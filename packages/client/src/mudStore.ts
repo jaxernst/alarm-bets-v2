@@ -8,7 +8,7 @@ import { ClientComponents } from "./mud/createClientComponents";
 export const mud = writable() as Writable<SetupResult>;
 
 setup().then((mudSetupResult) => {
-  mud.set(mudSetupResult);
+  // mud.set(mudSetupResult);
 
   const { network } = mudSetupResult;
 
@@ -27,7 +27,7 @@ setup().then((mudSetupResult) => {
 
 function MakeComponentValueStore<T extends keyof ClientComponents>(
   componentName: T,
-  initValue?: Partial<ComponentValue<ClientComponents[T]["schema"]>>,
+  initValue?: Partial<ComponentValue<ClientComponents[T]["schema"]>>
 ) {
   const componentValue = writable<
     ComponentValue<ClientComponents[T]["schema"]>
