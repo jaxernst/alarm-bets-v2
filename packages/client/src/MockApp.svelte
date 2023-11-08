@@ -1,5 +1,4 @@
 <script>
-  import AlarmActiveDays from "./lib/AlarmActiveDays.svelte";
   import EthSymbol from "./lib/icons/EthSymbol.svelte";
   import Reputation from "./lib/icons/Reputation.svelte";
   import Sun from "./lib/icons/Sun.svelte";
