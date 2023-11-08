@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "digital-clock";
+  src: url("/fonts/digital-7.ttf");
+}
+
 :root {
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -9,7 +14,6 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 }
-
 
 @media (prefers-color-scheme: light) {
   :root {
