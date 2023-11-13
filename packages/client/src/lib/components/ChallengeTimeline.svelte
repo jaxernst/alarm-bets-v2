@@ -1,63 +1,84 @@
-<script>
+<script lang="ts">
 	import Sun from '$lib/icons/Sun.svelte';
+	import { timeString } from '$lib/util';
 
-	let dayOfWeek = new Date().getDay();
+	type Challenge = {
+		id: number;
+		days: number[];
+		time: number;
+		title: string;
+		sunReward: number;
+		sunPenalty: number;
+		ethPenalty: number;
+	};
+
+	export let challenges: Challenge[];
 
 	// Make an array that stores the formatted date strings with the same order as the days array
 
-	const days = ['Su', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
+	let groupedChallenges = challenges.reduce((grouped, current, i) => {
+		current.days.forEach((day) => {
+			if (!grouped[day]) grouped[day] = [];
+			grouped[day].push(current);
+		});
 
-	let renderDays = days.slice(dayOfWeek).concat(days.slice(0, dayOfWeek));
-	let dayShown = renderDays[0];
+		return grouped;
+	}, {} as Record<number, Challenge[]>);
 
-	const challenges = [
-		{ day: 'Th', time: '8:00am', title: 'Wakeup Check-in', suns: 10, sunsLost: 6 },
-		{ day: 'F', time: '8:00am', title: 'Wakeup Check-in', suns: 10, sunsLost: 6 },
-		{ day: 'Sa', time: '8:00am', title: 'Wakeup Check-in', suns: 10, sunsLost: 6 },
-		{ day: 'Su', time: '8:00am', title: 'Wakeup Check-in', suns: 10, sunsLost: 6 },
-		{ day: 'M', time: '8:00am', title: 'Wakeup Check-in', suns: 10, sunsLost: 6 },
-		{ day: 'Tu', time: '8:00am', title: 'Wakeup Check-in', suns: 10, sunsLost: 6 },
-		{ day: 'W', time: '8:00am', title: 'Wakeup Check-in', suns: 10, sunsLost: 6 }
-	];
+	// Function to add days to a date
+	function addDays(date: Date, days: number): Date {
+		let result = new Date(date);
+		result.setDate(result.getDate() + days);
+		return result;
+	}
 
-	const challengeDays = ['M', 'T', 'W', 'F'];
+	const dayOfWeek = new Date().getDay();
+	const dayStrings = ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat'];
+	const upcomingDays = dayStrings.slice(dayOfWeek).concat(dayStrings.slice(0, dayOfWeek));
+
+	// Generate the date strings for the current week
+	let groupedUpcomingDayLabels = upcomingDays.map((dayName, index) => {
+		let today = new Date();
+		let dayDiff = index - today.getDay();
+		let date = addDays(today, dayDiff);
+		return `${dayName}, ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+	});
+
+	let selected: any;
 </script>
 
 <div class="flex h-full py-2 gap-2 justify-between">
-	<div class="flex flex-col items-center justify-evenly bg-zinc-100 rounded-full">
-		{#each renderDays as day, i}
-			<div
-				class={`px-1 text-sm rounded font-bold ${
-					day === dayShown
-						? 'bg-cyan-600 text-white'
-						: challengeDays.includes(day)
-						? 'text-cyan-400'
-						: 'text-zinc-300'
-				}
-				`}
-			>
-				{day}
-			</div>
-		{/each}
-	</div>
 	<div class="flex-grow overflow-y-auto">
-		{#each challenges as challenge}
-			<div class="flex justify-between items-center rounded-xl p-2 my-2">
-				<div class="flex flex-col">
-					<div class="text-cyan-600 font-semibold">{challenge.time}</div>
-					<div class="text-zinc-400 flex gap-1 items-center font-semibold">{challenge.title}</div>
+		{#each groupedUpcomingDayLabels as dayString, i}
+			{#if groupedChallenges[i + 1]}
+				<div class="flex justify-between text-cyan-400 text-sm">
+					{dayString}
 				</div>
-				<div class="flex self-start gap-3">
-					<div class="flex gap-2 items-center text-sm text-green-500">
-						+{challenge.suns}
-						<div class="w-3 fill-cyan-400"><Sun /></div>
+				{#each groupedChallenges[i + 1] as challenge, ii}
+					<div
+						class={`flex justify-between items-center rounded-xl p-2 my-2 ${
+							ii === selected ? 'border border-cyan-600 roundex lg' : ''
+						}`}
+					>
+						<div class="flex flex-col">
+							<div class="text-cyan-600 font-semibold">{timeString(challenge.time)}</div>
+							<div class="text-zinc-400 flex gap-1 items-center font-semibold">
+								{challenge.title}
+							</div>
+						</div>
+						<div class="flex self-start gap-3">
+							<div class="flex gap-2 items-center text-sm text-green-500">
+								+{challenge.sunReward}
+								<div class="w-3 fill-cyan-400"><Sun /></div>
+							</div>
+							<div class="flex gap-2 items-center text-sm text-red-600">
+								-{challenge.sunPenalty}
+								<div class="w-3 fill-cyan-400"><Sun /></div>
+							</div>
+						</div>
 					</div>
-					<div class="flex gap-2 items-center text-sm text-red-600">
-						-{challenge.sunsLost}
-						<div class="w-3 fill-cyan-400"><Sun /></div>
-					</div>
-				</div>
-			</div>
+				{/each}
+			{/if}
 		{/each}
 	</div>
 </div>
