@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import EthSymbol from '$lib/icons/EthSymbol.svelte';
 	import Sun from '$lib/icons/Sun.svelte';
 	import Wallet from '$lib/icons/Wallet.svelte';
@@ -7,22 +7,44 @@
 	import NavBar from './components/NavBar.svelte';
 	import ChallengeCard from './components/ChallengeCard.svelte';
 	import ChallengeTimeline from './components/ChallengeTimeline.svelte';
+	import type { Challenge } from './types';
 
 	const wakeupGoals = [
 		{
-			time: 8000,
+			time: 28800,
 			challengeDays: [1, 2, 3, 4],
 			suns: 50,
 			valueLocked: '0',
 			level: 1
 		},
 		{
-			time: 15000,
+			time: 30600,
 			challengeDays: [3, 4, 5],
 			sunRating: 12,
 			suns: 12,
 			valueLocked: '0',
 			level: 1
+		}
+	];
+
+	const wakeupChallenges = [
+		{
+			id: 1,
+			days: [2, 3, 4, 5],
+			time: 28800,
+			title: 'Wakeup Check-in',
+			sunReward: 10,
+			sunPenalty: 6,
+			ethPenalty: 0
+		},
+		{
+			id: 2,
+			days: [3, 4, 5],
+			time: 30600,
+			title: 'Alarm Bet with jaxer.eth',
+			sunReward: 10,
+			sunPenalty: 6,
+			ethPenalty: 0.001
 		}
 	];
 
@@ -52,7 +74,7 @@
 			<div>+</div>
 		</div>
 		<div class="overflow-y-auto">
-			<ChallengeTimeline />
+			<ChallengeTimeline challenges={wakeupChallenges} />
 		</div>
 	</div>
 </div>
