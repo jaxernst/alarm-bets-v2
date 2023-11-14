@@ -5,7 +5,7 @@
 	import { mud, user } from './mud/mudStore'
 	import GradientCard from './components/design-sys/GradientCard.svelte'
 
-	const wakeupChallenges = [
+	const wakeupChallenges = [] || [
 		{
 			id: 1,
 			days: [2, 3, 4, 5],
@@ -48,9 +48,7 @@
 			<div class="pt-4">
 				<GradientCard>
 					<p>Create your first wakeup goal...</p>
-					<p class="text-sm">
-						(enter alarm time) <input class="bg-transparent" type="text" value="..." />
-					</p>
+					<p class="text-sm">(enter alarm time)</p>
 				</GradientCard>
 			</div>
 		{:else}
@@ -67,9 +65,17 @@
 			<div class="text-sm">Challenges</div>
 			<div>+</div>
 		</div>
-		<div class="overflow-y-auto">
-			<ChallengeTimeline challenges={wakeupChallenges} />
-		</div>
+		{#if !wakeupChallenges.length}
+			<div class="p-4">
+				<div class="p-2 bg-slate-50 rounded-xl text-zinc-400 text-sm">
+					Create at least one wakeup goal to enter into daily challenges...
+				</div>
+			</div>
+		{:else}
+			<div class="overflow-y-auto">
+				<ChallengeTimeline challenges={wakeupChallenges} />
+			</div>
+		{/if}
 	</div>
 </div>
 
