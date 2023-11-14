@@ -1,52 +1,49 @@
-import mudConfig from 'contracts/mud.config';
-import { type SetupResult, setup } from './setup';
-import { writable, type Writable } from 'svelte/store';
-import { mount as mountDevTools } from '@latticexyz/dev-tools';
-import type { ComponentValue } from '@latticexyz/recs';
-import type { ClientComponents } from './createClientComponents';
+import mudConfig from 'contracts/mud.config'
+import { type SetupResult, setup } from './setup'
+import { writable, derived } from 'svelte/store'
+import { mount as mountDevTools } from '@latticexyz/dev-tools'
+import type { Component } from '@latticexyz/recs'
 
-export const mud = writable() as Writable<SetupResult>;
+export const mud = (() => {
+	const mud = writable<SetupResult>()
+	const components = writable<SetupResult['components']>()
 
-setup().then((mudSetupResult) => {
-	mud.set(mudSetupResult);
+	setup().then((mudSetupResult) => {
+		mud.set(mudSetupResult)
+		components.set(mudSetupResult.components)
 
-	const { network } = mudSetupResult;
+		const { network } = mudSetupResult
 
-	mountDevTools({
-		config: mudConfig,
-		publicClient: network.publicClient,
-		walletClient: network.walletClient,
-		latestBlock$: network.latestBlock$,
-		storedBlockLogs$: network.storedBlockLogs$,
-		worldAddress: network.worldContract.address,
-		worldAbi: network.worldContract.abi,
-		write$: network.write$,
-		recsWorld: network.world
-	});
-});
+		Object.entries(mudSetupResult.components).forEach(([componentName, component]) => {
+			;(component as Component).update$.subscribe((update) => {
+				console.log('Component update', componentName, update)
+				components.update((components) => ({
+					...components,
+					[componentName]: update.component as any
+				}))
+			})
+		})
 
-function MakeComponentValueStore<T extends keyof ClientComponents>(
-	componentName: T,
-	initValue?: Partial<ComponentValue<ClientComponents[T]['schema']>>
-) {
-	const componentValue = writable<ComponentValue<ClientComponents[T]['schema']>>(initValue ?? {});
+		mountDevTools({
+			config: mudConfig,
+			publicClient: network.publicClient,
+			walletClient: network.walletClient,
+			latestBlock$: network.latestBlock$,
+			storedBlockLogs$: network.storedBlockLogs$,
+			worldAddress: network.worldContract.address,
+			worldAbi: network.worldContract.abi,
+			write$: network.write$,
+			recsWorld: network.world
+		})
+	})
 
-	let subscribed = false;
-	mud.subscribe(($mud) => {
-		if (!$mud || subscribed) return;
+	return derived([mud, components], ([$mud, $components]) => {
+		if (!$mud) return undefined as unknown as SetupResult
+		return {
+			...$mud,
+			components: $components
+		}
+	})
+})()
 
-		$mud.components[componentName].update$.subscribe((update) => {
-			console.log(componentName, update);
-			const [newValue] = update.value;
-			if (!newValue) return;
-			componentValue.set(newValue);
-		});
-
-		subscribed = true;
-	});
-
-	return componentValue;
-}
-
-export const counter = MakeComponentValueStore('Counter', { value: 0 });
-export const wakeupObjectiveEntities = MakeComponentValueStore('WakeupObjectives');
+export const user = derived(mud, ($mud) => $mud?.network.walletClient.account.address)
