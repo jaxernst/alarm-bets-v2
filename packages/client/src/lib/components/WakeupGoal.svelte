@@ -6,6 +6,7 @@
 	import AlarmActiveDays from './ActiveDays.svelte'
 	import ActiveDays from './ActiveDays.svelte'
 	import type { Entity } from '@latticexyz/recs'
+	import GradientCard from './design-sys/GradientCard.svelte'
 
 	export let goal: {
 		entity: Entity
@@ -18,7 +19,7 @@
 	let challengeDays = [2, 3, 5]
 </script>
 
-<div class="flex flex-col relative bg-gradient-to-r from-cyan-400 to-cyan-500 rounded-xl p-1">
+<GradientCard klass="flex flex-col">
 	<div class="flex justify-between gap-1 items-center p-1 text-white">
 		<div class="text-xs rounded-full font-semibold">Lvl {goal.level}</div>
 		<div class="flex gap-1 items-center text-xs rounded-full font-semibold">
@@ -39,4 +40,4 @@
 	<div class="flex flex-col px-2">
 		<ActiveDays activeDays={challengeDays} />
 	</div>
-</div>
+</GradientCard>

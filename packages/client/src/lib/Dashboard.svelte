@@ -3,6 +3,7 @@
 	import { getEntitiesWithValue, getComponentValueStrict } from '@latticexyz/recs'
 	import ChallengeTimeline from './components/ChallengeTimeline.svelte'
 	import { mud, user } from './mud/mudStore'
+	import GradientCard from './components/design-sys/GradientCard.svelte'
 
 	const wakeupChallenges = [
 		{
@@ -40,11 +41,18 @@
 <div class="h-full px-2 flex flex-col gap-6">
 	<div class="w-full px-2">
 		<div class="text-sm py-2 text-cyan-500 flex justify-between">
-			Wakeup Goals
+			Goals
 			<a href="/new-goal" class="text-base">+</a>
 		</div>
 		{#if wakeupGoals.length === 0}
-			Create new wakeup goal...
+			<div class="pt-4">
+				<GradientCard>
+					<p>Create your first wakeup goal...</p>
+					<p class="text-sm">
+						(enter alarm time) <input class="bg-transparent" type="text" value="..." />
+					</p>
+				</GradientCard>
+			</div>
 		{:else}
 			<div class="grid-container overflow-y-auto max-h-[260px]">
 				{#each wakeupGoals as goal}
@@ -56,7 +64,7 @@
 
 	<div class="p-2 flex flex-col flex-grow gap-2 items-stretch overflow-hidden">
 		<div class="flex items-center justify-between text-cyan-500">
-			<div class="text-sm">Upcoming Challenges</div>
+			<div class="text-sm">Challenges</div>
 			<div>+</div>
 		</div>
 		<div class="overflow-y-auto">
