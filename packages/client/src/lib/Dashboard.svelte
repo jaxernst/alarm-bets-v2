@@ -1,31 +1,8 @@
 <script lang="ts">
-	import EthSymbol from '$lib/icons/EthSymbol.svelte';
-	import Sun from '$lib/icons/Sun.svelte';
-	import Wallet from '$lib/icons/Wallet.svelte';
-	import Lock from '$lib/icons/Lock.svelte';
-	import WakeupGoal from '$lib/components/WakeupGoal.svelte';
-	import NavBar from './components/NavBar.svelte';
-	import ChallengeCard from './components/ChallengeCard.svelte';
-	import ChallengeTimeline from './components/ChallengeTimeline.svelte';
-	import type { Challenge } from './types';
-
-	const wakeupGoals = [
-		{
-			time: 28800,
-			challengeDays: [1, 2, 3, 4],
-			suns: 50,
-			valueLocked: '0',
-			level: 1
-		},
-		{
-			time: 30600,
-			challengeDays: [3, 4, 5],
-			sunRating: 12,
-			suns: 12,
-			valueLocked: '0',
-			level: 1
-		}
-	];
+	import WakeupGoal from '$lib/components/WakeupGoal.svelte'
+	import { getEntitiesWithValue, getComponentValueStrict } from '@latticexyz/recs'
+	import ChallengeTimeline from './components/ChallengeTimeline.svelte'
+	import { mud, user } from './mud/mudStore'
 
 	const wakeupChallenges = [
 		{
@@ -46,21 +23,30 @@
 			sunPenalty: 6,
 			ethPenalty: 0.001
 		}
-	];
+	]
 
-	const activeDays = new Set(['M', 'T', 'W', 'Th']);
+	$: entities = getEntitiesWithValue($mud.components.Creator, { value: $user })
+	$: wakeupGoals = Array.from(entities).map((entity) => {
+		return {
+			entity,
+			time: getComponentValueStrict($mud.components.AlarmTime, entity).value,
+			timezone: getComponentValueStrict($mud.components.Timezone, entity).value,
+			suns: getComponentValueStrict($mud.components.Suns, entity).value,
+			level: getComponentValueStrict($mud.components.Level, entity).value
+		}
+	})
 </script>
 
 <div class="h-full px-2 flex flex-col gap-6">
 	<div class="w-full px-2">
 		<div class="text-sm py-2 text-cyan-500 flex justify-between">
 			Wakeup Goals
-			<div class="text-base">+</div>
+			<a href="/new-goal" class="text-base">+</a>
 		</div>
 		{#if wakeupGoals.length === 0}
 			Create new wakeup goal...
 		{:else}
-			<div class="flex gap-2">
+			<div class="grid-container overflow-y-auto max-h-[260px]">
 				{#each wakeupGoals as goal}
 					<WakeupGoal {goal} />
 				{/each}
@@ -80,27 +66,9 @@
 </div>
 
 <style>
-	.days-row {
-		display: inline-flex;
-		flex-wrap: wrap;
-		flex-direction: row;
-		font-size: 1em;
-		justify-content: space-evenly;
-	}
-
-	.day {
-		padding: 0 0.3em 0 0.3em;
-		color: rgb(161 161 170);
-		opacity: 0.3;
-	}
-
-	.today {
-		border-bottom: 0.1em solid white;
-		opacity: 1;
-	}
-
-	.active {
-		opacity: 1;
-		color: var(--active-color);
+	.grid-container {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+		grid-gap: 10px;
 	}
 </style>
