@@ -7,21 +7,13 @@ export default mudConfig({
       valueSchema: "uint32",
     },
 
-    WakeupObjectives: {
-      keySchema: {
-        user: "address",
-        id: "bytes32",
-      },
-      valueSchema: {
-        entity: "bytes32",
-      },
-    },
-
+    WakeupObjective: "bool",
     Creator: "address",
     AlarmTime: "uint32",
     Timezone: "int8",
     WakeupConfirmations: "uint32",
-    Credit: "uint32",
+    Suns: "uint32",
+    Level: "uint32",
   },
   modules: [
     {

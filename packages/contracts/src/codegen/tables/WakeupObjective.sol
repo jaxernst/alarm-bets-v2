@@ -21,15 +21,15 @@ import { ResourceId } from "@latticexyz/store/src/ResourceId.sol";
 import { RESOURCE_TABLE, RESOURCE_OFFCHAIN_TABLE } from "@latticexyz/store/src/storeResourceTypes.sol";
 
 ResourceId constant _tableId = ResourceId.wrap(
-  bytes32(abi.encodePacked(RESOURCE_TABLE, bytes14(""), bytes16("WakeupObjectives")))
+  bytes32(abi.encodePacked(RESOURCE_TABLE, bytes14(""), bytes16("WakeupObjective")))
 );
-ResourceId constant WakeupObjectivesTableId = _tableId;
+ResourceId constant WakeupObjectiveTableId = _tableId;
 
 FieldLayout constant _fieldLayout = FieldLayout.wrap(
-  0x0020010020000000000000000000000000000000000000000000000000000000
+  0x0001010001000000000000000000000000000000000000000000000000000000
 );
 
-library WakeupObjectives {
+library WakeupObjective {
   /**
    * @notice Get the table values' field layout.
    * @return _fieldLayout The field layout for the table.
@@ -43,9 +43,8 @@ library WakeupObjectives {
    * @return _keySchema The key schema for the table.
    */
   function getKeySchema() internal pure returns (Schema) {
-    SchemaType[] memory _keySchema = new SchemaType[](2);
-    _keySchema[0] = SchemaType.ADDRESS;
-    _keySchema[1] = SchemaType.BYTES32;
+    SchemaType[] memory _keySchema = new SchemaType[](1);
+    _keySchema[0] = SchemaType.BYTES32;
 
     return SchemaLib.encode(_keySchema);
   }
@@ -56,7 +55,7 @@ library WakeupObjectives {
    */
   function getValueSchema() internal pure returns (Schema) {
     SchemaType[] memory _valueSchema = new SchemaType[](1);
-    _valueSchema[0] = SchemaType.BYTES32;
+    _valueSchema[0] = SchemaType.BOOL;
 
     return SchemaLib.encode(_valueSchema);
   }
@@ -66,9 +65,8 @@ library WakeupObjectives {
    * @return keyNames An array of strings with the names of key fields.
    */
   function getKeyNames() internal pure returns (string[] memory keyNames) {
-    keyNames = new string[](2);
-    keyNames[0] = "user";
-    keyNames[1] = "id";
+    keyNames = new string[](1);
+    keyNames[0] = "key";
   }
 
   /**
@@ -77,7 +75,7 @@ library WakeupObjectives {
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
     fieldNames = new string[](1);
-    fieldNames[0] = "entity";
+    fieldNames[0] = "value";
   }
 
   /**
@@ -95,104 +93,95 @@ library WakeupObjectives {
   }
 
   /**
-   * @notice Get entity.
+   * @notice Get value.
    */
-  function getEntity(address user, bytes32 id) internal view returns (bytes32 entity) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(user)));
-    _keyTuple[1] = id;
+  function getValue(bytes32 key) internal view returns (bool value) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (bytes32(_blob));
+    return (_toBool(uint8(bytes1(_blob))));
   }
 
   /**
-   * @notice Get entity.
+   * @notice Get value.
    */
-  function _getEntity(address user, bytes32 id) internal view returns (bytes32 entity) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(user)));
-    _keyTuple[1] = id;
+  function _getValue(bytes32 key) internal view returns (bool value) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (bytes32(_blob));
+    return (_toBool(uint8(bytes1(_blob))));
   }
 
   /**
-   * @notice Get entity.
+   * @notice Get value.
    */
-  function get(address user, bytes32 id) internal view returns (bytes32 entity) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(user)));
-    _keyTuple[1] = id;
+  function get(bytes32 key) internal view returns (bool value) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (bytes32(_blob));
+    return (_toBool(uint8(bytes1(_blob))));
   }
 
   /**
-   * @notice Get entity.
+   * @notice Get value.
    */
-  function _get(address user, bytes32 id) internal view returns (bytes32 entity) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(user)));
-    _keyTuple[1] = id;
+  function _get(bytes32 key) internal view returns (bool value) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (bytes32(_blob));
+    return (_toBool(uint8(bytes1(_blob))));
   }
 
   /**
-   * @notice Set entity.
+   * @notice Set value.
    */
-  function setEntity(address user, bytes32 id, bytes32 entity) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(user)));
-    _keyTuple[1] = id;
+  function setValue(bytes32 key, bool value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((entity)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((value)), _fieldLayout);
   }
 
   /**
-   * @notice Set entity.
+   * @notice Set value.
    */
-  function _setEntity(address user, bytes32 id, bytes32 entity) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(user)));
-    _keyTuple[1] = id;
+  function _setValue(bytes32 key, bool value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((entity)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((value)), _fieldLayout);
   }
 
   /**
-   * @notice Set entity.
+   * @notice Set value.
    */
-  function set(address user, bytes32 id, bytes32 entity) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(user)));
-    _keyTuple[1] = id;
+  function set(bytes32 key, bool value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((entity)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((value)), _fieldLayout);
   }
 
   /**
-   * @notice Set entity.
+   * @notice Set value.
    */
-  function _set(address user, bytes32 id, bytes32 entity) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(user)));
-    _keyTuple[1] = id;
+  function _set(bytes32 key, bool value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((entity)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((value)), _fieldLayout);
   }
 
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(address user, bytes32 id) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(user)));
-    _keyTuple[1] = id;
+  function deleteRecord(bytes32 key) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
@@ -200,10 +189,9 @@ library WakeupObjectives {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(address user, bytes32 id) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(user)));
-    _keyTuple[1] = id;
+  function _deleteRecord(bytes32 key) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
 
     StoreCore.deleteRecord(_tableId, _keyTuple, _fieldLayout);
   }
@@ -212,8 +200,8 @@ library WakeupObjectives {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(bytes32 entity) internal pure returns (bytes memory) {
-    return abi.encodePacked(entity);
+  function encodeStatic(bool value) internal pure returns (bytes memory) {
+    return abi.encodePacked(value);
   }
 
   /**
@@ -222,8 +210,8 @@ library WakeupObjectives {
    * @return The lengths of the dynamic fields (packed into a single bytes32 value).
    * @return The dyanmic (variable length) data, encoded into a sequence of bytes.
    */
-  function encode(bytes32 entity) internal pure returns (bytes memory, PackedCounter, bytes memory) {
-    bytes memory _staticData = encodeStatic(entity);
+  function encode(bool value) internal pure returns (bytes memory, PackedCounter, bytes memory) {
+    bytes memory _staticData = encodeStatic(value);
 
     PackedCounter _encodedLengths;
     bytes memory _dynamicData;
@@ -234,11 +222,22 @@ library WakeupObjectives {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(address user, bytes32 id) internal pure returns (bytes32[] memory) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(user)));
-    _keyTuple[1] = id;
+  function encodeKeyTuple(bytes32 key) internal pure returns (bytes32[] memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
 
     return _keyTuple;
+  }
+}
+
+/**
+ * @notice Cast a value to a bool.
+ * @dev Boolean values are encoded as uint8 (1 = true, 0 = false), but Solidity doesn't allow casting between uint8 and bool.
+ * @param value The uint8 value to convert.
+ * @return result The boolean value.
+ */
+function _toBool(uint8 value) pure returns (bool result) {
+  assembly {
+    result := value
   }
 }
