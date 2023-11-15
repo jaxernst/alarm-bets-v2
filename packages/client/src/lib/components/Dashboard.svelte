@@ -4,6 +4,10 @@
 	import ChallengeTimeline from './ChallengeTimeline.svelte'
 	import { mud, user } from '../mud/mudStore'
 	import GradientCard from './design-sys/GradientCard.svelte'
+	import { bscTestnet } from 'viem/chains'
+	import { bytesToString } from 'viem'
+	import Plus from './Plus.svelte'
+	import GoalCreator from './GoalCreator.svelte'
 
 	const wakeupChallenges = [] || [
 		{
@@ -38,19 +42,21 @@
 	})
 </script>
 
-<div class="h-full px-2 flex flex-col gap-6">
-	<div class="w-full px-2">
-		<div class="text-sm py-2 text-cyan-500 flex justify-between">
-			Goals
-			<a href="/new-goal" class="text-base">+</a>
-		</div>
-		{#if wakeupGoals.length === 0}
-			<div class="pt-4">
-				<GradientCard>
-					<p>Create your first wakeup goal...</p>
-				</GradientCard>
+<div class="h-full flex flex-col gap-6 ">
+	{#if wakeupGoals.length === 0}
+		<div class="flex-grow flex flex-col justify-evenly w-full p-4">
+			<div>
+				<h1 class="text-cyan-600 text-2xl font-bold">Welcome to alarm bets.</h1>
+				<p class="text-cyan-400">An onchain game to make waking up early fun.</p>
 			</div>
-		{:else}
+			<GoalCreator />
+		</div>
+	{:else}
+		<div class="w-full px-2">
+			<div class="text-sm py-2 text-cyan-500 flex justify-between">
+				Goals
+				<a href="/new-goal" class="text-base">+</a>
+			</div>
 			<div
 				class={`${
 					wakeupGoals.length === 1 ? 'flex justify-center' : 'grid-container overflow-y-auto'
@@ -60,26 +66,33 @@
 					<WakeupGoal {goal} open={wakeupGoals.length === 1} />
 				{/each}
 			</div>
-		{/if}
-	</div>
-
-	<div class="p-2 flex flex-col flex-grow gap-2 items-stretch overflow-hidden">
-		<div class="flex items-center justify-between text-cyan-500">
-			<div class="text-sm">Challenges</div>
-			<div>+</div>
 		</div>
-		{#if !wakeupChallenges.length}
-			<div class="p-4">
-				<div class="p-2 bg-slate-50 rounded-xl text-zinc-400 text-sm">
-					Create at least one wakeup goal to enter into daily challenges...
+
+		<div class="p-2 flex flex-col flex-grow gap-2 items-stretch overflow-hidden">
+			<div class="flex items-center gap-3 text-cyan-500">
+				<div class="rounded-full px-2 py-1 bg-cyan-600 text-cyan-50">Active Challenges</div>
+				<div class="rounded-full px-2 py-1 border border-cyan-400 text-cyan-400">
+					Available Challenges
 				</div>
+				<div class="rounded-full px-2 py-1 border border-cyan-400 text-cyan-400">Leaderboard</div>
 			</div>
-		{:else}
-			<div class="overflow-y-auto">
-				<ChallengeTimeline challenges={wakeupChallenges} />
+			<div class="flex items-center justify-between text-cyan-500">
+				<div class="text-sm">Challenges</div>
+				<div>+</div>
 			</div>
-		{/if}
-	</div>
+			{#if !wakeupChallenges.length}
+				<div class="p-4">
+					<div class="p-2 bg-slate-50 rounded-xl text-zinc-400 text-sm">
+						Create at least one wakeup goal to enter into daily challenges...
+					</div>
+				</div>
+			{:else}
+				<div class="overflow-y-auto">
+					<ChallengeTimeline challenges={wakeupChallenges} />
+				</div>
+			{/if}
+		</div>
+	{/if}
 </div>
 
 <style>

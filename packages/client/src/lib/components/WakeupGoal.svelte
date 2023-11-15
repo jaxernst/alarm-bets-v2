@@ -7,7 +7,6 @@
 	import ActiveDays from './ActiveDays.svelte'
 	import type { Entity } from '@latticexyz/recs'
 	import GradientCard from './design-sys/GradientCard.svelte'
-	import PottedPlant from '$lib/icons/PottedPlant.svelte'
 
 	export let open = false
 	export let goal: {
@@ -50,13 +49,13 @@
 
 				<p class="text-sm text-cyan-200">
 					Work towards this goal by entering into wakeup challenges. Complete challenges to earns
-					suns, level up your goal, and qualify for more challenges. and show off your progress.
+					Suns, level up your alarm goal, qualify for more challenges, and show off your progress.
 				</p>
 
-				<div class="pt-2 pb-1">
+				<div class="pt-3 pb-2">
 					<a
 						href="/challenges"
-						class="rounded-xl bg-cyan-200  text-cyan-500 font-semibold text-sm px-2 py-1 hover:bg-cyan-50 transition-colors active:bg-cyan-400"
+						class="rounded-xl bg-cyan-200  text-cyan-500 font-semibold text-sm p-2 hover:bg-cyan-50 transition-colors active:bg-cyan-400"
 					>
 						Enter your first challenge
 					</a>
