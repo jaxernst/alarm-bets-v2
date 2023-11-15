@@ -1,43 +1,43 @@
 <script lang="ts">
-	import { localTzOffsetHrs, timeString, timeString24Hour, timeStringToSeconds } from '$lib/util';
-	import { mud } from '$lib/mud/mudStore';
-	import { writable } from 'svelte/store';
-	import Sun from '$lib/icons/Sun.svelte';
+	import { localTzOffsetHrs, timeString, timeString24Hour, timeStringToSeconds } from '$lib/util'
+	import { mud } from '$lib/mud/mudStore'
+	import { writable } from 'svelte/store'
+	import Sun from '$lib/icons/Sun.svelte'
 
-	let playerTimezoneOffset = localTzOffsetHrs();
-	let alarmTime = writable('08:30');
+	let playerTimezoneOffset = localTzOffsetHrs()
+	let alarmTime = writable('08:30')
 
 	const readableTimezone = (offset: number) => {
-		let localTimezone;
+		let localTimezone
 		if (offset === localTzOffsetHrs()) {
-			localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+			localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 		}
-		return `UTC${offset >= 0 ? `+${offset}` : offset} (${localTimezone ?? 'non-local'}) `;
-	};
+		return `UTC${offset >= 0 ? `+${offset}` : offset} (${localTimezone ?? 'non-local'}) `
+	}
 
-	let loading = false;
-	let error = '';
+	let loading = false
+	let error = ''
 	$: create = async () => {
-		error = '';
-		loading = true;
-		await new Promise((r) => setTimeout(r, 1000));
+		error = ''
+		loading = true
+		await new Promise((r) => setTimeout(r, 1000))
 		try {
 			await $mud.systemCalls.createWakeupObjective(
 				timeStringToSeconds($alarmTime),
 				playerTimezoneOffset
-			);
+			)
 		} catch (e) {
-			console.error(e);
-			error = 'Contract execution error';
+			console.error(e)
+			error = 'Contract execution error'
 		} finally {
-			loading = false;
+			loading = false
 		}
-	};
+	}
 </script>
 
 <div class="flex flex-col h-full gap-2 px-2">
 	<h1 class="p-2 text-cyan-600 font-semibold text-lg">Create a new Alarm Goal</h1>
-	<p class="px-4 text-cyan-400">
+	<p class="px-4 text-cyan-600">
 		This goal represents your commitment to wakeup at your choosen time. Alarm Goals are pulbic and
 		viewable by anyone
 	</p>
