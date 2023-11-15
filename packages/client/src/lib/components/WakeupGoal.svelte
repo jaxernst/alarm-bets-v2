@@ -7,7 +7,9 @@
 	import ActiveDays from './ActiveDays.svelte'
 	import type { Entity } from '@latticexyz/recs'
 	import GradientCard from './design-sys/GradientCard.svelte'
+	import PottedPlant from '$lib/icons/PottedPlant.svelte'
 
+	export let open = false
 	export let goal: {
 		entity: Entity
 		time: number
@@ -16,10 +18,10 @@
 	}
 
 	let time = timeString(goal.time)
-	let challengeDays = [2, 3, 5]
+	let challengeDays = []
 </script>
 
-<GradientCard klass="flex flex-col">
+<GradientCard klass={`flex flex-col ${open ? 'w-full h-full' : ''}`}>
 	<div class="flex justify-between gap-1 items-center p-1 text-white">
 		<div class="text-xs rounded-full font-semibold">Lvl {goal.level}</div>
 		<div class="flex gap-1 items-center text-xs rounded-full font-semibold">
@@ -29,7 +31,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="py-2">
+	<div class="py-1">
 		<div
 			class=" px-6 py-1 font-digital text-cyan-100 text-4xl font-bold text-center pt-1"
 			style="line-height:1em"
@@ -37,7 +39,29 @@
 			{time}
 		</div>
 	</div>
-	<div class="flex flex-col px-2">
-		<ActiveDays activeDays={challengeDays} />
+	<div class="self-center px-2 justify-center ">
+		{#if challengeDays.length > 0}
+			<ActiveDays activeDays={challengeDays} />
+		{:else}
+			<div class="flex flex-col items-center gap-2 px-4 py-2 text-center">
+				<p class="text-cyan-100 font-semibold">
+					You have set a goal to wakeup at {time}.
+				</p>
+
+				<p class="text-sm text-cyan-200">
+					Work towards this goal by entering into wakeup challenges. Complete challenges to earns
+					suns, level up your goal, and qualify for more challenges. and show off your progress.
+				</p>
+
+				<div class="pt-2 pb-1">
+					<a
+						href="/challenges"
+						class="rounded-xl bg-cyan-200  text-cyan-500 font-semibold text-sm px-2 py-1 hover:bg-cyan-50 transition-colors active:bg-cyan-400"
+					>
+						Enter your first challenge
+					</a>
+				</div>
+			</div>
+		{/if}
 	</div>
 </GradientCard>

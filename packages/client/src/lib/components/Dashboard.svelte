@@ -1,9 +1,9 @@
 <script lang="ts">
 	import WakeupGoal from '$lib/components/WakeupGoal.svelte'
 	import { getEntitiesWithValue, getComponentValueStrict } from '@latticexyz/recs'
-	import ChallengeTimeline from './components/ChallengeTimeline.svelte'
-	import { mud, user } from './mud/mudStore'
-	import GradientCard from './components/design-sys/GradientCard.svelte'
+	import ChallengeTimeline from './ChallengeTimeline.svelte'
+	import { mud, user } from '../mud/mudStore'
+	import GradientCard from './design-sys/GradientCard.svelte'
 
 	const wakeupChallenges = [] || [
 		{
@@ -48,13 +48,16 @@
 			<div class="pt-4">
 				<GradientCard>
 					<p>Create your first wakeup goal...</p>
-					<p class="text-sm">(enter alarm time)</p>
 				</GradientCard>
 			</div>
 		{:else}
-			<div class="grid-container overflow-y-auto max-h-[260px]">
+			<div
+				class={`${
+					wakeupGoals.length === 1 ? 'flex justify-center' : 'grid-container overflow-y-auto'
+				} max-h-[260px]`}
+			>
 				{#each wakeupGoals as goal}
-					<WakeupGoal {goal} />
+					<WakeupGoal {goal} open={wakeupGoals.length === 1} />
 				{/each}
 			</div>
 		{/if}
