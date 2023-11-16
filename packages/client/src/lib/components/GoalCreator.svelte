@@ -84,7 +84,7 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div on:click={() => (inputActive = true)} use:interactionListener>
+<button on:click={() => (inputActive = true)} use:interactionListener>
 	<GradientCard
 		klass={` p-3 px-4 flex justify-between items-center transition-all duration-300 ease-in-out ${
 			hovered || inputActive ? 'shadow-lg fill-cyan-50 text-cyan-50' : ''
@@ -120,12 +120,12 @@
 								bind:value={$alarmTimeInput}
 							/>
 							{#if alarmTimeInputValid}
-								<div
+								<button
 									transition:slide
 									class={` ${
 										readyToSubmit ? 'border border-green-300' : ''
 									} transition-all flex-grow items-center justify-evenly min-w-[66%] oveflow-hidden px-2 bg-cyan-400 text-cyan-50 rounded-full`}
-									on:click|preventDefault|stopPropagation={(e) => {
+									on:click|stopPropagation={(e) => {
 										timezoneConfirmed = true
 									}}
 								>
@@ -146,16 +146,19 @@
 											>
 										{/if}
 									</div>
-								</div>
+								</button>
 							{/if}
 						</div>
 						{#if readyToSubmit}
 							<button
-								transition:slide={{ axis: 'x', easing: cubicInOut }}
+								transition:slide={{ axis: 'x' }}
 								on:click|stopPropagation={() => submitGoal()}
-								class={`p-2 bg-cyan-600 hover:bg-cyan-300 transition-all duration-150 rounded-full`}
+								class={`p-3 hover:bg-cyan-300 transition-all duration-150 rounded-full`}
 							>
-								<div class="w-5 animate-pulse fill-green-200">
+								<div
+									transition:scale={{ easing: cubicInOut, delay: 50 }}
+									class="w-5 animate-pulse fill-green-200"
+								>
 									<Plus />
 								</div>
 							</button>
@@ -165,4 +168,4 @@
 			</div>
 		{/if}
 	</GradientCard>
-</div>
+</button>
