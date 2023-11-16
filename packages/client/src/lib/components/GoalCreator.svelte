@@ -81,21 +81,6 @@
 			submitLoading = false
 		}
 	}
-
-	let slideOutBoxWidth = tweened(0, {
-		duration: 500,
-		easing: cubicOut
-	})
-
-	function toggleWidth() {
-		$slideOutBoxWidth = $slideOutBoxWidth === 0 ? 100 : 0
-	}
-
-	$: if (alarmTimeInputValid) {
-		$slideOutBoxWidth = 100
-	} else {
-		$slideOutBoxWidth = 0
-	}
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -167,7 +152,7 @@
 						{#if readyToSubmit}
 							<button
 								transition:slide={{ axis: 'x', easing: cubicInOut }}
-								on:click={() => submitGoal()}
+								on:click|stopPropagation={() => submitGoal()}
 								class={`p-2 bg-cyan-600 hover:bg-cyan-300 transition-all duration-150 rounded-full`}
 							>
 								<div class="w-5 animate-pulse fill-green-200">
