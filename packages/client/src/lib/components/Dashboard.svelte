@@ -42,12 +42,12 @@
 	})
 </script>
 
-<div class="h-full flex flex-col gap-6 ">
+<div class="h-full flex flex-col gap-6">
 	{#if wakeupGoals.length === 0}
 		<div class="flex-grow flex flex-col justify-evenly w-full p-4">
 			<div>
 				<h1 class="text-cyan-600 text-2xl font-bold">Welcome to alarm bets.</h1>
-				<p class="text-cyan-400">An onchain game to make waking up early fun.</p>
+				<p class="text-cyan-400">An onchain game to help you wake up earlier.</p>
 			</div>
 			<GoalCreator />
 		</div>
@@ -68,22 +68,16 @@
 			</div>
 		</div>
 
-		<div class="p-2 flex flex-col flex-grow gap-2 items-stretch overflow-hidden">
+		<div class="p-2 pt-4 flex flex-col flex-grow gap-2 items-stretch overflow-hidden">
 			<div class="flex items-center gap-3 text-cyan-500">
 				<div class="rounded-full px-2 py-1 bg-cyan-600 text-cyan-50">Active Challenges</div>
-				<div class="rounded-full px-2 py-1 border border-cyan-400 text-cyan-400">
-					Available Challenges
-				</div>
-				<div class="rounded-full px-2 py-1 border border-cyan-400 text-cyan-400">Leaderboard</div>
-			</div>
-			<div class="flex items-center justify-between text-cyan-500">
-				<div class="text-sm">Challenges</div>
-				<div>+</div>
+				<div class="rounded-full px-2 py-1">Available Challenges</div>
+				<div class="rounded-full px-2 py-1">Leaderboard</div>
 			</div>
 			{#if !wakeupChallenges.length}
-				<div class="p-4">
-					<div class="p-2 bg-slate-50 rounded-xl text-zinc-400 text-sm">
-						Create at least one wakeup goal to enter into daily challenges...
+				<div class="py-4">
+					<div class="p-3 bg-slate-50 rounded-xl text-zinc-400 text-sm">
+						No active challenges ...
 					</div>
 				</div>
 			{:else}

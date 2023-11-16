@@ -38,7 +38,7 @@
 			{time}
 		</div>
 	</div>
-	<div class="self-center px-2 justify-center ">
+	<div class="self-center px-2 justify-center">
 		{#if challengeDays.length > 0}
 			<ActiveDays activeDays={challengeDays} />
 		{:else}
@@ -52,10 +52,10 @@
 					Suns, level up your alarm goal, qualify for more challenges, and show off your progress.
 				</p>
 
-				<div class="pt-3 pb-2">
+				<div class="pt-4 pb-3">
 					<a
 						href="/challenges"
-						class="rounded-xl bg-cyan-200  text-cyan-500 font-semibold text-sm p-2 hover:bg-cyan-50 transition-colors active:bg-cyan-400"
+						class="rounded-xl bg-cyan-200 text-cyan-500 font-semibold text-sm p-2 hover:bg-cyan-50 transition-colors active:bg-cyan-400"
 					>
 						Enter your first challenge
 					</a>
