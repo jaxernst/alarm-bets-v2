@@ -19,8 +19,13 @@
 		</div>
 		<GoalCreator
 			onGoalCreated={() => {
-				console.log('Goal created redirecting...')
-				goto('/')
+				// Wait 5 seconds and if a redirect has happened, force the redirect
+				setTimeout(() => {
+					if ($mud.stateSynced && userWakeupGoals.size > 0) {
+						console.log('User has goals, redirecting...')
+						goto('/')
+					}
+				}, 5000)
 			}}
 		/>
 	</div>
