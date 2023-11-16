@@ -7,6 +7,7 @@ import type { Component } from '@latticexyz/recs'
 export const mud = (() => {
 	const mud = writable<SetupResult>()
 	const components = writable<SetupResult['components']>()
+	const stateSynced = writable(false)
 
 	setup().then((mudSetupResult) => {
 		mud.set(mudSetupResult)
@@ -15,13 +16,17 @@ export const mud = (() => {
 		const { network } = mudSetupResult
 
 		Object.entries(mudSetupResult.components).forEach(([componentName, component]) => {
-			;(component as Component).update$.subscribe((update) => {
+			return (component as Component).update$.subscribe((update) => {
 				console.log('Component update', componentName, update)
 				components.update((components) => ({
 					...components,
 					[componentName]: update.component as any
 				}))
 			})
+		})
+
+		mudSetupResult.components.SyncProgress.update$.subscribe((progress) => {
+			stateSynced.set(progress.value.every((v) => v?.step === 'live'))
 		})
 
 		mountDevTools({
@@ -37,10 +42,11 @@ export const mud = (() => {
 		})
 	})
 
-	return derived([mud, components], ([$mud, $components]) => {
-		if (!$mud) return undefined as unknown as SetupResult
+	return derived([mud, components, stateSynced], ([$mud, $components, $stateSynced]) => {
+		if (!$mud) return undefined as unknown as SetupResult & { stateSynced: boolean }
 		return {
 			...$mud,
+			stateSynced: $stateSynced,
 			components: $components
 		}
 	})

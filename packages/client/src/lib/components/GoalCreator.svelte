@@ -7,6 +7,8 @@
 	import { mud } from '$lib/mud/mudStore'
 	import Sun from '$lib/icons/Sun.svelte'
 
+	export let onGoalCreated = () => {}
+
 	let inputActive = false
 	let hovered = false
 
@@ -60,6 +62,7 @@
 		try {
 			await new Promise((resolve) => setTimeout(resolve, 500))
 			await $mud.systemCalls.createWakeupObjective(alarmTime, playerTimezoneOffset)
+			onGoalCreated()
 		} catch (e) {
 			console.error(e)
 		} finally {

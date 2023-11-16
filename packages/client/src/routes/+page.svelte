@@ -1,5 +1,101 @@
 <script lang="ts">
-	import Dashboard from '$lib/components/Dashboard.svelte'
+	import WakeupGoal from '$lib/components/WakeupGoal.svelte'
+	import { getEntitiesWithValue, getComponentValueStrict } from '@latticexyz/recs'
+	import ChallengeTimeline from '$lib/components/ChallengeTimeline.svelte'
+	import { mud, user } from '$lib/mud/mudStore'
+	import { goto } from '$app/navigation'
+	import GoalCreator from '$lib/components/GoalCreator.svelte'
+	import { slide } from 'svelte/transition'
+
+	$: userWakeupGoals = getEntitiesWithValue($mud.components.Creator, { value: $user })
+
+	$: if ($mud.stateSynced && userWakeupGoals.size === 0) {
+		goto('/welcome')
+	}
+
+	const wakeupChallenges = [] || [
+		{
+			id: 1,
+			days: [2, 3, 4, 5],
+			time: 28800,
+			title: 'Wakeup Check-in',
+			sunReward: 10,
+			sunPenalty: 6,
+			ethPenalty: 0
+		},
+		{
+			id: 2,
+			days: [3, 4, 5],
+			time: 30600,
+			title: 'Alarm Bet with jaxer.eth',
+			sunReward: 10,
+			sunPenalty: 6,
+			ethPenalty: 0.001
+		}
+	]
+
+	$: entities = getEntitiesWithValue($mud.components.Creator, { value: $user })
+	$: wakeupGoals = Array.from(entities).map((entity) => {
+		return {
+			entity,
+			time: getComponentValueStrict($mud.components.AlarmTime, entity).value,
+			timezone: getComponentValueStrict($mud.components.Timezone, entity).value,
+			suns: getComponentValueStrict($mud.components.Suns, entity).value,
+			level: getComponentValueStrict($mud.components.Level, entity).value
+		}
+	})
+
+	let showGoalCreator = false
 </script>
 
-<Dashboard />
+<div class="h-full flex flex-col gap-6">
+	<div class="w-full px-2">
+		{#if showGoalCreator}
+			<div transition:slide>
+				<GoalCreator
+					onGoalCreated={() => {
+						showGoalCreator = false
+					}}
+				/>
+			</div>
+		{/if}
+		<div class="text-sm py-2 text-cyan-500 flex justify-between">
+			Goals
+			<button on:click={() => (showGoalCreator = true)} class="text-base">+</button>
+		</div>
+		<div
+			class={`${
+				wakeupGoals.length === 1 ? 'flex justify-center' : 'grid-container overflow-y-auto'
+			} max-h-[260px]`}
+		>
+			{#each wakeupGoals as goal}
+				<WakeupGoal {goal} open={wakeupGoals.length === 1} />
+			{/each}
+		</div>
+	</div>
+
+	<div class="p-2 pt-4 flex flex-col flex-grow gap-2 items-stretch overflow-hidden">
+		<div class="flex items-center gap-3 text-cyan-500">
+			<div class="rounded-full px-2 py-1 bg-cyan-600 text-cyan-50">Active Challenges</div>
+			<div class="rounded-full px-2 py-1">Available Challenges</div>
+			<div class="rounded-full px-2 py-1">Leaderboard</div>
+		</div>
+		{#if !wakeupChallenges.length}
+			<div class="py-4">
+				<div class="p-3 bg-slate-50 rounded-xl text-zinc-400 text-sm">No active challenges ...</div>
+			</div>
+		{:else}
+			<div class="overflow-y-auto">
+				<ChallengeTimeline challenges={wakeupChallenges} />
+			</div>
+		{/if}
+	</div>
+</div>
+
+<style>
+	.grid-container {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+		grid-gap: 10px;
+	}
+</style>
