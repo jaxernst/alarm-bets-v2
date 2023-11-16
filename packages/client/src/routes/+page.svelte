@@ -66,7 +66,7 @@
 		<div
 			class={`${
 				wakeupGoals.length === 1 ? 'flex justify-center' : 'grid-container overflow-y-auto'
-			} max-h-[260px]`}
+			}`}
 		>
 			{#each wakeupGoals as goal}
 				<WakeupGoal {goal} open={wakeupGoals.length === 1} />
@@ -74,16 +74,15 @@
 		</div>
 	</div>
 
-	<div class="p-2 pt-4 flex flex-col flex-grow gap-2 items-stretch overflow-hidden">
-		<div class="flex items-center gap-3 text-cyan-500">
-			<div class="rounded-full px-2 py-1 bg-cyan-600 text-cyan-50">Active Challenges</div>
-			<div class="rounded-full px-2 py-1">Available Challenges</div>
-			<div class="rounded-full px-2 py-1">Leaderboard</div>
-		</div>
+	<div class="px-2 flex items-center gap-3 text-cyan-500">
+		<div class="rounded-full px-2 py-1 bg-cyan-600 text-cyan-50">Active Challenges</div>
+		<div class="rounded-full px-2 py-1">Available Challenges</div>
+		<div class="rounded-full px-2 py-1">Leaderboard</div>
+	</div>
+
+	<div class="px-2 flex flex-col items-stretch overflow-hidden">
 		{#if !wakeupChallenges.length}
-			<div class="py-4">
-				<div class="p-3 bg-slate-50 rounded-xl text-zinc-400 text-sm">No active challenges ...</div>
-			</div>
+			<div class="p-3 bg-slate-50 rounded-xl text-zinc-400 text-sm">No active challenges ...</div>
 		{:else}
 			<div class="overflow-y-auto">
 				<ChallengeTimeline challenges={wakeupChallenges} />

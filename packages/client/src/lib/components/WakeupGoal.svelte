@@ -32,35 +32,35 @@
 	</div>
 	<div class="py-1">
 		<div
-			class=" px-6 py-1 font-digital text-cyan-100 text-4xl font-bold text-center pt-1"
+			class=" px-6 whitespace-nowrap py-1 font-digital text-cyan-100 text-4xl font-bold text-center pt-1"
 			style="line-height:1em"
 		>
 			{time}
 		</div>
 	</div>
 	<div class="self-center px-2 justify-center">
-		{#if challengeDays.length > 0}
-			<ActiveDays activeDays={challengeDays} />
-		{:else}
-			<div class="flex flex-col items-center gap-2 px-4 py-2 text-center">
-				<p class="text-cyan-100 font-semibold">
-					You have set a goal to wakeup at {time}.
-				</p>
-
-				<p class="text-sm text-cyan-200">
-					Work towards this goal by entering into wakeup challenges. Complete challenges to earns
-					Suns, level up your alarm goal, qualify for more challenges, and show off your progress.
-				</p>
-
-				<div class="pt-4 pb-3">
-					<a
-						href="/challenges"
-						class="rounded-xl bg-cyan-200 text-cyan-500 font-semibold text-sm p-2 hover:bg-cyan-50 transition-colors active:bg-cyan-400"
-					>
-						Enter your first challenge
-					</a>
-				</div>
-			</div>
-		{/if}
+		<ActiveDays activeDays={challengeDays} />
 	</div>
+
+	{#if challengeDays.length === 0 && open}
+		<div class="flex flex-col items-center gap-2 px-4 py-2 text-center">
+			<p class="text-cyan-100 font-semibold">
+				You have set a goal to wakeup at {time}.
+			</p>
+
+			<p class="text-sm text-cyan-200">
+				Work towards this goal by entering into wakeup challenges. Complete challenges to earns
+				Suns, level up your alarm goal, qualify for more challenges, and show off your progress.
+			</p>
+
+			<div class="pt-4 pb-3">
+				<a
+					href="/challenges"
+					class="rounded-xl bg-cyan-200 text-cyan-500 font-semibold text-sm p-2 hover:bg-cyan-50 transition-colors active:bg-cyan-400"
+				>
+					Enter your first challenge
+				</a>
+			</div>
+		</div>
+	{/if}
 </GradientCard>
