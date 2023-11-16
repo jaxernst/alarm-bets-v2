@@ -5,8 +5,8 @@
 	import '../app.css'
 </script>
 
-<div class="flex justify-center ">
-	{#if !$mud}
+<div class="flex justify-center">
+	{#if !$mud.stateSynced}
 		Loading MUD App...
 	{:else}
 		<div class={`flex w-full flex-col text-zinc-700 h-screen overflow-hidden max-w-[550px] px-3`}>

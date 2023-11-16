@@ -2,12 +2,19 @@
 	import { writable } from 'svelte/store'
 	import Plus from './Plus.svelte'
 	import GradientCard from './design-sys/GradientCard.svelte'
-	import { fade, slide } from 'svelte/transition'
+	import { fade, scale, slide } from 'svelte/transition'
+	import { cubicInOut } from 'svelte/easing'
 	import { localTzOffsetHrs, parseTimeString, readableTimezone } from '$lib/util'
 	import { mud } from '$lib/mud/mudStore'
 	import Sun from '$lib/icons/Sun.svelte'
+	import { onMount } from 'svelte'
 
 	export let onGoalCreated = () => {}
+	export let onClose = () => {}
+	export let firstGoal = false
+
+	const deferClickOutsideDuration = 300
+	const mountTime = Date.now()
 
 	let inputActive = false
 	let hovered = false
@@ -16,9 +23,12 @@
 		const handleMouseover = () => (hovered = true)
 		const handleMouseout = () => (hovered = false)
 		const handleClickOutside = (event) => {
+			if (Date.now() - mountTime < deferClickOutsideDuration) {
+				return
+			}
 			if (!node.contains(event.target)) {
 				inputActive = false
-				console.log('click outside')
+				onClose()
 			}
 		}
 
@@ -66,6 +76,7 @@
 		} catch (e) {
 			console.error(e)
 		} finally {
+			inputActive = false
 			submitLoading = false
 		}
 	}
@@ -79,64 +90,74 @@
 		}`}
 	>
 		{#if submitLoading}
-			<div class=" w-5 animate-spin" in:fade={{ delay: 370 }}>
+			<div class=" w-5 animate-spin" transition:fade={{ delay: 370 }}>
 				<Sun />
 			</div>
 		{:else}
 			<div class="grid grid-rows-1 w-full">
 				{#if !inputActive}
-					<button out:slide class="grid-cols-1 w-full text-center"
-						>Create your first wakeup goal</button
-					>
-				{:else}
-					<input
+					<div
 						transition:slide
-						type="text"
-						placeholder="At what time would you like to wake up?"
-						class="grid-cols-1 font-semibold text-center w-full bg-transparent placeholder-cyan-200 outline-none"
-						bind:value={$alarmTimeInput}
-					/>
-					{#if alarmTimeInputValid}
-						<div
-							class="grid grid-rows-1 justify-center pt-2 pb-1"
-							transition:slide
-							on:click|preventDefault|stopPropagation={(e) => {
-								timezoneConfirmed = true
-							}}
-						>
-							{#if !timezoneConfirmed}
-								<button
-									in:fade
-									class="grid-col-1 text-center text-cyan-50 py-1 px-2 text-sm bg-cyan-400 rounded-full"
-								>
-									Confirm your primary timezone
-								</button>
-							{:else}
-								<div
-									class="flex grid-col-1 justify-between items-center gap-1 bg-cyan-400 rounded-full"
-								>
-									<button on:click={() => playerTimezoneOffset--} class="px-2 font-semibold"
-										>{'<'}</button
-									>
-									<p in:fade class="text-center min-w-[250px] text-cyan-50 py-1 px-2 text-sm">
-										{readableTimezone(playerTimezoneOffset)}
-									</p>
-									<button on:click={() => playerTimezoneOffset++} class="px-2 font-semibold"
-										>{'>'}</button
-									>
-								</div>
-							{/if}
+						class={`grid col-start-1 grid-cols-[1fr_auto_1fr] items-center w-full`}
+					>
+						<div />
+						<button class="grid-cols-1 w-full text-center"> Create a new wakeup goal </button>
+						<div class="w-3 fill-cyan-200 justify-self-end">
+							<Plus />
 						</div>
-					{/if}
+					</div>
+				{:else}
+					<div transition:slide class="flex row-start-1 col-start-1 gap-3 items-center">
+						<input
+							type="text"
+							placeholder="At what time would you like to wake up?"
+							class="grid-cols-1 font-semibold text-center w-full bg-transparent placeholder-cyan-200 outline-none"
+							bind:value={$alarmTimeInput}
+						/>
+						{#if alarmTimeInputValid}
+							<div
+								class="flex justify-evenly items-center px-2 bg-cyan-400 text-cyan-50 rounded-full"
+								in:slide={{ axis: 'x', easing: cubicInOut }}
+								on:click|preventDefault|stopPropagation={(e) => {
+									timezoneConfirmed = true
+								}}
+							>
+								{#if !timezoneConfirmed}
+									<button class=" whitespace-nowrap text-center py-1 px-2 text-sm">
+										Confirm your primary timezone
+									</button>
+								{:else}
+									<div
+										transition:slide={{ axis: 'x' }}
+										class="min-w-[150px] flex grid-col-1 justify-between items-center gap-1"
+									>
+										<button on:click={() => playerTimezoneOffset--} class="px-2 font-semibold"
+											>{'<'}</button
+										>
+										<p class="text-center min-w-[240px] py-1 px-2 text-sm">
+											{readableTimezone(playerTimezoneOffset)}
+										</p>
+										<button on:click={() => playerTimezoneOffset++} class="px-2 font-semibold"
+											>{'>'}</button
+										>
+									</div>
+								{/if}
+							</div>
+						{/if}
+						{#if readyToSubmit}
+							<button
+								on:click={() => submitGoal()}
+								class={`w-10 first-letter:animate-pulse`}
+								transition:slide
+							>
+								<div class="w-3 fill-green-300">
+									<Plus />
+								</div>
+							</button>
+						{/if}
+					</div>
 				{/if}
 			</div>
-
-			<button
-				on:click={() => (!inputActive ? (inputActive = true) : readyToSubmit ? submitGoal() : null)}
-				class={`fill-cyan-200 ${readyToSubmit && inputActive ? 'w-5 animate-pulse' : 'w-3'}`}
-			>
-				<Plus />
-			</button>
 		{/if}
 	</GradientCard>
 </div>

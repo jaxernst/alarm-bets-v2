@@ -10,6 +10,7 @@
 	$: userWakeupGoals = getEntitiesWithValue($mud.components.Creator, { value: $user })
 
 	$: if ($mud.stateSynced && userWakeupGoals.size === 0) {
+		console.log('User has no goals, redirecting from dashboard...')
 		goto('/welcome')
 	}
 
@@ -56,12 +57,17 @@
 					onGoalCreated={() => {
 						showGoalCreator = false
 					}}
+					onClose={() => {
+						showGoalCreator = false
+					}}
 				/>
 			</div>
 		{/if}
 		<div class="text-sm py-2 text-cyan-500 flex justify-between">
 			Goals
-			<button on:click={() => (showGoalCreator = true)} class="text-base">+</button>
+			<button on:click={() => (showGoalCreator = true)} class="text-base"
+				>{showGoalCreator ? '' : '+'}</button
+			>
 		</div>
 		<div
 			class={`${

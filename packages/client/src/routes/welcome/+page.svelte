@@ -6,6 +6,7 @@
 
 	$: userWakeupGoals = getEntitiesWithValue($mud.components.Creator, { value: $user })
 	$: if ($mud.stateSynced && userWakeupGoals.size > 0) {
+		console.log('User has goals, redirecting...')
 		goto('/')
 	}
 </script>
@@ -16,6 +17,11 @@
 			<h1 class="text-cyan-600 text-2xl font-bold">Welcome to alarm bets.</h1>
 			<p class="text-cyan-400">An onchain game to help you wake up earlier.</p>
 		</div>
-		<GoalCreator onGoalCreated={() => goto('/')} />
+		<GoalCreator
+			onGoalCreated={() => {
+				console.log('Goal created redirecting...')
+				goto('/')
+			}}
+		/>
 	</div>
 </div>
