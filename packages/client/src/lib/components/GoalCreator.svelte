@@ -71,8 +71,8 @@
 		const alarmTime = parseTimeString($alarmTimeInput)
 		submitLoading = true
 		try {
-			await new Promise((resolve) => setTimeout(resolve, 2000))
-			// await $mud.systemCalls.createWakeupObjective(alarmTime, playerTimezoneOffset)
+			await new Promise((resolve) => setTimeout(resolve, 800))
+			await $mud.systemCalls.createWakeupObjective(alarmTime, playerTimezoneOffset)
 			onGoalCreated()
 		} catch (e) {
 			console.error(e)
