@@ -80,7 +80,7 @@
 		</div>
 	</div>
 
-	<div class="flex gap-4 flex-col flex-grow bg-slate-100 rounded-t-2xl py-3">
+	<div class="flex gap-4 flex-col flex-grow bg-slate-100 shadow-xl rounded-t-2xl py-3">
 		<div class="px-2 flex items-center gap-3 text-cyan-400">
 			<div class="rounded-full px-2 py-1 bg-cyan-400 text-cyan-50">Active Challenges</div>
 			<div class="rounded-full px-2 py-1">Available Challenges</div>
