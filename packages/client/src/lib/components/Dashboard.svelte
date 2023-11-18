@@ -8,6 +8,8 @@
 	import { bytesToString } from 'viem'
 	import Plus from './Plus.svelte'
 	import GoalCreator from './GoalCreator.svelte'
+	import { DashboardTab } from '../../routes/globalViewState'
+	import TabPill from './TabPill.svelte'
 
 	const wakeupChallenges = [] || [
 		{
@@ -40,6 +42,10 @@
 			level: getComponentValueStrict($mud.components.Level, entity).value
 		}
 	})
+
+	type DashboardTab = 'Active Challenges' | 'Available Challenges' | 'Leaderboard'
+	let activeTab: DashboardTab = 'Active Challenges'
+	$: console.log(activeTab)
 </script>
 
 <div class="h-full flex flex-col gap-6">
@@ -70,9 +76,21 @@
 
 		<div class="p-2 pt-4 flex flex-col flex-grow gap-2 items-stretch overflow-hidden">
 			<div class="flex items-center gap-3 text-cyan-500">
-				<div class="rounded-full px-2 py-1 bg-cyan-600 text-cyan-50">Active Challenges</div>
-				<div class="rounded-full px-2 py-1">Available Challenges</div>
-				<div class="rounded-full px-2 py-1">Leaderboard</div>
+				<TabPill
+					on:click={() => (activeTab = 'Active Challenges')}
+					active={activeTab === 'Active Challenges'}
+				>
+					Active Challenges
+				</TabPill>
+				<TabPill
+					on:click={() => (activeTab = 'Available Challenges')}
+					active={activeTab === 'Available Challenges'}
+				>
+					Available Challenges
+				</TabPill>
+				<TabPill on:click={() => (activeTab = 'Leaderboard')} active={activeTab === 'Leaderboard'}>
+					Leaderboard
+				</TabPill>
 			</div>
 			{#if !wakeupChallenges.length}
 				<div class="py-4">
