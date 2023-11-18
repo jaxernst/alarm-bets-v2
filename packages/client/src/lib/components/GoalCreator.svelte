@@ -84,7 +84,7 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<button on:click={() => (inputActive = true)} use:interactionListener>
+<button class="w-full" on:click={() => (inputActive = true)} use:interactionListener>
 	<GradientCard
 		klass={` p-3 px-4 flex justify-between items-center transition-all duration-300 ease-in-out ${
 			hovered || inputActive ? 'shadow-lg fill-cyan-50 text-cyan-50' : ''
@@ -153,7 +153,7 @@
 							<button
 								transition:slide={{ axis: 'x' }}
 								on:click|stopPropagation={() => submitGoal()}
-								class={`p-3 hover:bg-cyan-300 transition-all duration-150 rounded-full`}
+								class={`p-3 hover:bg-cyan-300 transition-all duration-300 rounded-full`}
 							>
 								<div
 									transition:scale={{ easing: cubicInOut, delay: 50 }}
