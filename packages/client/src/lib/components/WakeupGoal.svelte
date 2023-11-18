@@ -21,7 +21,7 @@
 	let challengeDays = []
 </script>
 
-<div in:scale class="h-full w-full">
+<div in:scale class="h-full w-full shadow-lg rounded-xl">
 	<GradientCard klass={`flex flex-col ${open ? 'w-full h-full' : ''}`}>
 		<div class="flex justify-between gap-1 items-center p-1 text-white">
 			<div class="text-xs rounded-full font-semibold">Lvl {goal.level}</div>
