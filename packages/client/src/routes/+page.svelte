@@ -7,6 +7,10 @@
 	import GoalCreator from '$lib/components/GoalCreator.svelte'
 	import { fade, slide } from 'svelte/transition'
 	import TabPill from '$lib/components/TabPill.svelte'
+	import Sun from '$lib/icons/Sun.svelte'
+	import CheckIn from '$lib/icons/CheckIn.svelte'
+	import ChallengeCard from '$lib/components/ChallengeCard.svelte'
+	import AvailableChallenges from '$lib/components/available-challenges/AvailableChallenges.svelte'
 
 	$: userWakeupGoals = getEntitiesWithValue($mud.components.Creator, { value: $user })
 
@@ -49,7 +53,7 @@
 
 	let showGoalCreator = false
 	type DashboardTab = 'Active Challenges' | 'Available Challenges' | 'Leaderboard'
-	let activeTab: DashboardTab = 'Active Challenges'
+	let activeTab: DashboardTab = 'Available Challenges'
 </script>
 
 <div class="h-full flex flex-col gap-10">
@@ -78,13 +82,17 @@
 			}`}
 		>
 			{#each wakeupGoals as goal}
-				<WakeupGoal {goal} open={wakeupGoals.length === 1} onEnterFirstChallenge= />
+				<WakeupGoal
+					{goal}
+					open={wakeupGoals.length === 1}
+					onOpenFirstChallenge={() => (activeTab = 'Available Challenges')}
+				/>
 			{/each}
 		</div>
 	</div>
 
-	<div class="flex gap-4 flex-col flex-grow bg-slate-100 shadow-xl rounded-t-2xl py-3">
-		<div class="px-2 flex items-center gap-3 text-cyan-400">
+	<div class="flex flex-col flex-grow bg-slate-100 shadow-xl rounded-t-2xl py-3">
+		<div class="px-2 flex overflow-x-auto items-center gap-3 text-cyan-400">
 			<TabPill
 				on:click={() => (activeTab = 'Active Challenges')}
 				active={activeTab === 'Active Challenges'}
@@ -102,28 +110,22 @@
 			</TabPill>
 		</div>
 
-		<div class="grid">
+		<div class="grid text-zinc-400 p-3">
 			{#if activeTab === 'Leaderboard'}
-				<div
-					transition:fade
-					class="p-3 row-start-1 col-start-1 text-zinc-400 whitespace-nowrap text-sm"
-				>
+				<div transition:fade class="row-start-1 col-start-1 whitespace-nowrap text-sm">
 					Leaderboard coming soon ...
 				</div>
 			{:else if activeTab === 'Available Challenges'}
-				<div
-					transition:fade
-					class="p-3 row-start-1 col-start-1 text-zinc-400 whitespace-nowrap text-sm"
-				>
-					Available challenges coming soon ...
+				<div transition:fade class="row-start-1 col-start-1 whitespace-nowrap text-sm">
+					<AvailableChallenges />
 				</div>
 			{:else}
 				<div
 					transition:fade
-					class="px-2 row-start-1 col-start-1 flex flex-col items-stretch overflow-hidden"
+					class="row-start-1 col-start-1 flex flex-col items-stretch overflow-hidden"
 				>
 					{#if !wakeupChallenges.length}
-						<div class="p-3 text-zinc-400 text-sm">No active challenges ...</div>
+						<div class="text-sm">No active challenges ...</div>
 					{:else}
 						<div class="overflow-y-auto">
 							<ChallengeTimeline challenges={wakeupChallenges} />

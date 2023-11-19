@@ -17,6 +17,8 @@
 		level: number
 	}
 
+	export let onOpenFirstChallenge = () => {}
+
 	let time = timeString(goal.time)
 	let challengeDays = []
 </script>
@@ -56,12 +58,12 @@
 				</p>
 
 				<div class="pt-4 pb-3">
-					<a
-						href="/challenges"
+					<button
+						on:click={onOpenFirstChallenge}
 						class="rounded-xl bg-cyan-200 text-cyan-500 font-semibold text-sm p-2 hover:bg-cyan-50 transition-colors active:bg-cyan-400"
 					>
 						Enter your first challenge
-					</a>
+					</button>
 				</div>
 			</div>
 		{/if}
