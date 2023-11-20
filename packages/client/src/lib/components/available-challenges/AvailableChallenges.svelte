@@ -4,7 +4,9 @@
 	import AvailableChallengeExpandedCard from './AvailableChallengeExpandedCard.svelte'
 	import AvailableChallengeOverviewCard from './AvailableChallengeOverviewCard.svelte'
 	import { derived, writable } from 'svelte/store'
-	import { cubicInOut, cubicOut } from 'svelte/easing'
+	import { cubicInOut, cubicOut, sineInOut } from 'svelte/easing'
+	import { getComponentValueStrict, getEntitiesWithValue } from '@latticexyz/recs'
+	import { mud, user } from '$lib/mud/mudStore'
 
 	const availableChallenges = [
 		{
@@ -29,11 +31,11 @@
 		},
 		{
 			id: '3',
-			name: 'Wakeup puzzle',
+			name: 'Wakeup Wordle',
 			reward: 30,
 			entryCost: 20,
 			staked: false,
-			requiredLevel: 3,
+			requiredLevel: 5,
 			description: 'Wakeup and solve a puzzle before your goal time to earn suns'
 		},
 		{
@@ -63,21 +65,34 @@
 			return [selectedChallenge, ...otherChallenges]
 		}
 	)
+
+
+	$: entities = getEntitiesWithValue($mud.components.Creator, { value: $user })
+	$: wakeupGoals = Array.from(entities).map((entity) => {
+		return {
+			id: entity,
+			level: getComponentValueStrict($mud.components.Level, entity).value,
+			time: getComponentValueStrict($mud.components.AlarmTime, entity).value,
+		}
+	})
+	
 </script>
 
-<div class="flex flex-wrap gap-2 bg-zinc-100 p-2 rounded-xl w-full items-start text-zinc-400 px-2">
+<div class="flex flex-wrap gap-2 w-full items-start text-zinc-400">
 	{#each $reorderedChallenges as challenge (challenge?.id)}
-		<div animate:flip={{ duration: 300 }} class={`${$selectedId === challenge.id ? 'w-full' : ''}`}>
+		<div animate:flip={{ duration: 450, easing: cubicOut }} class={`${$selectedId === challenge.id ? 'w-full' : ''}`}>
 			{#if challenge}
 				{#if challenge.id === $selectedId}
-					<AvailableChallengeExpandedCard {challenge} />
+					<AvailableChallengeExpandedCard {challenge} {wakeupGoals}/>
 				{:else}
 					<AvailableChallengeOverviewCard
-						on:click={() => ($selectedId = challenge.id)}
-						{challenge}
+					on:click={() => ($selectedId = challenge.id)}
+					{challenge}
+					{wakeupGoals}
 					/>
 				{/if}
 			{/if}
 		</div>
 	{/each}
 </div>
+<div class="h-[200px]"></div> <!-- Spacer -->

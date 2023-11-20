@@ -56,7 +56,7 @@
 	let activeTab: DashboardTab = 'Available Challenges'
 </script>
 
-<div class="h-full flex flex-col gap-10">
+<div class="h-full flex flex-col gap-6">
 	<div class="w-full px-2">
 		{#if showGoalCreator}
 			<div transition:slide>
@@ -77,7 +77,7 @@
 			>
 		</div>
 		<div
-			class={`${
+			class={`px-4 py-2 ${
 				wakeupGoals.length === 1 ? 'flex justify-center' : 'grid-container overflow-y-auto'
 			}`}
 		>
@@ -91,8 +91,10 @@
 		</div>
 	</div>
 
-	<div class="flex flex-col flex-grow bg-slate-100 shadow-xl rounded-t-2xl py-3">
-		<div class="px-2 flex overflow-x-auto items-center gap-3 text-cyan-400">
+	<div class="flex-grow flex flex-col overflow-y-auto bg-zinc-100 rounded-t-2xl px-2 ">
+		<div
+			class="p-2 flex items-center gap-3 text-cyan-400"
+		>
 			<TabPill
 				on:click={() => (activeTab = 'Active Challenges')}
 				active={activeTab === 'Active Challenges'}
@@ -110,19 +112,19 @@
 			</TabPill>
 		</div>
 
-		<div class="grid text-zinc-400 p-3">
+		<div class="grid text-zinc-400 flex-grow bg-gradient-to-t from-zinc-300 to-zinc-200 bg-opacity-25 rounded-xl shadow-inner overflow-auto h-max">
 			{#if activeTab === 'Leaderboard'}
-				<div transition:fade class="row-start-1 col-start-1 whitespace-nowrap text-sm">
+				<div transition:fade class="h-full flex flex-col row-start-1 col-start-1 whitespace-nowrap text-sm">
 					Leaderboard coming soon ...
 				</div>
 			{:else if activeTab === 'Available Challenges'}
-				<div transition:fade class="row-start-1 col-start-1 whitespace-nowrap text-sm">
+				<div transition:fade class="flex flex-col p-2 overflow-y-auto row-start-1 col-start-1 whitespace-nowrap text-sm">
 					<AvailableChallenges />
 				</div>
 			{:else}
 				<div
 					transition:fade
-					class="row-start-1 col-start-1 flex flex-col items-stretch overflow-hidden"
+					class="h-full row-start-1 col-start-1 flex flex-col items-stretch overflow-hidden"
 				>
 					{#if !wakeupChallenges.length}
 						<div class="text-sm">No active challenges ...</div>

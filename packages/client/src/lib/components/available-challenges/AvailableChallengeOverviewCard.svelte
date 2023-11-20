@@ -3,8 +3,16 @@
 	import EthSymbol from '$lib/icons/EthSymbol.svelte'
 	import { fade } from 'svelte/transition'
 	import type { Challenge } from './types'
+	import { getComponentValueStrict, getEntitiesWithValue, type Entity } from '@latticexyz/recs'
+	import Lock from '$lib/icons/Lock.svelte'
+	import { mud, user } from '$lib/mud/mudStore'
 
 	export let challenge: Challenge
+	export let wakeupGoals: { id: Entity; level: number }[]
+	
+
+	$: maxWakeupObjectiveLevel = Math.max(...wakeupGoals.map((goal) => goal.level))
+	$: qualifies = challenge.requiredLevel <= maxWakeupObjectiveLevel
 </script>
 
 <button
@@ -12,8 +20,8 @@
 	in:fade={{ delay: 200, duration: 100 }}
 	class="flex flex-col gap-2 rounded-lg bg-slate-50 items-center border-zinc-400 p-2 text-sm"
 >
-	<div class="bg-cyan-400 text-cyan-50 rounded-full px-2 text-xs">
-		Lvl {challenge.requiredLevel}
+	<div class={`${qualifies ? "bg-cyan-400 text-cyan-50 stroke-cyan-50" : "text-zinc-400 bg-zinc-200 stroke-zinc-400" } font-bold rounded-full flex items-center gap-1 px-2 py-1 text-xs`}>
+		<span class="w-3 "><Lock /></span>Lvl {challenge.requiredLevel}
 	</div>
 	<div class="font-semibold text-zinc-400">
 		{challenge.name}
