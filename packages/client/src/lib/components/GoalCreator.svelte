@@ -7,8 +7,6 @@
 	import { localTzOffsetHrs, parseTimeString, readableTimezone } from '$lib/util'
 	import { mud } from '$lib/mud/mudStore'
 	import Sun from '$lib/icons/Sun.svelte'
-	import { onMount } from 'svelte'
-	import { tweened } from 'svelte/motion'
 
 	export let onGoalCreated = () => {}
 	export let onClose = () => {}
@@ -102,7 +100,9 @@
 						class={`grid col-start-1 grid-cols-[1fr_auto_1fr] items-center w-full`}
 					>
 						<div />
-						<button class="grid-cols-1 w-full text-center"> Create a new wakeup goal </button>
+						<button class="grid-cols-1 w-full text-center"
+							>{firstGoal ? 'Create your first wakeup goal' : 'Create a new wakeup goal'}
+						</button>
 						<div class="w-3 fill-cyan-200 justify-self-end">
 							<Plus />
 						</div>
@@ -141,9 +141,10 @@
 											<p class="overflow-auto text-sm text-center flex-grow">
 												{readableTimezone(playerTimezoneOffset)}
 											</p>
+
 											<button on:click={() => playerTimezoneOffset++} class="font-semibold"
 												>{'>'}</button
-											>
+>
 										{/if}
 									</div>
 								</button>
@@ -154,7 +155,7 @@
 								transition:slide={{ axis: 'x' }}
 								on:click|stopPropagation={() => submitGoal()}
 								class={`p-3 hover:bg-cyan-300 transition-all duration-300 rounded-full`}
-							>
+								>
 								<div
 									transition:scale={{ easing: cubicInOut, delay: 50 }}
 									class="w-5 animate-pulse fill-green-200"

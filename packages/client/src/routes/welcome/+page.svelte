@@ -18,6 +18,7 @@
 			<p class="text-cyan-400">An onchain game to help you wake up earlier.</p>
 		</div>
 		<GoalCreator
+			firstGoal={true}
 			onGoalCreated={() => {
 				// Wait 5 seconds and if a redirect has happened, force the redirect
 				setTimeout(() => {
