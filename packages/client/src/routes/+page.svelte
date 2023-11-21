@@ -91,9 +91,9 @@
 		</div>
 	</div>
 
-	<div class="flex-grow flex flex-col overflow-y-auto bg-zinc-100 rounded-t-2xl px-2 ">
+	<div class="flex-grow flex flex-col overflow-y-auto bg-gradient-to-b from-zinc-100 to-zinc-200 rounded-t-2xl px-2 ">
 		<div
-			class="p-2 flex items-center gap-3 text-cyan-400"
+			class="py-2 flex items-center gap-3 text-cyan-400"
 		>
 			<TabPill
 				on:click={() => (activeTab = 'Active Challenges')}
@@ -112,13 +112,13 @@
 			</TabPill>
 		</div>
 
-		<div class="grid text-zinc-400 flex-grow bg-gradient-to-t from-zinc-300 to-zinc-200 bg-opacity-25 rounded-xl shadow-inner overflow-auto h-max">
+		<div class="grid text-zinc-400 flex-grow overflow-auto h-max p-2">
 			{#if activeTab === 'Leaderboard'}
 				<div transition:fade class="h-full flex flex-col row-start-1 col-start-1 whitespace-nowrap text-sm">
 					Leaderboard coming soon ...
 				</div>
 			{:else if activeTab === 'Available Challenges'}
-				<div transition:fade class="flex flex-col p-2 overflow-y-auto row-start-1 col-start-1 whitespace-nowrap text-sm">
+				<div transition:fade class="flex flex-col overflow-y-auto row-start-1 col-start-1 whitespace-nowrap text-sm">
 					<AvailableChallenges />
 				</div>
 			{:else}
