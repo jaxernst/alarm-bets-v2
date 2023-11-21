@@ -11,3 +11,4 @@ import { Timezone, TimezoneTableId } from "./tables/Timezone.sol";
 import { WakeupConfirmations, WakeupConfirmationsTableId } from "./tables/WakeupConfirmations.sol";
 import { Suns, SunsTableId } from "./tables/Suns.sol";
 import { Level, LevelTableId } from "./tables/Level.sol";
+import { DailyCheckIn, DailyCheckInData, DailyCheckInTableId } from "./tables/DailyCheckIn.sol";
