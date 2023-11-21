@@ -1,12 +1,13 @@
-<script>
+<script lang="ts">
 	import Sun from '$lib/icons/Sun.svelte'
 	import { flip } from 'svelte/animate'
 	import AvailableChallengeExpandedCard from './AvailableChallengeExpandedCard.svelte'
 	import AvailableChallengeOverviewCard from './AvailableChallengeOverviewCard.svelte'
-	import { derived, writable } from 'svelte/store'
+	import { derived, writable, type Readable } from 'svelte/store'
 	import { cubicInOut, cubicOut, sineInOut } from 'svelte/easing'
 	import { getComponentValueStrict, getEntitiesWithValue } from '@latticexyz/recs'
 	import { mud, user } from '$lib/mud/mudStore'
+	import type { Challenge } from './types'
 
 	const availableChallenges = [
 		{
@@ -64,7 +65,7 @@
 			const otherChallenges = availableChallenges.filter((c) => c.id !== $selectedId)
 			return [selectedChallenge, ...otherChallenges]
 		}
-	)
+	) as Readable<Challenge[]>
 
 
 	$: entities = getEntitiesWithValue($mud.components.Creator, { value: $user })
@@ -73,6 +74,7 @@
 			id: entity,
 			level: getComponentValueStrict($mud.components.Level, entity).value,
 			time: getComponentValueStrict($mud.components.AlarmTime, entity).value,
+			sunBalance: getComponentValueStrict($mud.components.Suns, entity).value
 		}
 	})
 	
@@ -86,10 +88,11 @@
 					<AvailableChallengeExpandedCard {challenge} {wakeupGoals}/>
 				{:else}
 					<AvailableChallengeOverviewCard
-					on:click={() => ($selectedId = challenge.id)}
-					{challenge}
-					{wakeupGoals}
-					/>
+						on:click={() => ($selectedId = challenge.id)}
+						{challenge}
+						{wakeupGoals}
+					
+						/>
 				{/if}
 			{/if}
 		</div>
