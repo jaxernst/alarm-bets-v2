@@ -35,9 +35,7 @@ export function createSystemCalls(
 		wakeupObjective: Entity,
 		challengeDays: number,
 		numWeeks: number
-	) => {
-		worldContract.write.
-	}
+	) => {}
 
 	return {
 		increment,
