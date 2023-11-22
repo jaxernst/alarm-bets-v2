@@ -1,10 +1,5 @@
 import { mudConfig } from "@latticexyz/world/register";
-/**
- * Daily check-in:
- * State:
- *  map WakeupObjecive => Schedule (days of week, start time, end time, confirmation submitter)
- *
- */
+
 export default mudConfig({
   tables: {
     Counter: {
@@ -18,22 +13,19 @@ export default mudConfig({
     AlarmTime: "uint32",
     Timezone: "int8",
     WakeupConfirmations: "uint32",
-    Suns: "uint32",
+    Suns: "uint256",
     Level: "uint32",
 
     // Challenge State
-    DailyCheckIn: {
+    DailyCheckInState: {
       valueSchema: {
-        scheduleId: "bytes32",
-        endTime: "uint32",
-        alarmDays: "uint8[]", // Days of the week the alarm is to be enforced on (1 Sunday - 7 Saturday)
+        active: "bool",
+        confirmationSubmitter: "address",
+        expirationTime: "uint256",
       },
     },
-
-    AlarmSchedules: {
-      // Schedule state
-    },
   },
+
   modules: [
     {
       name: "UniqueEntityModule",
