@@ -1,13 +1,16 @@
 import { mudConfig } from "@latticexyz/world/register";
 
 export default mudConfig({
+  enums: {
+    Status: ["Inactive", "Active", "Complete"],
+  },
   tables: {
     Counter: {
       keySchema: {},
       valueSchema: "uint32",
     },
 
-    // Wakeup Objective state
+    // Wakeup goal components
     WakeupObjective: "bool",
     Creator: "address",
     AlarmTime: "uint32",
@@ -16,14 +19,12 @@ export default mudConfig({
     Suns: "uint256",
     Level: "uint32",
 
-    // Challenge State
-    DailyCheckInState: {
-      valueSchema: {
-        active: "bool",
-        confirmationSubmitter: "address",
-        expirationTime: "uint256",
-      },
-    },
+    // Wakeup challenge components
+    WakeupChallenge: "bool",
+    TargetWakeupObjective: "bytes32",
+    ExpirationTime: "uint256",
+    ChallengeStatus: "Status",
+    ChallengeName: "string",
   },
 
   modules: [
