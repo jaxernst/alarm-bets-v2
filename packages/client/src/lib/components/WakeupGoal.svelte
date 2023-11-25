@@ -1,36 +1,33 @@
 <script lang="ts">
 	import Sun from '../icons/Sun.svelte'
-	import EthSymbol from '../icons/EthSymbol.svelte'
-	import Lock from '../icons/Lock.svelte'
 	import { timeString } from '../util'
-	import AlarmActiveDays from './ActiveDays.svelte'
 	import ActiveDays from './ActiveDays.svelte'
-	import type { Entity } from '@latticexyz/recs'
+	import { getComponentValueStrict, type Entity } from '@latticexyz/recs'
 	import GradientCard from './design-sys/GradientCard.svelte'
 	import { scale } from 'svelte/transition'
+	import { userWakeupGoals, mud } from '$lib/mud/mudStore'
 
 	export let open = false
-	export let goal: {
-		entity: Entity
-		time: number
-		suns: number
-		level: number
-	}
+	export let goal: Entity
+
+	const [goalTime, goalLevel, goalSuns] = [
+		getComponentValueStrict($mud.components.AlarmTime, goal).value,
+		getComponentValueStrict($mud.components.Level, goal).value,
+		getComponentValueStrict($mud.components.Suns, goal).value
+	]
 
 	export let onOpenFirstChallenge = () => {}
 
-	let time = timeString(goal.time)
-	let challengeDays = []
-
-
+	let time = timeString(goalTime)
+	let challengeDays: any[] = []
 </script>
 
-<div in:scale class="h-full w-full ${open ? "" : "shadow-lg"} rounded-xl">
+<div in:scale class="h-full w-full ${open ? '' : 'shadow-lg'} rounded-xl">
 	<GradientCard klass={`flex flex-col ${open ? 'w-full h-full' : ''}`}>
 		<div class="flex justify-between gap-1 items-center p-1 text-white">
-			<div class="text-xs rounded-full font-semibold">Lvl {goal.level}</div>
+			<div class="text-xs rounded-full font-semibold">Lvl {goalLevel}</div>
 			<div class="flex gap-1 items-center text-xs rounded-full font-semibold">
-				{goal.suns}
+				{goalSuns}
 				<div class="w-3 h-min fill-white">
 					<Sun />
 				</div>

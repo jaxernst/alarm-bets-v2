@@ -6,7 +6,7 @@
 	import { derived, writable, type Readable } from 'svelte/store'
 	import { cubicInOut, cubicOut, sineInOut } from 'svelte/easing'
 	import { getComponentValueStrict, getEntitiesWithValue } from '@latticexyz/recs'
-	import { mud, user } from '$lib/mud/mudStore'
+	import { mud, user, userWakeupGoals } from '$lib/mud/mudStore'
 	import type { Challenge } from './types'
 
 	const availableChallenges = [
@@ -67,9 +67,7 @@
 		}
 	) as Readable<Challenge[]>
 
-
-	$: entities = getEntitiesWithValue($mud.components.Creator, { value: $user })
-	$: wakeupGoals = Array.from(entities).map((entity) => {
+	$: wakeupGoals = $userWakeupGoals.map((entity) => {
 		return {
 			id: entity,
 			level: getComponentValueStrict($mud.components.Level, entity).value,
@@ -77,25 +75,27 @@
 			sunBalance: getComponentValueStrict($mud.components.Suns, entity).value
 		}
 	})
-	
 </script>
 
 <div class="flex flex-wrap gap-2 w-full items-start text-zinc-400">
 	{#each $reorderedChallenges as challenge (challenge?.id)}
-		<div animate:flip={{ duration: 450, easing: cubicOut }} class={`${$selectedId === challenge.id ? 'w-full' : ''}`}>
+		<div
+			animate:flip={{ duration: 450, easing: cubicOut }}
+			class={`${$selectedId === challenge.id ? 'w-full' : ''}`}
+		>
 			{#if challenge}
 				{#if challenge.id === $selectedId}
-					<AvailableChallengeExpandedCard {challenge} {wakeupGoals}/>
+					<AvailableChallengeExpandedCard {challenge} {wakeupGoals} />
 				{:else}
 					<AvailableChallengeOverviewCard
 						on:click={() => ($selectedId = challenge.id)}
 						{challenge}
 						{wakeupGoals}
-					
-						/>
+					/>
 				{/if}
 			{/if}
 		</div>
 	{/each}
 </div>
-<div class="h-[200px]"></div> <!-- Spacer -->
+<div class="h-[200px]" />
+<!-- Spacer -->

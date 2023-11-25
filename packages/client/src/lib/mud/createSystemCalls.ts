@@ -3,10 +3,10 @@
  * for changes in the World state (using the System contracts).
  */
 
-import { getComponentValue, type Entity } from '@latticexyz/recs'
+import { getComponentValue, type Entity, getEntityString, getEntitySymbol } from '@latticexyz/recs'
 import type { ClientComponents } from './createClientComponents'
 import type { SetupNetworkResult } from './setupNetwork'
-import { singletonEntity } from '@latticexyz/store-sync/recs'
+import { encodeEntity, entityToHexKeyTuple, singletonEntity } from '@latticexyz/store-sync/recs'
 
 export type SystemCalls = ReturnType<typeof createSystemCalls>
 
@@ -31,14 +31,23 @@ export function createSystemCalls(
 		await waitForTransaction(tx)
 	}
 
-	const enterChallenge = async (
+	const enterDailyCheckInChallenge = async (
 		wakeupObjective: Entity,
-		challengeDays: number,
+		challengeDays: number[],
 		numWeeks: number
-	) => {}
+	) => {
+		const tx = await worldContract.write.DailyCheckIn_enter([
+			wakeupObjective as `0x${string}`,
+			numWeeks,
+			challengeDays
+		])
+		await waitForTransaction(tx)
+		console.log('Entered daily check-in challenge')
+	}
 
 	return {
 		increment,
-		createWakeupObjective
+		createWakeupObjective,
+		enterDailyCheckInChallenge
 	}
 }

@@ -2,7 +2,7 @@ import mudConfig from 'contracts/mud.config'
 import { type SetupResult, setup } from './setup'
 import { writable, derived } from 'svelte/store'
 import { mount as mountDevTools } from '@latticexyz/dev-tools'
-import type { Component } from '@latticexyz/recs'
+import { type Component, runQuery, Has, HasValue } from '@latticexyz/recs'
 
 export const mud = (() => {
 	const mud = writable<SetupResult>()
@@ -52,4 +52,24 @@ export const mud = (() => {
 	})
 })()
 
-export const user = derived(mud, ($mud) => $mud?.network.walletClient.account.address)
+export const user = derived(mud, ($mud) => {
+	return $mud?.network.walletClient.account.address
+})
+
+export const userWakeupGoals = derived(mud, ($mud) => {
+	const user = $mud?.network.walletClient.account.address
+	if (!$mud || !user) return []
+
+	const { WakeupObjective, Creator } = $mud.components
+	const entities = runQuery([Has(WakeupObjective), HasValue(Creator, { value: user })])
+	return Array.from(entities)
+})
+
+export const userWakeupChallenges = derived(mud, ($mud) => {
+	const user = $mud?.network.walletClient.account.address
+	if (!$mud || !user || !$mud.components) return []
+
+	const { Creator, WakeupChallenge } = $mud.components
+	const entities = runQuery([Has(WakeupChallenge), HasValue(Creator, { value: user })])
+	return Array.from(entities)
+})

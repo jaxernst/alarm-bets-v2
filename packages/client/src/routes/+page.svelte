@@ -1,20 +1,14 @@
 <script lang="ts">
 	import WakeupGoal from '$lib/components/WakeupGoal.svelte'
-	import { getEntitiesWithValue, getComponentValueStrict } from '@latticexyz/recs'
 	import ChallengeTimeline from '$lib/components/ChallengeTimeline.svelte'
-	import { mud, user } from '$lib/mud/mudStore'
+	import { mud, user, userWakeupGoals } from '$lib/mud/mudStore'
 	import { goto } from '$app/navigation'
 	import GoalCreator from '$lib/components/GoalCreator.svelte'
 	import { fade, slide } from 'svelte/transition'
 	import TabPill from '$lib/components/TabPill.svelte'
-	import Sun from '$lib/icons/Sun.svelte'
-	import CheckIn from '$lib/icons/CheckIn.svelte'
-	import ChallengeCard from '$lib/components/ChallengeCard.svelte'
 	import AvailableChallenges from '$lib/components/available-challenges/AvailableChallenges.svelte'
 
-	$: userWakeupGoals = getEntitiesWithValue($mud.components.Creator, { value: $user })
-
-	$: if ($mud.stateSynced && userWakeupGoals.size === 0) {
+	$: if ($mud.stateSynced && $userWakeupGoals.length === 0) {
 		console.log('User has no goals, redirecting from dashboard...')
 		goto('/welcome')
 	}
@@ -40,17 +34,6 @@
 		}
 	]
 
-	$: entities = getEntitiesWithValue($mud.components.Creator, { value: $user })
-	$: wakeupGoals = Array.from(entities).map((entity) => {
-		return {
-			entity,
-			time: getComponentValueStrict($mud.components.AlarmTime, entity).value,
-			timezone: getComponentValueStrict($mud.components.Timezone, entity).value,
-			suns: getComponentValueStrict($mud.components.Suns, entity).value,
-			level: getComponentValueStrict($mud.components.Level, entity).value
-		}
-	})
-
 	let showGoalCreator = false
 	type DashboardTab = 'Active Challenges' | 'Available Challenges' | 'Leaderboard'
 	let activeTab: DashboardTab = 'Available Challenges'
@@ -61,7 +44,7 @@
 		{#if showGoalCreator}
 			<div transition:slide>
 				<GoalCreator
-					firstGoal={wakeupGoals.length === 0}
+					firstGoal={$userWakeupGoals.length === 0}
 					onGoalCreated={() => {
 						showGoalCreator = false
 					}}
@@ -79,13 +62,13 @@
 		</div>
 		<div
 			class={`px-4 py-2 ${
-				wakeupGoals.length === 1 ? 'flex justify-center' : 'grid-container overflow-y-auto'
+				$userWakeupGoals.length === 1 ? 'flex justify-center' : 'grid-container overflow-y-auto'
 			}`}
 		>
-			{#each wakeupGoals as goal}
+			{#each $userWakeupGoals as goal}
 				<WakeupGoal
 					{goal}
-					open={wakeupGoals.length === 1}
+					open={false}
 					onOpenFirstChallenge={() => (activeTab = 'Available Challenges')}
 				/>
 			{/each}

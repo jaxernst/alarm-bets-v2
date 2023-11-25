@@ -1,11 +1,10 @@
 <script>
 	import { goto } from '$app/navigation'
 	import GoalCreator from '$lib/components/GoalCreator.svelte'
-	import { mud, user } from '$lib/mud/mudStore'
+	import { mud, userWakeupGoals } from '$lib/mud/mudStore'
 	import { getEntitiesWithValue } from '@latticexyz/recs'
 
-	$: userWakeupGoals = getEntitiesWithValue($mud.components.Creator, { value: $user })
-	$: if ($mud.stateSynced && userWakeupGoals.size > 0) {
+	$: if ($mud.stateSynced && $userWakeupGoals.length > 0) {
 		console.log('User has goals, redirecting...')
 		goto('/')
 	}
@@ -20,9 +19,9 @@
 		<GoalCreator
 			firstGoal={true}
 			onGoalCreated={() => {
-				// Wait 5 seconds and if a redirect has happened, force the redirect
+				// Wait 5 seconds and if a redirect has not happened, force the redirect
 				setTimeout(() => {
-					if ($mud.stateSynced && userWakeupGoals.size > 0) {
+					if ($mud.stateSynced && $userWakeupGoals.length > 0) {
 						console.log('User has goals, redirecting...')
 						goto('/')
 					}
