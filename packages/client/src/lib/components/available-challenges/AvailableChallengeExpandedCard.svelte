@@ -10,9 +10,10 @@
 	import { formatTime, timeString } from '$lib/util'
 	import ActiveDaysInput from '../ActiveDaysInput.svelte'
 	import { writable } from 'svelte/store'
+	import { userWakeupGoals } from '$lib/mud/mudStore'
 
 	export let challenge: Challenge
-	export let wakeupGoals: { id: Entity; level: number; time: number; sunBalance: number }[]
+	export let wakeupGoals: { id: Entity; level: number; time: number; sunBalance: bigint }[]
 
 	$: maxWakeupObjectiveLevel = Math.max(...wakeupGoals.map((goal) => goal.level))
 	$: qualifies = challenge.requiredLevel <= maxWakeupObjectiveLevel
@@ -29,8 +30,22 @@
 		$joinChallengeDays.length > 0 &&
 		$joinChallengeWeeks > 0
 
+	let enterChallengeLoading = false
+	let enterChallengeError = ''
 	const enterChallenge = async () => {
-		$mud.systemCalls
+		enterChallengeLoading = true
+		enterChallengeError = ''
+		try {
+			await $mud.systemCalls.enterDailyCheckInChallenge(
+				$selectedGoal.id,
+				$joinChallengeDays,
+				$joinChallengeWeeks
+			)
+		} catch (e: any) {
+			enterChallengeError = e.message ?? 'Unknown error'
+		} finally {
+			enterChallengeLoading = false
+		}
 	}
 </script>
 
@@ -110,20 +125,24 @@
 			<button
 				on:click={enterChallenge}
 				disabled={!joinReady}
-				class={`px-2 py-1 flex items-center gap-2 rounded-lg bg-cyan-400  font-semibold text-white 
-					${!joinReady ? 'opacity-75' : 'hover:cyan-500'}
+				class={`px-2 py-1 flex items-center gap-2 rounded-lg bg-cyan-600 transition-all font-semibold text-white 
+					${!joinReady ? 'opacity-75' : 'hover:bg-cyan-400 hover:scale-105'}
 				`}
 			>
-				<div
-					class={`flex items-center gap-1 ${
-						$selectedGoal.sunBalance < costSuns ? 'text-red-600' : 'text-white '
-					}`}
-				>
-					{costSuns}
-					<div class="w-3 fill-cyan-200"><Sun /></div>
-				</div>
-				|
-				<div class=" text-center">Enter Challenge</div>
+				{#if enterChallengeLoading}
+					<div class="w-4 h-4 fill-white animate-spin"><Sun /></div>
+				{:else}
+					<div
+						class={`flex items-center gap-1 ${
+							$selectedGoal.sunBalance < costSuns ? 'text-red-600' : 'text-white '
+						}`}
+					>
+						{costSuns}
+						<div class="w-3 fill-white"><Sun /></div>
+					</div>
+					|
+					<div class=" text-center">Enter Challenge</div>
+				{/if}
 			</button>
 		</div>
 	{:else}
