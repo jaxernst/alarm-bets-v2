@@ -13,8 +13,6 @@
 		}
 		onDaysChanged(selectedDays)
 	}
-
-	$: console.log(selectedDays)
 </script>
 
 <div class="px-2 flex gap-2 text-xs font-semi py-1 justify-end">

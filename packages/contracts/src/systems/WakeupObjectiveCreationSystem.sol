@@ -20,6 +20,5 @@ contract WakeupObjectiveCreationSystem is System {
 
     return entity; 
   }
-  
-}
+ }
 
