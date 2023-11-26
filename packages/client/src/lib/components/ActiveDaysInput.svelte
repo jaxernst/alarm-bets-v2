@@ -16,7 +16,7 @@
 </script>
 
 <div class="px-2 flex gap-2 text-xs font-semi py-1 justify-end">
-	{#each ['Su', 'M', 'Tu', 'W', 'Th', 'Sa', 'Su'] as day, i}
+	{#each ['Su', 'M', 'Tu', 'W', 'Th', 'F', 'Sa'] as day, i}
 		<button
 			on:click={() => handleDayClick(i + 1)}
 			class={`${selectedDays.includes(i + 1) ? activeDayClass : inactiveDayClass}`}
