@@ -4,6 +4,12 @@ import { writable, derived } from 'svelte/store'
 import { mount as mountDevTools } from '@latticexyz/dev-tools'
 import { type Component, runQuery, Has, HasValue } from '@latticexyz/recs'
 
+enum Status {
+	Inactive,
+	Active,
+	Complete
+}
+
 export const mud = (() => {
 	const mud = writable<SetupResult>()
 	const components = writable<SetupResult['components']>()
@@ -65,11 +71,16 @@ export const userWakeupGoals = derived(mud, ($mud) => {
 	return Array.from(entities)
 })
 
-export const userWakeupChallenges = derived(mud, ($mud) => {
+export const activeWakeupChallenges = derived(mud, ($mud) => {
 	const user = $mud?.network.walletClient.account.address
 	if (!$mud || !user || !$mud.components) return []
 
-	const { Creator, WakeupChallenge } = $mud.components
-	const entities = runQuery([Has(WakeupChallenge), HasValue(Creator, { value: user })])
+	const { Creator, WakeupChallenge, ChallengeStatus } = $mud.components
+	const entities = runQuery([
+		Has(WakeupChallenge),
+		HasValue(Creator, { value: user }),
+		HasValue(ChallengeStatus, { value: Status.Active as any })
+	])
+
 	return Array.from(entities)
 })

@@ -5,8 +5,10 @@
 	import { goto } from '$app/navigation'
 	import GoalCreator from '$lib/components/GoalCreator.svelte'
 	import { fade, slide } from 'svelte/transition'
-	import TabPill from '$lib/components/TabPill.svelte'
+	import TabPill from '$lib/components/design-sys/TabPill.svelte'
 	import AvailableChallenges from '$lib/components/available-challenges/AvailableChallenges.svelte'
+	import { getComponentValueStrict } from '@latticexyz/recs'
+	import { timeString } from '$lib/util'
 
 	$: if ($mud.stateSynced && $userWakeupGoals.length === 0) {
 		console.log('User has no goals, redirecting from dashboard...')
@@ -37,48 +39,63 @@
 	let showGoalCreator = false
 	type DashboardTab = 'Active Challenges' | 'Available Challenges' | 'Leaderboard'
 	let activeTab: DashboardTab = 'Available Challenges'
+
+	let iActiveGoal = 0
+	$: goalTimes = $userWakeupGoals.map((goal) => {
+		return timeString(getComponentValueStrict($mud.components.AlarmTime, goal).value)
+	})
 </script>
 
-<div class="h-full flex flex-col gap-6">
-	<div class="w-full px-2">
-		{#if showGoalCreator}
-			<div transition:slide>
-				<GoalCreator
-					firstGoal={$userWakeupGoals.length === 0}
-					onGoalCreated={() => {
-						showGoalCreator = false
-					}}
-					onClose={() => {
-						showGoalCreator = false
-					}}
-				/>
-			</div>
-		{/if}
-		<div class="text-sm py-2 text-cyan-500 flex justify-between">
-			Goals
-			<button on:click={() => (showGoalCreator = true)} class="text-base"
-				>{showGoalCreator ? '' : '+'}</button
-			>
+<div class="h-full flex flex-col gap-4">
+	{#if showGoalCreator}
+		<div transition:slide>
+			<GoalCreator
+				firstGoal={$userWakeupGoals.length === 0}
+				onGoalCreated={() => {
+					showGoalCreator = false
+				}}
+				onClose={() => {
+					showGoalCreator = false
+				}}
+			/>
 		</div>
-		<div
-			class={`px-4 py-2 ${
-				$userWakeupGoals.length === 1 ? 'flex justify-center' : 'grid-container overflow-y-auto'
-			}`}
-		>
-			{#each $userWakeupGoals as goal}
-				<WakeupGoal
-					{goal}
-					open={false}
-					onOpenFirstChallenge={() => (activeTab = 'Available Challenges')}
-				/>
-			{/each}
+	{/if}
+	<div class="w-full px-2">
+		<div class="text-sm text-cyan-500 flex justify-between">
+			<div class="w-full flex flex-col gap-1">
+				<div class="flex justify-between items-center">Goals</div>
+				<div class="px-2 flex gap-2">
+					{#each goalTimes as time, i}
+						<TabPill
+							active={iActiveGoal === i}
+							on:click={() => (iActiveGoal = i)}
+							inactiveClass="bg-zinc-200 text-white hover:bg-zinc-300 transition-all hover:shadow-md"
+							paddingClass={'px-2'}
+						>
+							{time}
+						</TabPill>
+					{/each}
+					<button
+						on:click={() => (showGoalCreator = true)}
+						class="rounded-full aspect-square h-full bg-zinc-200 hover:bg-zinc-300 transition-all hover:shadow-md px-2 flex justify-center items-center text-lg text-white font-bold pb-[.2em]"
+					>
+						+
+					</button>
+				</div>
+			</div>
 		</div>
 	</div>
-
+	<div class="px-4 grid">
+		{#key iActiveGoal}
+			<div class="col-start-1 row-start-1">
+				<WakeupGoal goal={$userWakeupGoals[iActiveGoal]} open={false} />
+			</div>
+		{/key}
+	</div>
 	<div
-		class="flex-grow flex flex-col overflow-y-auto bg-gradient-to-b from-zinc-100 to-zinc-200 rounded-t-2xl px-2 "
+		class="flex-grow flex flex-col overflow-y-auto bg-gradient-to-b from-zinc-100 to-zinc-200 rounded-t-2xl px-3"
 	>
-		<div class="py-2 flex items-center gap-3 text-cyan-400">
+		<div class="py-3 flex items-center gap-3 text-cyan-400">
 			<TabPill
 				on:click={() => (activeTab = 'Active Challenges')}
 				active={activeTab === 'Active Challenges'}
