@@ -25,6 +25,7 @@ export default mudConfig({
     ExpirationTime: "uint256",
     ChallengeStatus: "Status",
     ChallengeName: "string",
+    ChallengeDays: "uint8[]",
   },
 
   modules: [

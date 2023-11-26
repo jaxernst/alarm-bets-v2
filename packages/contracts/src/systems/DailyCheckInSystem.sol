@@ -15,7 +15,8 @@ import {
   WakeupChallenge, 
   ChallengeName, 
   ExpirationTime, 
-  TargetWakeupObjective  
+  TargetWakeupObjective,
+  ChallengeDays  
 } from "../codegen/index.sol";
 
 contract DailyCheckInSystem is System {
@@ -50,6 +51,7 @@ contract DailyCheckInSystem is System {
     WakeupChallenge.set(challengeId, true);
     Creator.set(challengeId, creator);
     ChallengeStatus.set(challengeId, Status.Active);
+    ChallengeDays.set(challengeId, challengeDays);
 
     uint expiration = block.timestamp + numWeeks * 1 weeks;
     ExpirationTime.set(challengeId, expiration);
