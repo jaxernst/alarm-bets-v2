@@ -16,3 +16,4 @@ import { TargetWakeupObjective, TargetWakeupObjectiveTableId } from "./tables/Ta
 import { ExpirationTime, ExpirationTimeTableId } from "./tables/ExpirationTime.sol";
 import { ChallengeStatus, ChallengeStatusTableId } from "./tables/ChallengeStatus.sol";
 import { ChallengeName, ChallengeNameTableId } from "./tables/ChallengeName.sol";
+import { ChallengeDays, ChallengeDaysTableId } from "./tables/ChallengeDays.sol";
