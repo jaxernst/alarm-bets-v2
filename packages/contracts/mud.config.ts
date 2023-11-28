@@ -20,12 +20,15 @@ export default mudConfig({
     Level: "uint32",
 
     // Wakeup challenge components
+    StartTime: "uint256",
     WakeupChallenge: "bool",
     TargetWakeupObjective: "bytes32",
     ExpirationTime: "uint256",
     ChallengeStatus: "Status",
     ChallengeName: "string",
     ChallengeDays: "uint8[]",
+    SunsStaked: "uint256",
+    EthStaked: "uint256",
   },
 
   modules: [

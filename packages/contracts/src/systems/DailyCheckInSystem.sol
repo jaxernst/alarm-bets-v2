@@ -16,13 +16,15 @@ import {
   ChallengeName, 
   ExpirationTime, 
   TargetWakeupObjective,
-  ChallengeDays  
+  ChallengeDays,
+  StartTime,
+  SunsStaked
 } from "../codegen/index.sol";
 
 contract DailyCheckInSystem is System {
   using AlarmSchedule for AlarmSchedule.Schedule;
 
-  string public constant CHALLENGE_NAME = "DailyCheckIn";
+  string public constant CHALLENGE_NAME = "Daily Check In";
   uint public constant SUBMISSION_WINDOW = 15 minutes;
   uint public constant SUN_REWARD_PER_DAY = 10;
   uint public constant SUN_COST_PER_DAY = 6;
@@ -52,6 +54,8 @@ contract DailyCheckInSystem is System {
     Creator.set(challengeId, creator);
     ChallengeStatus.set(challengeId, Status.Active);
     ChallengeDays.set(challengeId, challengeDays);
+    StartTime.set(challengeId, block.timestamp);
+    SunsStaked.set(challengeId, costSuns);
 
     uint expiration = block.timestamp + numWeeks * 1 weeks;
     ExpirationTime.set(challengeId, expiration);
