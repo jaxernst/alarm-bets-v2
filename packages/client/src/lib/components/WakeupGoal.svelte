@@ -38,11 +38,7 @@
 	}
 </script>
 
-<div
-	in:slide={{ axis: 'x' }}
-	out:scale
-	class="flex items-center justify-evenly gap-4 rounded-xl py-4"
->
+<div transition:fade class="flex items-center justify-evenly gap-4 rounded-xl py-4">
 	<div class="flex flex-col bg-gradient-to-b from-cyan-300 to-cyan-500 p-3 rounded-xl">
 		<div
 			class="whitespace-nowrap font-digital text-cyan-100 from-cyan-50 to-cyan-200 text-5xl font-bold text-center pt-1"
@@ -55,7 +51,7 @@
 			<ActiveDays
 				activeDays={challengeDays}
 				activeDayClass={'text-cyan-100'}
-				inactiveDayClass={challengeDays.length === 0 ? 'text-cyan-100' : 'text-cyan-500'}
+				inactiveDayClass={'text-cyan-500'}
 			/>
 		</div>
 	</div>
