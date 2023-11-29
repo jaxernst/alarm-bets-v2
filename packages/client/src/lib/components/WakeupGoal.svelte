@@ -38,10 +38,10 @@
 	}
 </script>
 
-<div transition:fade class="flex items-center justify-evenly gap-4 rounded-xl py-4">
-	<div class="flex flex-col bg-gradient-to-b from-cyan-300 to-cyan-500 p-3 rounded-xl">
+<div transition:fade class="flex items-center justify-evenly gap-4 rounded-xl py-6">
+	<div class="flex flex-col p-3 rounded-xl">
 		<div
-			class="whitespace-nowrap font-digital text-cyan-100 from-cyan-50 to-cyan-200 text-5xl font-bold text-center pt-1"
+			class="whitespace-nowrap font-digital text-cyan-400 from-cyan-50 to-cyan-200 text-5xl font-bold text-center pt-1"
 			style="line-height:.8em"
 		>
 			{timeString(goalTime)}
@@ -49,9 +49,10 @@
 
 		<div class="self-center font-semibold justify-center">
 			<ActiveDays
+				textSizeClass={'text-xs'}
 				activeDays={challengeDays}
-				activeDayClass={'text-cyan-100'}
-				inactiveDayClass={'text-cyan-500'}
+				activeDayClass={'text-green-400 font-bold'}
+				inactiveDayClass={'text-zinc-300'}
 			/>
 		</div>
 	</div>
