@@ -46,7 +46,7 @@
 </script>
 
 <div
-	class="p-3 flex flex-col items-center text-lg bg-zinc-100 text-zinc-400 min-w-[200px] rounded-lg first:border-2 border-cyan-200"
+	class="p-3 flex flex-col items-center text-lg bg-zinc-100 text-zinc-400 min-w-[180px] rounded-lg first:border-2 border-cyan-200"
 >
 	<div class="w-full flex justify-between items-center">
 		<div class="text-center font-digital text-2xl pt-[.2rem]" style="line-height:.8em">
