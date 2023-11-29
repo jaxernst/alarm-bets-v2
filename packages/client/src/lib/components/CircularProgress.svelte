@@ -4,7 +4,7 @@
 
 	// Adapt the logic according to the approach
 	const background = `radial-gradient(white 50%, transparent 51%),
-    conic-gradient(transparent 0deg ${angle}deg, gainsboro ${angle}deg 360deg),
+    conic-gradient(transparent 0deg ${angle}deg, rgb(235,235,235) ${angle}deg 360deg),
     conic-gradient(orange 0deg, yellow 90deg, lightgreen 180deg, green);`
 
 	$: cssVarStyles = `--background:${background}`
