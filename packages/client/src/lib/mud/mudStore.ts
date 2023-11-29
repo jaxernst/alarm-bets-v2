@@ -2,7 +2,7 @@ import mudConfig from 'contracts/mud.config'
 import { type SetupResult, setup } from './setup'
 import { writable, derived } from 'svelte/store'
 import { mount as mountDevTools } from '@latticexyz/dev-tools'
-import { type Component, runQuery, Has, HasValue } from '@latticexyz/recs'
+import { type Component, runQuery, Has, HasValue, type Entity } from '@latticexyz/recs'
 
 enum Status {
 	Inactive,
@@ -71,16 +71,18 @@ export const userWakeupGoals = derived(mud, ($mud) => {
 	return Array.from(entities)
 })
 
-export const activeWakeupChallenges = derived(mud, ($mud) => {
-	const user = $mud?.network.walletClient.account.address
-	if (!$mud || !user || !$mud.components) return []
+// Function to get all active wakeup challenges for a given wakeup goal
+export const getActiveWakeupChallenges = derived(mud, ($mud) => {
+	return (forGoal: Entity) => {
+		if (!$mud) return []
 
-	const { Creator, WakeupChallenge, ChallengeStatus } = $mud.components
-	const entities = runQuery([
-		Has(WakeupChallenge),
-		HasValue(Creator, { value: user }),
-		HasValue(ChallengeStatus, { value: Status.Active as any })
-	])
+		const { WakeupChallenge, ChallengeStatus, TargetWakeupObjective } = $mud.components
+		const entities = runQuery([
+			Has(WakeupChallenge),
+			HasValue(TargetWakeupObjective, { value: forGoal }),
+			HasValue(ChallengeStatus, { value: Status.Active as any })
+		])
 
-	return Array.from(entities)
+		return Array.from(entities)
+	}
 })

@@ -3,9 +3,8 @@
 	import { timeString } from '../util'
 	import ActiveDays from './ActiveDays.svelte'
 	import { getComponentValueStrict, type Entity, runQuery } from '@latticexyz/recs'
-	import GradientCard from './design-sys/GradientCard.svelte'
 	import { fade, scale, slide } from 'svelte/transition'
-	import { userWakeupGoals, mud, activeWakeupChallenges } from '$lib/mud/mudStore'
+	import { mud, getActiveWakeupChallenges } from '$lib/mud/mudStore'
 	import CircularProgress from './CircularProgress.svelte'
 	import Deadline from '$lib/icons/Deadline.svelte'
 
@@ -18,14 +17,15 @@
 		getComponentValueStrict($mud.components.Suns, goal).value
 	]
 
-	$: numChallenges = $activeWakeupChallenges.length
+	$: console.log(Number(goalSuns) / nextLevelSunRequirement)
+	$: activeChallenges = $getActiveWakeupChallenges(goal)
+	$: numChallenges = activeChallenges.length
 
 	let nextLevelSunRequirement = 100
 	let challengeDays: number[] = []
 	$: {
 		const activeChallengeDays = new Set<number>()
-
-		$activeWakeupChallenges.forEach((challenge) => {
+		activeChallenges.forEach((challenge) => {
 			const days = getComponentValueStrict($mud.components.ChallengeDays, challenge).value
 			days.forEach((day) => {
 				if (!activeChallengeDays.has(day)) {
@@ -55,17 +55,19 @@
 			/>
 		</div>
 	</div>
-	<CircularProgress progress={Number(goalSuns) / nextLevelSunRequirement}>
-		<div class="flex flex-col w-[70px] font-semibold text-center fill-cyan-500 text-cyan-500">
-			<div class="flex justify-center items-center gap-1">
-				100
-				<div class="w-4">
-					<Sun />
+	{#key goalSuns}
+		<CircularProgress progress={Number(goalSuns) / nextLevelSunRequirement}>
+			<div class="flex flex-col w-[70px] font-semibold text-center fill-cyan-500 text-cyan-500">
+				<div class="flex justify-center items-center gap-1">
+					100
+					<div class="w-4">
+						<Sun />
+					</div>
 				</div>
+				<div class="text-zinc-300 text-xs">To level up</div>
 			</div>
-			<div class="text-zinc-300 text-xs">To level up</div>
-		</div>
-	</CircularProgress>
+		</CircularProgress>
+	{/key}
 	<div class="self-stretch flex flex-col gap-1 text-zinc-400 fill-cyan-500">
 		<div
 			class="font-bold bg-gradient-to-r from-cyan-300 to-cyan-500 rounded-full px-2 text-cyan-50"
