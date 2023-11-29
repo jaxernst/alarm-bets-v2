@@ -62,7 +62,7 @@
 				{#if !activeChallenges.length}
 					<div class="text-sm">No active challenges ...</div>
 				{:else}
-					<div class="flex overflow-x-auto gap-2">
+					<div class="flex flex-col items-stretch gap-2">
 						{#each activeChallenges as challenge}
 							<ActiveChallenge {challenge} />
 						{/each}

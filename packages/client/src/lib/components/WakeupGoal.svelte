@@ -17,7 +17,6 @@
 		getComponentValueStrict($mud.components.Suns, goal).value
 	]
 
-	$: console.log(Number(goalSuns) / nextLevelSunRequirement)
 	$: activeChallenges = $getActiveWakeupChallenges(goal)
 	$: numChallenges = activeChallenges.length
 

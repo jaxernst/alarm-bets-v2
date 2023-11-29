@@ -9,6 +9,8 @@
 
 	export let challenge: Entity
 
+	let open = true
+
 	$: [challengeName, targetWakeupGoal, startTime, expiration, days, sunsStaked] = [
 		getComponentValueStrict($mud.components.ChallengeName, challenge).value,
 		getComponentValueStrict($mud.components.TargetWakeupObjective, challenge).value,
@@ -32,8 +34,6 @@
 		setInterval(async () => {}, 3000)
 	})
 
-	$: console.log(challengeName, startTime, expiration)
-
 	const dayMap: any = {
 		1: 'Su',
 		2: 'M',
@@ -45,36 +45,44 @@
 	}
 </script>
 
-<div
-	class="p-3 flex flex-col items-center text-lg bg-zinc-100 text-zinc-400 min-w-[180px] rounded-lg first:border-2 border-cyan-200"
->
+<div class="p-3 flex flex-col gap-2 text-lg bg-zinc-100 text-zinc-400 rounded-lg ">
 	<div class="w-full flex justify-between items-center">
-		<div class="text-center font-digital text-2xl pt-[.2rem]" style="line-height:.8em">
-			{timeString(targetWakeupGoalTime)}
+		<div>
+			<div class="font-bold text-xl">
+				{challengeName}
+			</div>
+			<div class="text-xs px-2">Due in 5 hrs 59 minutes...</div>
 		</div>
 		<div class="flex justify-center text-sm text-zinc-100 gap-1">
 			{#each days as day}
-				<div class="bg-zinc-600 font-semibold bg-opacity-50 text-sm rounded-full w-5 text-center">
+				<div
+					class="w-6 h-6 flex items-center justify-center text-sm bg-zinc-400 font-semibold rounded-full"
+				>
 					{dayMap[day]}
 				</div>
 			{/each}
 		</div>
 	</div>
 
-	<div class="font-bold text-xl py-3">
-		{challengeName}
-	</div>
-
-	<div class="flex flex-col items-center gap-2 py-2 px-1 text-sm fill-cyan-400">
-		<div class="flex items-center gap-1">
-			Staked: {sunsStaked}
-			<span><div class="w-3"><Sun /></div></span>
+	{#if open}
+		<div class="border-[.5px] w-full border-zinc-200" />
+		<div class="p-2">
+			<div class="bg-zinc-200 bg-opacity-70 p-2 rounded-lg text-sm">
+				Wakeup before your goal time and check in to earn suns on the days you selected. Missing a
+				deadline results in lost Suns!
+			</div>
 		</div>
-		<div>Submission window: 15min</div>
-	</div>
-
-	<div class="bg-zinc-200 bg-opacity-70 p-2 rounded-lg">
-		<div>Next alarm in 59 minutes...</div>
-		<div>Check in before 6:00am to earn 1 sun</div>
-	</div>
+		<div class="flex flex-col gap-2 py-2 px-1 text-sm fill-cyan-400">
+			<div>Submission window: 15min (before deadline)</div>
+			<div class="flex items-center gap-1">
+				Staked: {sunsStaked}
+				<span><div class="w-3"><Sun /></div></span>
+			</div>
+			<div class="flex items-center gap-1">
+				Suns Earned: {sunsStaked}
+				<span><div class="w-3"><Sun /></div></span>
+			</div>
+			<div>Expiration: 2 days</div>
+		</div>
+	{/if}
 </div>
