@@ -29,6 +29,19 @@ export default mudConfig({
     ChallengeDays: "uint8[]",
     SunsStaked: "uint256",
     EthStaked: "uint256",
+
+    AlarmSchedule: {
+      valueSchema: {
+        alarmTime: "uint32",
+        submissionWindow: "uint32",
+        timezoneOffset: "int8",
+        activationTimestamp: "uint32",
+        lastEntryTime: "uint32",
+        alarmEntries: "uint32",
+        expiration: "uint32",
+        alarmDays: "uint8[]",
+      },
+    },
   },
 
   modules: [
