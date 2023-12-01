@@ -44,6 +44,13 @@ export default mudConfig({
     },
   },
 
+  systems: {
+    AlarmScheduleSystem: {
+      openAccess: false,
+      accessList: ["DailyCheckInSystem"],
+    },
+  },
+
   modules: [
     {
       name: "UniqueEntityModule",
