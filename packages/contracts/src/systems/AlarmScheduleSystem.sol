@@ -10,6 +10,11 @@ contract AlarmScheduleSystem is System {
     _;
   }
 
+  modifier notExpired(bytes32 entity) {
+    require(AlarmSchedule.getExpiration(entity) > block.timestamp, "EXPIRED");
+    _;
+  }
+
   function newAlarmSchedule(
     bytes32 entity,
     uint32 alarmTime,
@@ -25,7 +30,7 @@ contract AlarmScheduleSystem is System {
 
     // The 'activation' occurs at the next alarm deadline interval. This interval occurs at next timestamp
     // which the alarmTime (in local timezone) will occur
-    uint32 activationTimestamp = _nextDeadlineInterval(alarmTime, timezoneOffsetHrs);
+    uint32 activationTimestamp = _nextDeadlineInterval(uint32(block.timestamp), alarmTime, timezoneOffsetHrs);
 
     // Initialize the schedule for the entity mud
     AlarmSchedule.set(
@@ -41,7 +46,7 @@ contract AlarmScheduleSystem is System {
     );
   }
 
-  function recordEntry(bytes32 entity) public started(entity) {
+  function recordEntry(bytes32 entity) public started(entity) notExpired(entity) {
     uint32 currentTime = uint32(block.timestamp);
     uint32 lastEntryTime = AlarmSchedule.getLastEntryTime(entity);
     uint32 submissionWindow = AlarmSchedule.getSubmissionWindow(entity);
@@ -56,14 +61,21 @@ contract AlarmScheduleSystem is System {
     AlarmSchedule.setAlarmEntries(entity, AlarmSchedule.getAlarmEntries(entity) + 1);
   }
 
-  function inSubmissionWindow(bytes32 entity) public view started(entity) returns (bool) {
+  function inSubmissionWindow(bytes32 entity) public view started(entity) notExpired(entity) returns (bool) {
     uint32 alarmTime = AlarmSchedule.getAlarmTime(entity);
     int8 timezoneOffset = AlarmSchedule.getTimezoneOffset(entity);
-    if (_deadlinePassedToday(alarmTime, timezoneOffset)) {
+
+    if (_deadlinePassedToday(uint32(block.timestamp), alarmTime, timezoneOffset)) {
       return false;
     }
+
     return
-      (_nextDeadlineInterval(alarmTime, timezoneOffset) - block.timestamp) < AlarmSchedule.getSubmissionWindow(entity);
+      (_nextDeadlineInterval(uint32(block.timestamp), alarmTime, timezoneOffset) - block.timestamp) <
+      AlarmSchedule.getSubmissionWindow(entity);
+  }
+
+  function expired(bytes32 entity) public view started(entity) returns (bool) {
+    return block.timestamp > AlarmSchedule.getExpiration(entity);
   }
 
   /**
@@ -71,6 +83,8 @@ contract AlarmScheduleSystem is System {
    * This is done by calculating the number of whole weeks that have passed since
    * activation, then calculating how many additional (remainder) alarms days to add,
    * and comparing that with the total entry count.
+   *
+   * @notice missedDeadlines can still be called after expiration, but will stop counting after the expiration timestamp
    */
   function missedDeadlines(bytes32 entity) internal view started(entity) returns (uint numMissedDeadlines) {
     uint32 alarmTime = AlarmSchedule.getAlarmTime(entity);
@@ -81,13 +95,12 @@ contract AlarmScheduleSystem is System {
 
     if (block.timestamp < activationTimestamp) return 0;
 
-    // The last deadline is the last timestamp where the local time of day == alarmTime
-    // (does not have to fall on an alarm day of the week)
-    // (used as a reference point for calculating the number of days passed)
-    uint32 lastDeadline = _lastDeadlineInterval(alarmTime, timezoneOffset);
+    uint32 latestTimestamp = block.timestamp > AlarmSchedule.getExpiration(entity)
+      ? AlarmSchedule.getExpiration(entity)
+      : uint32(block.timestamp);
 
+    uint32 lastDeadline = _lastDeadlineInterval(latestTimestamp, alarmTime, timezoneOffset);
     uint32 daysPassed = (lastDeadline - activationTimestamp) / 1 days;
-
     uint32 weeksPassed = daysPassed / 7;
     uint32 remainderDays = daysPassed % 7;
 
@@ -117,12 +130,12 @@ contract AlarmScheduleSystem is System {
     return nextDeadlineTimestamp(entity) - block.timestamp;
   }
 
-  function nextDeadlineTimestamp(bytes32 entity) internal view started(entity) returns (uint) {
+  function nextDeadlineTimestamp(bytes32 entity) internal view started(entity) notExpired(entity) returns (uint) {
     uint32 alarmTime = AlarmSchedule.getAlarmTime(entity);
     int8 timezoneOffset = AlarmSchedule.getTimezoneOffset(entity);
     uint8[] memory alarmDays = AlarmSchedule.getAlarmDays(entity);
 
-    uint32 referenceTimestamp = _lastDeadlineInterval(alarmTime, timezoneOffset);
+    uint32 referenceTimestamp = _lastDeadlineInterval(uint32(block.timestamp), alarmTime, timezoneOffset);
     uint8 curDay = _dayOfWeek(_offsetTimestamp(referenceTimestamp, timezoneOffset));
     uint8 nextDay = _nextAlarmDay(alarmDays, curDay);
 
@@ -150,31 +163,39 @@ contract AlarmScheduleSystem is System {
     return alarmDays[0];
   }
 
-  function _nextDeadlineInterval(uint32 alarmTime, int8 timezoneOffset) internal view returns (uint32) {
-    uint32 lastMidnight = _lastMidnightTimestamp(timezoneOffset);
-    if (_deadlinePassedToday(alarmTime, timezoneOffset)) {
+  function _nextDeadlineInterval(
+    uint32 timestamp,
+    uint32 alarmTime,
+    int8 timezoneOffset
+  ) private pure returns (uint32) {
+    uint32 lastMidnight = _lastMidnightTimestamp(timestamp, timezoneOffset);
+    if (_deadlinePassedToday(timestamp, alarmTime, timezoneOffset)) {
       return lastMidnight + 1 days + alarmTime;
     } else {
       return lastMidnight + alarmTime;
     }
   }
 
-  function _lastDeadlineInterval(uint32 alarmTime, int8 timezoneOffset) internal view returns (uint32) {
-    uint32 lastMidnight = _lastMidnightTimestamp(timezoneOffset);
-    if (_deadlinePassedToday(alarmTime, timezoneOffset)) {
+  function _lastDeadlineInterval(
+    uint32 timestamp,
+    uint32 alarmTime,
+    int8 timezoneOffset
+  ) private pure returns (uint32) {
+    uint32 lastMidnight = _lastMidnightTimestamp(timestamp, timezoneOffset);
+    if (_deadlinePassedToday(timestamp, alarmTime, timezoneOffset)) {
       return lastMidnight + alarmTime;
     } else {
       return lastMidnight - 1 days + alarmTime;
     }
   }
 
-  function _deadlinePassedToday(uint32 alarmTime, int8 timezoneOffset) internal view returns (bool) {
-    uint _now = _offsetTimestamp(uint32(block.timestamp), timezoneOffset);
+  function _deadlinePassedToday(uint32 timestamp, uint32 alarmTime, int8 timezoneOffset) private pure returns (bool) {
+    uint _now = _offsetTimestamp(timestamp, timezoneOffset);
     return (_now % 1 days) > alarmTime;
   }
 
   // 1 = Sunday, 7 = Saturday
-  function _dayOfWeek(uint32 timestamp) internal pure returns (uint8 dayOfWeek) {
+  function _dayOfWeek(uint32 timestamp) private pure returns (uint8 dayOfWeek) {
     uint32 _days = timestamp / 1 days;
     dayOfWeek = uint8(((_days + 4) % 7) + 1);
   }
@@ -183,8 +204,8 @@ contract AlarmScheduleSystem is System {
    * @notice 'midnight' is timezone specific so we must offset the timestamp before taking the modulus.
    * this is like pretending UTC started in the user's timezone instead of GMT.
    */
-  function _lastMidnightTimestamp(int8 timezoneOffset) private view returns (uint32) {
-    uint32 localTimestamp = _offsetTimestamp(uint32(block.timestamp), timezoneOffset);
+  function _lastMidnightTimestamp(uint32 timestamp, int8 timezoneOffset) private pure returns (uint32) {
+    uint32 localTimestamp = _offsetTimestamp(timestamp, timezoneOffset);
     uint32 lastMidnightLocal = localTimestamp - (localTimestamp % 1 days);
     return _offsetTimestamp(lastMidnightLocal, -timezoneOffset);
   }
@@ -193,7 +214,7 @@ contract AlarmScheduleSystem is System {
     return uint32(int32(timestamp) + offset * int32(3600));
   }
 
-  function _validateDaysArr(uint8[] memory daysActive) internal pure returns (bool) {
+  function _validateDaysArr(uint8[] memory daysActive) private pure returns (bool) {
     if (daysActive.length > 7 || daysActive.length == 0) {
       return false;
     }
