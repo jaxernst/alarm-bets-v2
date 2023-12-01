@@ -20,3 +20,4 @@ import { ChallengeName, ChallengeNameTableId } from "./tables/ChallengeName.sol"
 import { ChallengeDays, ChallengeDaysTableId } from "./tables/ChallengeDays.sol";
 import { SunsStaked, SunsStakedTableId } from "./tables/SunsStaked.sol";
 import { EthStaked, EthStakedTableId } from "./tables/EthStaked.sol";
+import { AlarmSchedule, AlarmScheduleData, AlarmScheduleTableId } from "./tables/AlarmSchedule.sol";
