@@ -40,7 +40,7 @@
 <div transition:fade class="flex items-center justify-evenly gap-4 rounded-xl py-6">
 	<div class="flex flex-col p-3 rounded-xl">
 		<div
-			class="whitespace-nowrap font-digital text-cyan-400 from-cyan-50 to-cyan-200 text-5xl font-bold text-center pt-1"
+			class="whitespace-nowrap font-digital text-cyan-500 from-cyan-50 to-cyan-200 text-5xl font-bold text-center pt-1"
 			style="line-height:.8em"
 		>
 			{timeString(goalTime)}

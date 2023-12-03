@@ -38,8 +38,8 @@
 
 	<div class="w-full px-2">
 		<div class="text-sm text-cyan-500 flex justify-between">
-			<div class="w-full flex flex-col gap-1">
-				<div class="flex justify-between items-center">Goals</div>
+			<div class="w-full flex gap-1">
+				<div class="flex justify-between items-center text-green-400 font-semibold">Goals</div>
 				<div class="px-2 flex gap-2">
 					{#each goalTimes as time, i}
 						<TabPill
@@ -48,6 +48,7 @@
 							inactiveClass="bg-zinc-200 text-white hover:bg-zinc-300 transition-all hover:shadow-md"
 							activeClass="shadow-md"
 							paddingClass={'px-2'}
+							roundedClass={'rounded-lg'}
 						>
 							{time}
 						</TabPill>
@@ -63,7 +64,9 @@
 		</div>
 	</div>
 
-	<div class="flex-grow">
-		<GoalDashboard wakeupGoal={$userWakeupGoals[iActiveGoal]} />
-	</div>
+	{#if $userWakeupGoals[iActiveGoal]}
+		<div class="flex-grow">
+			<GoalDashboard wakeupGoal={$userWakeupGoals[iActiveGoal]} />
+		</div>
+	{/if}
 </div>
