@@ -126,11 +126,11 @@ contract AlarmScheduleSystem is System {
     return totalExpectedEntries - alarmEntries;
   }
 
-  function timeToNextDeadline(bytes32 entity) internal view started(entity) returns (uint) {
+  function timeToNextDeadline(bytes32 entity) public view started(entity) returns (uint) {
     return nextDeadlineTimestamp(entity) - block.timestamp;
   }
 
-  function nextDeadlineTimestamp(bytes32 entity) internal view started(entity) notExpired(entity) returns (uint) {
+  function nextDeadlineTimestamp(bytes32 entity) public view started(entity) notExpired(entity) returns (uint) {
     uint32 alarmTime = AlarmSchedule.getAlarmTime(entity);
     int8 timezoneOffset = AlarmSchedule.getTimezoneOffset(entity);
     uint8[] memory alarmDays = AlarmSchedule.getAlarmDays(entity);

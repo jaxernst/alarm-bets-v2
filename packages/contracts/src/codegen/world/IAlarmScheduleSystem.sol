@@ -22,4 +22,8 @@ interface IAlarmScheduleSystem {
   function inSubmissionWindow(bytes32 entity) external view returns (bool);
 
   function expired(bytes32 entity) external view returns (bool);
+
+  function timeToNextDeadline(bytes32 entity) external view returns (uint);
+
+  function nextDeadlineTimestamp(bytes32 entity) external view returns (uint);
 }

@@ -12,8 +12,8 @@ import { IWorld } from "../codegen/world/IWorld.sol";
 contract DailyCheckInSystem is System {
   string public constant CHALLENGE_NAME = "Daily Check In";
   uint32 public constant SUBMISSION_WINDOW = 15 minutes;
-  uint public constant SUN_REWARD_PER_DAY = 10;
-  uint public constant SUN_COST_PER_DAY = 6;
+  uint32 public constant SUN_REWARD_PER_DAY = 10;
+  uint32 public constant SUN_COST_PER_DAY = 6;
 
   function DailyCheckIn_enter(
     bytes32 wakeupObjective,
@@ -24,13 +24,13 @@ contract DailyCheckInSystem is System {
     uint32 alarmTime = AlarmTime.get(wakeupObjective);
     address creator = Creator.get(wakeupObjective);
 
-    uint costSuns = numWeeks * challengeDays.length * SUN_COST_PER_DAY;
+    uint32 costSuns = numWeeks * uint32(challengeDays.length) * SUN_COST_PER_DAY;
 
     require(WakeupObjective.get(wakeupObjective), "Not a wakeup objective");
     require(creator == _msgSender(), "creator only");
 
     // Apply the entry fee for the challenge
-    _debitEntity(wakeup, costSuns);
+    _debitEntity(wakeupObjective, costSuns);
 
     // Create challenge entity
     bytes32 challengeId = getUniqueEntity();
@@ -59,17 +59,17 @@ contract DailyCheckInSystem is System {
 
     SystemSwitch.call(abi.encodeCall(IWorld(_world()).recordEntry, (challengeId)));
 
-    _creditWakeupObjective(TargetWakeupObjective.get(challengeId), SUN_REWARD_PER_DAY);
+    _creditEntity(TargetWakeupObjective.get(challengeId), SUN_REWARD_PER_DAY);
   }
 
   function _creditEntity(bytes32 entity, uint32 amount) private {
-    Suns.set(wakeupObjective, Suns.get(wakeupObjective) + amount);
+    Suns.set(entity, Suns.get(entity) + amount);
   }
 
   function _debitEntity(bytes32 entity, uint32 amount) private {
-    uint32 balanceSuns = Suns.get(WakeupObjective);
-    require(balanceSuns >= costSuns, "Insufficient Sun balance");
-    Suns.set(wakeupObjective, balanceSuns - amount);
+    uint32 balanceSuns = Suns.get(entity);
+    require(balanceSuns >= amount, "Insufficient Sun balance");
+    Suns.set(entity, balanceSuns - amount);
   }
 
   function _startAlarmSchedule(

@@ -13,12 +13,11 @@ contract WakeupObjectiveCreationSystem is System {
     Creator.set(entity, _msgSender());
     AlarmTime.set(entity, wakeupTime);
     Timezone.set(entity, playerTimezoneHrs);
-    
+
     Suns.set(entity, 20);
     WakeupConfirmations.set(entity, 0);
     Level.set(entity, 1);
 
-    return entity; 
+    return entity;
   }
- }
-
+}
