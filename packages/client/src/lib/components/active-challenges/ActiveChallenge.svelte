@@ -3,7 +3,7 @@
 	import { getComponentValueStrict, type Entity } from '@latticexyz/recs'
 	import CircularProgress from '../CircularProgress.svelte'
 	import { onMount } from 'svelte'
-	import { timeString } from '$lib/util'
+	import { formatTime, systemTimestamp, timeString, timeString24Hour } from '$lib/util'
 	import ActiveDays from '../ActiveDays.svelte'
 	import Sun from '$lib/icons/Sun.svelte'
 
@@ -11,11 +11,10 @@
 
 	let open = true
 
-	$: [challengeName, targetWakeupGoal, startTime, expiration, days, sunsStaked] = [
+	$: [challengeName, targetWakeupGoal, expiration, days, sunsStaked] = [
 		getComponentValueStrict($mud.components.ChallengeName, challenge).value,
 		getComponentValueStrict($mud.components.TargetWakeupObjective, challenge).value,
-		Number(getComponentValueStrict($mud.components.StartTime, challenge).value),
-		Number(getComponentValueStrict($mud.components.ExpirationTime, challenge).value),
+		getComponentValueStrict($mud.components.ExpirationTime, challenge).value,
 		getComponentValueStrict($mud.components.ChallengeDays, challenge).value,
 		getComponentValueStrict($mud.components.SunsStaked, challenge).value
 	]
@@ -43,6 +42,18 @@
 		6: 'F',
 		7: 'S'
 	}
+
+	let timeToNextDeadline: null | number = null
+	onMount(async () => {
+		const dueTimestamp = await $mud.systemCalls.nextDeadlineTimestamp(challenge)
+
+		setInterval(() => {
+			const curTimestamp = systemTimestamp()
+			timeToNextDeadline = dueTimestamp - curTimestamp
+		}, 1000)
+	})
+
+	$: console.log(timeToNextDeadline)
 </script>
 
 <div class="p-3 flex flex-col gap-2 text-lg bg-zinc-100 text-zinc-400 rounded-lg ">
@@ -51,7 +62,9 @@
 			<div class="font-bold text-xl">
 				{challengeName}
 			</div>
-			<div class="text-xs px-2">Due in 5 hrs 59 minutes...</div>
+			{#if timeToNextDeadline}
+				<div class="text-xs px-2">Due in {formatTime(timeToNextDeadline)}...</div>
+			{/if}
 		</div>
 		<div class="flex justify-center text-sm text-zinc-100 gap-1">
 			{#each days as day}
@@ -72,17 +85,32 @@
 				deadline results in lost Suns!
 			</div>
 		</div>
+		<div class="flex flex-wrap gap-4 justify-center fill-cyan-500 ">
+			<div class="flex gap-1 items-center">
+				<div class="text-cyan-500 font-semibold">
+					{sunsStaked}
+				</div>
+				<span><div class="w-3"><Sun /></div></span>
+				staked
+			</div>
+			<div class="flex items-center gap-1">
+				<div class="text-cyan-500 font-semibold">
+					{10}
+				</div>
+				<span><div class="w-3"><Sun /></div></span>
+				next reward
+			</div>
+			<div class="flex items-center gap-1">
+				<div class="text-cyan-500 font-semibold">
+					{0}
+				</div>
+				<span><div class="w-3"><Sun /></div></span>
+				wakeups confirmed
+			</div>
+		</div>
 		<div class="flex flex-col gap-2 py-2 px-1 text-sm fill-cyan-400">
-			<div>Submission window: 15min (before deadline)</div>
-			<div class="flex items-center gap-1">
-				Staked: {sunsStaked}
-				<span><div class="w-3"><Sun /></div></span>
-			</div>
-			<div class="flex items-center gap-1">
-				Suns Earned: {sunsStaked}
-				<span><div class="w-3"><Sun /></div></span>
-			</div>
-			<div>Expiration: 2 days</div>
+			<div><span class="font-semibold">Submission window:</span>{' '}15min (before deadline)</div>
+			<div><span class="font-semibold">Expiration:</span>{' '}2 days</div>
 		</div>
 	{/if}
 </div>
