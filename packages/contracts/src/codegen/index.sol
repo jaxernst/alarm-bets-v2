@@ -11,7 +11,6 @@ import { Timezone, TimezoneTableId } from "./tables/Timezone.sol";
 import { WakeupConfirmations, WakeupConfirmationsTableId } from "./tables/WakeupConfirmations.sol";
 import { Suns, SunsTableId } from "./tables/Suns.sol";
 import { Level, LevelTableId } from "./tables/Level.sol";
-import { StartTime, StartTimeTableId } from "./tables/StartTime.sol";
 import { WakeupChallenge, WakeupChallengeTableId } from "./tables/WakeupChallenge.sol";
 import { TargetWakeupObjective, TargetWakeupObjectiveTableId } from "./tables/TargetWakeupObjective.sol";
 import { ExpirationTime, ExpirationTimeTableId } from "./tables/ExpirationTime.sol";

@@ -8,7 +8,11 @@ pragma solidity >=0.8.21;
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface IDailyCheckInSystem {
-  function DailyCheckIn_enter(bytes32 wakeupObjective, uint32 numWeeks, uint8[] memory challengeDays) external;
+  function DailyCheckIn_enter(
+    bytes32 wakeupObjective,
+    uint32 numWeeks,
+    uint8[] memory challengeDays
+  ) external returns (bytes32);
 
   function DailyCheckIn_confirmWakeup(bytes32 challengeId) external;
 }

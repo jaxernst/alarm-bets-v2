@@ -16,11 +16,10 @@ export default mudConfig({
     AlarmTime: "uint32",
     Timezone: "int8",
     WakeupConfirmations: "uint32",
-    Suns: "uint256",
+    Suns: "uint32",
     Level: "uint32",
 
     // Wakeup challenge components
-    StartTime: "uint256",
     WakeupChallenge: "bool",
     TargetWakeupObjective: "bytes32",
     ExpirationTime: "uint256",

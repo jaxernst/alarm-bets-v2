@@ -6,7 +6,7 @@ import { SystemSwitch } from "@latticexyz/world-modules/src/utils/SystemSwitch.s
 import { System } from "@latticexyz/world/src/System.sol";
 import { Status } from "../codegen/common.sol";
 import { AlarmScheduleSystem } from "./AlarmScheduleSystem.sol";
-import { WakeupObjective, Creator, Timezone, AlarmTime, Suns, ChallengeStatus, WakeupChallenge, ChallengeName, ExpirationTime, TargetWakeupObjective, ChallengeDays, StartTime, SunsStaked } from "../codegen/index.sol";
+import { WakeupObjective, Creator, Timezone, AlarmTime, Suns, ChallengeStatus, WakeupChallenge, ChallengeName, ExpirationTime, TargetWakeupObjective, ChallengeDays, SunsStaked } from "../codegen/index.sol";
 import { IWorld } from "../codegen/world/IWorld.sol";
 
 contract DailyCheckInSystem is System {
@@ -15,20 +15,22 @@ contract DailyCheckInSystem is System {
   uint public constant SUN_REWARD_PER_DAY = 10;
   uint public constant SUN_COST_PER_DAY = 6;
 
-  function DailyCheckIn_enter(bytes32 wakeupObjective, uint32 numWeeks, uint8[] memory challengeDays) public {
+  function DailyCheckIn_enter(
+    bytes32 wakeupObjective,
+    uint32 numWeeks,
+    uint8[] memory challengeDays
+  ) public returns (bytes32) {
     int8 timezoneHrs = Timezone.get(wakeupObjective);
     uint32 alarmTime = AlarmTime.get(wakeupObjective);
     address creator = Creator.get(wakeupObjective);
-    uint balanceSuns = Suns.get(wakeupObjective);
 
     uint costSuns = numWeeks * challengeDays.length * SUN_COST_PER_DAY;
 
     require(WakeupObjective.get(wakeupObjective), "Not a wakeup objective");
     require(creator == _msgSender(), "creator only");
-    require(balanceSuns >= costSuns, "Insufficient Sun balance");
 
     // Apply the entry fee for the challenge
-    Suns.set(wakeupObjective, balanceSuns - costSuns);
+    _debitEntity(wakeup, costSuns);
 
     // Create challenge entity
     bytes32 challengeId = getUniqueEntity();
@@ -38,18 +40,14 @@ contract DailyCheckInSystem is System {
     Creator.set(challengeId, creator);
     ChallengeStatus.set(challengeId, Status.Active);
     ChallengeDays.set(challengeId, challengeDays);
-    StartTime.set(challengeId, block.timestamp);
     SunsStaked.set(challengeId, costSuns);
 
     uint expiration = block.timestamp + numWeeks * 1 weeks;
     ExpirationTime.set(challengeId, expiration);
 
-    SystemSwitch.call(
-      abi.encodeCall(
-        IWorld(_world()).newAlarmSchedule,
-        (challengeId, alarmTime, SUBMISSION_WINDOW, timezoneHrs, uint32(expiration), challengeDays)
-      )
-    );
+    _startAlarmSchedule(challengeId, alarmTime, timezoneHrs, uint32(expiration), challengeDays);
+
+    return challengeId;
   }
 
   function DailyCheckIn_confirmWakeup(bytes32 challengeId) public {
@@ -60,5 +58,32 @@ contract DailyCheckInSystem is System {
     require(expiration > block.timestamp, "Challenge expired");
 
     SystemSwitch.call(abi.encodeCall(IWorld(_world()).recordEntry, (challengeId)));
+
+    _creditWakeupObjective(TargetWakeupObjective.get(challengeId), SUN_REWARD_PER_DAY);
+  }
+
+  function _creditEntity(bytes32 entity, uint32 amount) private {
+    Suns.set(wakeupObjective, Suns.get(wakeupObjective) + amount);
+  }
+
+  function _debitEntity(bytes32 entity, uint32 amount) private {
+    uint32 balanceSuns = Suns.get(WakeupObjective);
+    require(balanceSuns >= costSuns, "Insufficient Sun balance");
+    Suns.set(wakeupObjective, balanceSuns - amount);
+  }
+
+  function _startAlarmSchedule(
+    bytes32 challengeId,
+    uint32 alarmTime,
+    int8 timezoneHrs,
+    uint32 expiration,
+    uint8[] memory challengeDays
+  ) private {
+    SystemSwitch.call(
+      abi.encodeCall(
+        IWorld(_world()).newAlarmSchedule,
+        (challengeId, alarmTime, SUBMISSION_WINDOW, timezoneHrs, uint32(expiration), challengeDays)
+      )
+    );
   }
 }
