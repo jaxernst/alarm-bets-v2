@@ -45,6 +45,11 @@ export function createSystemCalls(
 		console.log('Entered daily check-in challenge')
 	}
 
+	const recordEntry = async (challengeId: Entity) => {
+		const tx = await worldContract.write.DailyCheckIn_confirmWakeup([challengeId])
+		await waitForTransaction(tx)
+	}
+
 	const nextDeadlineTimestamp = async (challengeId: Entity) => {
 		return Number(await worldContract.read.nextDeadlineTimestamp([challengeId]))
 	}
@@ -53,6 +58,7 @@ export function createSystemCalls(
 		increment,
 		createWakeupObjective,
 		enterDailyCheckInChallenge,
+		recordEntry,
 		nextDeadlineTimestamp
 	}
 }

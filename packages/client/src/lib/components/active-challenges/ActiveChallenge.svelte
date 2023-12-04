@@ -6,17 +6,19 @@
 	import { formatTime, systemTimestamp, timeString, timeString24Hour } from '$lib/util'
 	import ActiveDays from '../ActiveDays.svelte'
 	import Sun from '$lib/icons/Sun.svelte'
+	import WakeupGoal from '../WakeupGoal.svelte'
 
 	export let challenge: Entity
 
 	let open = true
 
-	$: [challengeName, targetWakeupGoal, expiration, days, sunsStaked] = [
+	$: [challengeName, targetWakeupGoal, expiration, days, sunsStaked, submissionWindow] = [
 		getComponentValueStrict($mud.components.ChallengeName, challenge).value,
 		getComponentValueStrict($mud.components.TargetWakeupObjective, challenge).value,
-		getComponentValueStrict($mud.components.ExpirationTime, challenge).value,
+		Number(getComponentValueStrict($mud.components.ExpirationTime, challenge).value),
 		getComponentValueStrict($mud.components.ChallengeDays, challenge).value,
-		getComponentValueStrict($mud.components.SunsStaked, challenge).value
+		getComponentValueStrict($mud.components.SunsStaked, challenge).value,
+		getComponentValueStrict($mud.components.AlarmSchedule, challenge).submissionWindow
 	]
 
 	$: targetWakeupGoalTime = getComponentValueStrict(
@@ -52,8 +54,6 @@
 			timeToNextDeadline = dueTimestamp - curTimestamp
 		}, 1000)
 	})
-
-	$: console.log(timeToNextDeadline)
 </script>
 
 <div class="p-3 flex flex-col gap-2 text-lg bg-zinc-100 text-zinc-400 rounded-lg ">
@@ -104,13 +104,28 @@
 				<div class="text-cyan-500 font-semibold">
 					{0}
 				</div>
-				<span><div class="w-3"><Sun /></div></span>
 				wakeups confirmed
 			</div>
 		</div>
 		<div class="flex flex-col gap-2 py-2 px-1 text-sm fill-cyan-400">
-			<div><span class="font-semibold">Submission window:</span>{' '}15min (before deadline)</div>
-			<div><span class="font-semibold">Expiration:</span>{' '}2 days</div>
+			<div>
+				<span class="font-semibold">Submission window:</span>{' '}{Math.floor(
+					submissionWindow / 60
+				)} minutes before deadline
+			</div>
+			<div>
+				<span class="font-semibold">Expiration:</span>{' '}{formatTime(
+					expiration - systemTimestamp()
+				)}
+			</div>
 		</div>
+
+		<button
+			class="py-1 px-2 self-center bg-gradient-to-r from-cyan-300 to-cyan-500 text-cyan-100 rounded font-semibold disabled:opacity-60"
+			disabled={(timeToNextDeadline ?? 0) > submissionWindow}
+			on:click={() => $mud.systemCalls.recordEntry(challenge)}
+		>
+			Wakeup
+		</button>
 	{/if}
 </div>

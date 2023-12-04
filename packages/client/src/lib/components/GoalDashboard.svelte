@@ -21,6 +21,7 @@
 	</div>
 </div>
 
+<div class="min-h-[50px] p-6" />
 <div class="flex flex-shrink flex-col overflow-y-auto rounded-t-2xl px-3">
 	<div class="py-3 flex items-center gap-3 text-cyan-400">
 		<TabPill

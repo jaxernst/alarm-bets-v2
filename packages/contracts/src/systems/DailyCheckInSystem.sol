@@ -42,7 +42,7 @@ contract DailyCheckInSystem is System {
     ChallengeDays.set(challengeId, challengeDays);
     SunsStaked.set(challengeId, costSuns);
 
-    uint expiration = block.timestamp + numWeeks * 1 weeks;
+    uint expiration = block.timestamp + challengeDays.length * numWeeks * 1 days;
     ExpirationTime.set(challengeId, expiration);
 
     _startAlarmSchedule(challengeId, alarmTime, timezoneHrs, uint32(expiration), challengeDays);

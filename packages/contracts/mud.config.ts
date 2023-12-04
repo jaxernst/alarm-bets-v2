@@ -45,7 +45,7 @@ export default mudConfig({
 
   systems: {
     AlarmScheduleSystem: {
-      openAccess: false,
+      openAccess: true,
       accessList: ["DailyCheckInSystem"],
     },
   },
