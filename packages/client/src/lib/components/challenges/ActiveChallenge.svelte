@@ -56,7 +56,7 @@
 	})
 </script>
 
-<div class="p-3 flex flex-col gap-2 text-lg bg-zinc-100 text-zinc-400 rounded-lg ">
+<div class="p-3 flex flex-col gap-2 text-lg bg-zinc-100 text-zinc-400 rounded-lg">
 	<div class="w-full flex justify-between items-center">
 		<div>
 			<div class="font-bold text-xl">
@@ -85,7 +85,7 @@
 				deadline results in lost Suns!
 			</div>
 		</div>
-		<div class="flex flex-wrap gap-4 justify-center fill-cyan-500 ">
+		<div class="flex flex-wrap gap-4 justify-center fill-cyan-500">
 			<div class="flex gap-1 items-center">
 				<div class="text-cyan-500 font-semibold">
 					{sunsStaked}

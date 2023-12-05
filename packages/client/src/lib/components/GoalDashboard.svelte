@@ -4,10 +4,13 @@
 	import WakeupGoal from './WakeupGoal.svelte'
 	import { getActiveWakeupChallenges } from '$lib/mud/mudStore'
 	import { fade } from 'svelte/transition'
-	import AvailableChallenges from './available-challenges/AvailableChallenges.svelte'
-	import ActiveChallenge from './active-challenges/ActiveChallenge.svelte'
+	import AvailableChallenge from './challenges/AvailableChallenge.svelte'
+	import ActiveChallenge from './challenges/ActiveChallenge.svelte'
+	import { challengeTypes } from '$lib/challengeTypes'
 
 	export let wakeupGoal: Entity
+
+	const availableChallenge = challengeTypes
 
 	$: activeChallenges = $getActiveWakeupChallenges(wakeupGoal)
 
@@ -15,13 +18,12 @@
 	let activeTab: DashboardTab = 'Active Challenges'
 </script>
 
-<div class="px-4 grid">
+<div class="px-4 grid py-2">
 	<div class="col-start-1 row-start-1">
 		<WakeupGoal goal={wakeupGoal} open={false} />
 	</div>
 </div>
 
-<div class="min-h-[50px] p-6" />
 <div class="flex flex-shrink flex-col overflow-y-auto rounded-t-2xl px-3">
 	<div class="py-3 flex items-center gap-3 text-cyan-400">
 		<TabPill
@@ -45,15 +47,17 @@
 		</TabPill>
 	</div>
 
-	<div class="border-[.05px] border-cyan-400 w-full" />
+	<div class="border-[.5px] border-cyan-400 w-full" />
 
-	<div class="py-4 grid text-zinc-400 flex-grow overflow-auto h-max ">
+	<div class="py-4 grid text-zinc-400 flex-grow overflow-auto h-max">
 		{#if activeTab === 'Available Challenges'}
 			<div
 				transition:fade
 				class="flex flex-col overflow-y-auto row-start-1 col-start-1 whitespace-nowrap text-sm"
 			>
-				<AvailableChallenges />
+				{#each availableChallenge as challenge}
+					<AvailableChallenge {challenge} />
+				{/each}
 			</div>
 		{:else if activeTab === 'Active Challenges'}
 			<div
