@@ -62,7 +62,7 @@
 		</div>
 	</div>
 
-	<div slot="description" class="p-2 rounded bg-zinc-200 whitespace-normal">
+	<div slot="description">
 		{challenge.description}
 	</div>
 
@@ -112,7 +112,7 @@
 		<button
 			on:click={() => enterChallenge()}
 			disabled={!daysSelected.length || !numWeeks || entryCost > sunBalance}
-			class="my-2 px-2 py-1 flex justify-center gap-1 bg-gradient-to-r from-cyan-300 to-cyan-500 text-cyan-50 rounded disabled:opacity-60"
+			class="mt-2 px-2 py-1 flex justify-center gap-1 bg-gradient-to-r from-cyan-300 to-cyan-500 text-cyan-50 rounded disabled:opacity-60"
 		>
 			{#if !enterChallengeLoading}
 				{#if !enterSuccess}

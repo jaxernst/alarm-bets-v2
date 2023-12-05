@@ -30,7 +30,7 @@
 			</div>
 			<div class="flex flex-col gap-2 p-1">
 				<div class="p-2">
-					<div class="p-1 rounded bg-zinc-200 whitespace-normal">
+					<div class="p-2 rounded-lg bg-zinc-200 whitespace-normal">
 						<slot name="description" />
 					</div>
 				</div>
