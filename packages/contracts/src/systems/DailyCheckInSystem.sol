@@ -12,8 +12,8 @@ import { IWorld } from "../codegen/world/IWorld.sol";
 contract DailyCheckInSystem is System {
   string public constant CHALLENGE_NAME = "Daily Check In";
   uint32 public constant SUBMISSION_WINDOW = 15 minutes;
-  uint32 public constant SUN_REWARD_PER_DAY = 10;
-  uint32 public constant SUN_COST_PER_DAY = 6;
+  uint32 public constant SUN_REWARD_PER_DAY = 11;
+  uint32 public constant SUN_COST_PER_DAY = 5;
 
   function DailyCheckIn_enter(
     bytes32 wakeupObjective,
