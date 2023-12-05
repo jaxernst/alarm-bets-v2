@@ -53,10 +53,10 @@
 		{#if activeTab === 'Available Challenges'}
 			<div
 				transition:fade
-				class="flex flex-col overflow-y-auto row-start-1 col-start-1 whitespace-nowrap text-sm"
+				class="flex flex-col gap-2 overflow-y-auto row-start-1 col-start-1 whitespace-nowrap text-sm"
 			>
 				{#each availableChallenge as challenge}
-					<AvailableChallenge {challenge} />
+					<AvailableChallenge {challenge} {wakeupGoal} />
 				{/each}
 			</div>
 		{:else if activeTab === 'Active Challenges'}

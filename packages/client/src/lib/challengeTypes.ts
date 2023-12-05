@@ -26,14 +26,16 @@ export type ChallengeInfo = {
 	}
 
 	attestionRequired?: boolean
+	submissionWindowMin: number
 }
 
 export const challengeTypes: ChallengeInfo[] = [
 	{
 		name: 'Daily Check in',
 		requiredLevel: 1,
-		sunReward: { amount: 10, currency: 'suns' },
+		sunReward: { amount: 11, currency: 'suns' },
 		sunEntryStake: { type: 'fixed', currency: 'suns', amount: 5 },
+		submissionWindowMin: 15,
 		description:
 			'Wakeup before your wakeup goal time and check in to earn suns. If you miss your wakeup on the days you select, no reward is given'
 	},
@@ -43,6 +45,7 @@ export const challengeTypes: ChallengeInfo[] = [
 		sunReward: { amount: 35, currency: 'suns' },
 		sunEntryStake: { type: 'fixed', currency: 'suns', amount: 18 },
 		requiredLevel: 5,
+		submissionWindowMin: 15,
 		description: 'Wakeup and solve a puzzle before your goal time to earn suns'
 	}
 ]

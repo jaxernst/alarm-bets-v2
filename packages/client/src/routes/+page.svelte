@@ -39,7 +39,6 @@
 	<div class="w-full px-2">
 		<div class="text-sm text-cyan-500 flex justify-between">
 			<div class="w-full flex gap-1">
-				<div class="flex justify-between items-center text-green-400 font-semibold">Goals</div>
 				<div class="px-2 flex gap-2">
 					{#each goalTimes as time, i}
 						<TabPill
