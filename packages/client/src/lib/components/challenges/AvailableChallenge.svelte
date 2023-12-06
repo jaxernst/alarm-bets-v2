@@ -18,7 +18,11 @@
 
 	let daysSelected: number[] = []
 	let numWeeks = 0
-	$: entryCost = daysSelected.length * numWeeks * (challenge.sunEntryStake.amount ?? 0)
+
+	$: sunEntryCost =
+		challenge.sunEntryStake.type === 'fixed'
+			? daysSelected.length * numWeeks * (challenge.sunEntryStake.amount ?? 0)
+			: 0
 
 	let enterSuccess = false
 	let enterChallengeLoading = false
@@ -105,26 +109,29 @@
 				type="number"
 				min="0"
 				class="w-[30px] text-center bg-zinc-200 rounded"
-				on:input={(e) => (numWeeks = e.target?.value)}
+				on:input={(e) => {
+					// @ts-ignore
+					numWeeks = e.target?.value
+				}}
 			/>
 			weeks
 		</div>
 		<button
 			on:click={() => enterChallenge()}
-			disabled={!daysSelected.length || !numWeeks || entryCost > sunBalance}
-			class="mt-2 px-2 py-1 flex justify-center gap-1 bg-gradient-to-r from-cyan-300 to-cyan-500 text-cyan-50 rounded disabled:opacity-60"
+			disabled={!daysSelected.length || !numWeeks || sunEntryCost > sunBalance}
+			class="mt- 2 px-2 py-1 flex justify-center gap-1 bg-gradient-to-r from-cyan-300 to-cyan-500 text-cyan-50 rounded disabled:opacity-60"
 		>
 			{#if !enterChallengeLoading}
 				{#if !enterSuccess}
 					Enter <span class="font-semibold">{timeString(wakeupGoalTime)}</span>
 					{challenge.name}
-					{#if entryCost}
+					{#if sunEntryCost}
 						<div
 							class={`flex items-center font-semibold ${
-								entryCost > sunBalance ? 'fill-red-500 text-red-500' : 'fill-cyan-50'
+								sunEntryCost > sunBalance ? 'fill-red-500 text-red-500' : 'fill-cyan-50'
 							}`}
 						>
-							({entryCost}{' '}
+							({sunEntryCost}{' '}
 							<div class="w-4">
 								<Sun />
 							</div>
