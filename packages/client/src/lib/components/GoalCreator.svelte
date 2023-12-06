@@ -144,7 +144,7 @@
 
 											<button on:click={() => playerTimezoneOffset++} class="font-semibold"
 												>{'>'}</button
->
+											>
 										{/if}
 									</div>
 								</button>
@@ -154,8 +154,8 @@
 							<button
 								transition:slide={{ axis: 'x' }}
 								on:click|stopPropagation={() => submitGoal()}
-								class={`p-3 hover:bg-cyan-300 transition-all duration-300 rounded-full`}
-								>
+								class={`p-3 hover:bg-cyan-400 transition-all duration-300 rounded-full`}
+							>
 								<div
 									transition:scale={{ easing: cubicInOut, delay: 50 }}
 									class="w-5 animate-pulse fill-green-200"
