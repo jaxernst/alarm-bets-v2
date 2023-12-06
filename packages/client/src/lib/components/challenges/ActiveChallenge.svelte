@@ -6,7 +6,7 @@
 	import { formatTime, systemTimestamp, timeString, timeString24Hour } from '$lib/util'
 	import ActiveDays from '../ActiveDays.svelte'
 	import Sun from '$lib/icons/Sun.svelte'
-	import WakeupGoal from '../WakeupGoal.svelte'
+	import WakeupGoal from '../wakeup-goals/WakeupGoal.svelte'
 	import ChallengeCard from './ChallengeCard.svelte'
 	import { challengeTypes } from '$lib/challengeTypes'
 	import { fade } from 'svelte/transition'

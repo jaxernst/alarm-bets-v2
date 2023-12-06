@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Entity } from '@latticexyz/recs'
 	import TabPill from './design-sys/TabPill.svelte'
-	import WakeupGoal from './WakeupGoal.svelte'
+	import WakeupGoal from './wakeup-goals/WakeupGoal.svelte'
 	import { getActiveWakeupChallenges } from '$lib/mud/mudStore'
 	import { fade } from 'svelte/transition'
 	import AvailableChallenge from './challenges/AvailableChallenge.svelte'
