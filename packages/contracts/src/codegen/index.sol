@@ -12,10 +12,10 @@ import { WakeupConfirmations, WakeupConfirmationsTableId } from "./tables/Wakeup
 import { Suns, SunsTableId } from "./tables/Suns.sol";
 import { Level, LevelTableId } from "./tables/Level.sol";
 import { WakeupChallenge, WakeupChallengeTableId } from "./tables/WakeupChallenge.sol";
+import { ChallengeName, ChallengeNameTableId } from "./tables/ChallengeName.sol";
 import { TargetWakeupObjective, TargetWakeupObjectiveTableId } from "./tables/TargetWakeupObjective.sol";
 import { ExpirationTime, ExpirationTimeTableId } from "./tables/ExpirationTime.sol";
 import { ChallengeStatus, ChallengeStatusTableId } from "./tables/ChallengeStatus.sol";
-import { ChallengeName, ChallengeNameTableId } from "./tables/ChallengeName.sol";
 import { ChallengeDays, ChallengeDaysTableId } from "./tables/ChallengeDays.sol";
 import { SunsStaked, SunsStakedTableId } from "./tables/SunsStaked.sol";
 import { EthStaked, EthStakedTableId } from "./tables/EthStaked.sol";

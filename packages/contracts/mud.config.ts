@@ -21,10 +21,10 @@ export default mudConfig({
 
     // Wakeup challenge components
     WakeupChallenge: "bool",
+    ChallengeName: "string",
     TargetWakeupObjective: "bytes32",
     ExpirationTime: "uint256",
     ChallengeStatus: "Status",
-    ChallengeName: "string",
     ChallengeDays: "uint8[]",
     SunsStaked: "uint256",
     EthStaked: "uint256",
@@ -46,7 +46,6 @@ export default mudConfig({
   systems: {
     AlarmScheduleSystem: {
       openAccess: true,
-      accessList: ["DailyCheckInSystem"],
     },
   },
 
