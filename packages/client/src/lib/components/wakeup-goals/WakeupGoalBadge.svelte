@@ -58,4 +58,9 @@
 			{goalSuns}
 		</div>
 	</div>
+	<div
+		class="my-1 self-start text-sm font-semibold px-2 rounded-full bg-gradient-to-r from-cyan-300 to-cyan-400 text-cyan-50"
+	>
+		Mint
+	</div>
 </div>
