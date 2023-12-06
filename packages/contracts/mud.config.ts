@@ -26,7 +26,7 @@ export default mudConfig({
     ExpirationTime: "uint256",
     ChallengeStatus: "Status",
     ChallengeDays: "uint8[]",
-    SunsStaked: "uint256",
+    SunsStaked: "uint32",
     EthStaked: "uint256",
 
     AlarmSchedule: {

@@ -9,40 +9,9 @@
 	import WakeupGoal from '../WakeupGoal.svelte'
 	import ChallengeCard from './ChallengeCard.svelte'
 	import { challengeTypes } from '$lib/challengeTypes'
+	import { fade } from 'svelte/transition'
 
 	export let challenge: Entity
-
-	$: [challengeName, targetWakeupGoal, expiration, days, sunsStaked, alarmSchedule] = [
-		getComponentValueStrict($mud.components.ChallengeName, challenge).value,
-		getComponentValueStrict($mud.components.TargetWakeupObjective, challenge).value,
-		Number(getComponentValueStrict($mud.components.ExpirationTime, challenge).value),
-		getComponentValueStrict($mud.components.ChallengeDays, challenge).value,
-		getComponentValueStrict($mud.components.SunsStaked, challenge).value,
-		getComponentValueStrict($mud.components.AlarmSchedule, challenge)
-	]
-
-	$: challengeInfo = challengeTypes.find((type) => {
-		return type.name === challengeName
-	})
-
-	$: console.log(challengeInfo)
-
-	$: submissionWindow = alarmSchedule.submissionWindow
-	$: numWakeups = alarmSchedule.alarmEntries
-
-	$: targetWakeupGoalTime = getComponentValueStrict(
-		$mud.components.AlarmTime,
-		targetWakeupGoal as Entity
-	).value
-
-	let lastBlockTimestamp = 0
-	const lastBlockNumber = async () => {
-		const lastBlock = await $mud.network.publicClient.getBlock()
-		lastBlockTimestamp = Number(lastBlock.timestamp)
-	}
-	onMount(() => {
-		setInterval(async () => {}, 3000)
-	})
 
 	const dayMap: any = {
 		1: 'Su',
@@ -54,15 +23,50 @@
 		7: 'S'
 	}
 
+	$: [challengeName, expiration, days, sunsStaked, alarmSchedule] = [
+		getComponentValueStrict($mud.components.ChallengeName, challenge).value,
+		Number(getComponentValueStrict($mud.components.ExpirationTime, challenge).value),
+		getComponentValueStrict($mud.components.ChallengeDays, challenge).value,
+		getComponentValueStrict($mud.components.SunsStaked, challenge).value,
+		getComponentValueStrict($mud.components.AlarmSchedule, challenge)
+	]
+
+	$: challengeInfo = challengeTypes.find((type) => {
+		return type.name === challengeName
+	})
+
+	$: submissionWindow = alarmSchedule.submissionWindow
+	$: numWakeups = alarmSchedule.alarmEntries
+
+	$: sunBalance = (challengeInfo?.sunReward.amount ?? 0) * numWakeups - sunsStaked
+
 	let timeToNextDeadline: null | number = null
 	onMount(async () => {
 		const dueTimestamp = await $mud.systemCalls.nextDeadlineTimestamp(challenge)
-
 		setInterval(() => {
 			const curTimestamp = systemTimestamp()
 			timeToNextDeadline = dueTimestamp - curTimestamp
+			if (timeToNextDeadline < 0) timeToNextDeadline = null
 		}, 1000)
 	})
+
+	let challengeSubmitLoading = false
+	let challengeSubmitError = ''
+	let entrySubmitted = false
+	const submitChallengeEntry = async () => {
+		if (challengeName !== 'Daily Check In') throw 'Not implemented'
+
+		challengeSubmitError = ''
+		challengeSubmitLoading = true
+		try {
+			await $mud.systemCalls.recordEntry(challenge)
+			entrySubmitted = true
+		} catch (e) {
+			challengeSubmitError = 'Error recording entry. Were you too late?'
+		} finally {
+			challengeSubmitLoading = false
+		}
+	}
 </script>
 
 <ChallengeCard>
@@ -72,17 +76,27 @@
 				{challengeName}
 			</div>
 			{#if timeToNextDeadline}
-				<div class="text-xs px-2">Due in {formatTime(timeToNextDeadline)}...</div>
+				<div class="text-xs px-2 text-zinc-400">Due in {formatTime(timeToNextDeadline)}...</div>
 			{/if}
 		</div>
-		<div class="flex justify-center text-sm text-zinc-100 gap-1">
+		<div class="flex justify-center items-center font-semibold text-cyan-50 gap-2">
 			{#each days as day}
 				<div
-					class="w-6 h-6 flex items-center justify-center text-sm bg-zinc-400 font-semibold rounded-full"
+					class="w-6 h-6 flex items-center text-sm justify-center bg-gradient-to-r from-cyan-400 to-cyan-500 font-semibold rounded-full"
 				>
 					{dayMap[day]}
 				</div>
 			{/each}
+			<div
+				class={`flex gap-1 p-2 items-center text-base ${
+					sunBalance > 0 ? 'text-green-500' : 'text-red-500'
+				}`}
+			>
+				{sunBalance > 0 ? '+' : ''}{sunBalance}
+				<div class="w-4 fill-cyan-400">
+					<Sun />
+				</div>
+			</div>
 		</div>
 	</div>
 
@@ -128,11 +142,17 @@
 		</div>
 
 		<button
-			class="py-1 px-2 self-center bg-gradient-to-r from-cyan-300 to-cyan-500 text-cyan-100 rounded font-semibold disabled:opacity-60"
-			disabled={(timeToNextDeadline ?? 0) > submissionWindow}
-			on:click={() => $mud.systemCalls.recordEntry(challenge)}
+			class="py-1 px-2 self-center flex justify-center bg-gradient-to-r from-cyan-400 to-cyan-500 text-cyan-100 rounded font-semibold disabled:opacity-60"
+			disabled={(timeToNextDeadline ?? 0) > submissionWindow || entrySubmitted}
+			on:click={() => submitChallengeEntry()}
 		>
-			Wakeup
+			{#if challengeSubmitLoading}
+				<div in:fade class="w-4 fill-cyan-50 py-1 animate-spin"><Sun /></div>
+			{:else if entrySubmitted}
+				Success!
+			{:else}
+				Wakeup
+			{/if}
 		</button>
 	</div>
 </ChallengeCard>

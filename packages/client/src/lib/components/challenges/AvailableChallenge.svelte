@@ -42,11 +42,10 @@
 </script>
 
 <ChallengeCard>
-	<div slot="header" class="flex justify-between gap-2">
+	<div slot="header" class={`flex justify-between gap-2 ${qualifies ? '' : 'opacity-60'}`}>
 		<div class="flex gap-2">
 			<div
-				class={`flex items-center px-2 bg-gradient-to-r from-cyan-300 to-cyan-500 text-cyan-50 font-bold rounded-full text-sm
-				${qualifies ? '' : 'opacity-60'}`}
+				class={`flex items-center px-2 bg-gradient-to-r from-cyan-400 to-cyan-500 text-cyan-50 font-bold rounded-full text-sm`}
 			>
 				{`Level ${challenge.requiredLevel}`}
 			</div>
@@ -118,8 +117,8 @@
 		</div>
 		<button
 			on:click|stopPropagation={() => enterChallenge()}
-			disabled={!daysSelected.length || !numWeeks || sunEntryCost > sunBalance}
-			class="mt-2 px-2 py-1 flex justify-center gap-1 bg-gradient-to-r from-cyan-300 to-cyan-500 text-cyan-50 rounded disabled:opacity-60 enabled:hover:shadow-md enabled:hover:to-cyan-400 transition-all"
+			disabled={!daysSelected.length || !numWeeks || sunEntryCost > sunBalance || enterSuccess}
+			class="mt-2 px-2 py-1 flex justify-center gap-1 bg-gradient-to-r from-cyan-400 to-cyan-400 text-cyan-50 rounded disabled:opacity-60 enabled:hover:shadow-md enabled:hover:to-cyan-400 transition-all"
 		>
 			{#if !enterChallengeLoading}
 				{#if !enterSuccess}
