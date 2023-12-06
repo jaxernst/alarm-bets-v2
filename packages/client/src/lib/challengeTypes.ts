@@ -31,7 +31,7 @@ export type ChallengeInfo = {
 
 export const challengeTypes: ChallengeInfo[] = [
 	{
-		name: 'Daily Check in',
+		name: 'Daily Check In',
 		requiredLevel: 1,
 		sunReward: { amount: 11, currency: 'suns' },
 		sunEntryStake: { type: 'fixed', currency: 'suns', amount: 5 },

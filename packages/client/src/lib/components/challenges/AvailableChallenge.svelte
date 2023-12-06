@@ -31,7 +31,7 @@
 		enterChallengeLoading = true
 		enterChallengeError = ''
 		try {
-			await $mud.systemCalls.enterDailyCheckInChallenge(wakeupGoal, daysSelected, numWeeks)
+			await $mud.systemCalls.enterDailyCheckInChallenge(wakeupGoal, daysSelected.sort(), numWeeks)
 			enterSuccess = true
 		} catch (e: any) {
 			enterChallengeError = e.message ?? 'Unknown error'
@@ -45,14 +45,14 @@
 	<div slot="header" class="flex justify-between gap-2">
 		<div class="flex gap-2">
 			<div
-				class={`flex items-center px-2 bg-cyan-500 text-cyan-100 font-semibold rounded-full text-sm
+				class={`flex items-center px-2 bg-gradient-to-r from-cyan-300 to-cyan-500 text-cyan-50 font-bold rounded-full text-sm
 				${qualifies ? '' : 'opacity-60'}`}
 			>
 				{`Level ${challenge.requiredLevel}`}
 			</div>
 			<div class="text-lg font-bold">{challenge.name}</div>
 		</div>
-		<div class="flex gap-3 fill-cyan-500">
+		<div class="flex gap-3 fill-cyan-500 text-base">
 			<div class="flex gap-1 items-center text-green-500 font-semibold">
 				+{challenge.sunReward.amount}
 				<div class="w-3"><Sun /></div>
@@ -117,9 +117,9 @@
 			weeks
 		</div>
 		<button
-			on:click={() => enterChallenge()}
+			on:click|stopPropagation={() => enterChallenge()}
 			disabled={!daysSelected.length || !numWeeks || sunEntryCost > sunBalance}
-			class="mt- 2 px-2 py-1 flex justify-center gap-1 bg-gradient-to-r from-cyan-300 to-cyan-500 text-cyan-50 rounded disabled:opacity-60"
+			class="mt-2 px-2 py-1 flex justify-center gap-1 bg-gradient-to-r from-cyan-300 to-cyan-500 text-cyan-50 rounded disabled:opacity-60 enabled:hover:shadow-md enabled:hover:to-cyan-400 transition-all"
 		>
 			{#if !enterChallengeLoading}
 				{#if !enterSuccess}
@@ -131,8 +131,8 @@
 								sunEntryCost > sunBalance ? 'fill-red-500 text-red-500' : 'fill-cyan-50'
 							}`}
 						>
-							({sunEntryCost}{' '}
-							<div class="w-4">
+							({sunEntryCost}
+							<div class="w-4 ml-1">
 								<Sun />
 							</div>
 							)

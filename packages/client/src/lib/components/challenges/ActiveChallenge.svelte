@@ -7,19 +7,28 @@
 	import ActiveDays from '../ActiveDays.svelte'
 	import Sun from '$lib/icons/Sun.svelte'
 	import WakeupGoal from '../WakeupGoal.svelte'
+	import ChallengeCard from './ChallengeCard.svelte'
+	import { challengeTypes } from '$lib/challengeTypes'
 
 	export let challenge: Entity
 
-	let open = true
-
-	$: [challengeName, targetWakeupGoal, expiration, days, sunsStaked, submissionWindow] = [
+	$: [challengeName, targetWakeupGoal, expiration, days, sunsStaked, alarmSchedule] = [
 		getComponentValueStrict($mud.components.ChallengeName, challenge).value,
 		getComponentValueStrict($mud.components.TargetWakeupObjective, challenge).value,
 		Number(getComponentValueStrict($mud.components.ExpirationTime, challenge).value),
 		getComponentValueStrict($mud.components.ChallengeDays, challenge).value,
 		getComponentValueStrict($mud.components.SunsStaked, challenge).value,
-		getComponentValueStrict($mud.components.AlarmSchedule, challenge).submissionWindow
+		getComponentValueStrict($mud.components.AlarmSchedule, challenge)
 	]
+
+	$: challengeInfo = challengeTypes.find((type) => {
+		return type.name === challengeName
+	})
+
+	$: console.log(challengeInfo)
+
+	$: submissionWindow = alarmSchedule.submissionWindow
+	$: numWakeups = alarmSchedule.alarmEntries
 
 	$: targetWakeupGoalTime = getComponentValueStrict(
 		$mud.components.AlarmTime,
@@ -56,8 +65,8 @@
 	})
 </script>
 
-<div class="p-3 flex flex-col gap-2 text-lg bg-zinc-100 text-zinc-400 rounded-lg">
-	<div class="w-full flex justify-between items-center">
+<ChallengeCard>
+	<div slot="header" class="w-full flex justify-between items-center">
 		<div>
 			<div class="font-bold text-xl">
 				{challengeName}
@@ -77,14 +86,12 @@
 		</div>
 	</div>
 
-	{#if open}
-		<div class="border-[.5px] w-full border-zinc-200" />
-		<div class="p-2">
-			<div class="bg-zinc-200 bg-opacity-70 p-2 rounded-lg text-sm">
-				Wakeup before your goal time and check in to earn suns on the days you selected. Missing a
-				deadline results in lost Suns!
-			</div>
-		</div>
+	<div slot="description">
+		Wakeup before your goal time and check in to earn suns on the days you selected. Missing a
+		deadline results in lost Suns!
+	</div>
+
+	<div slot="details" class="flex flex-col gap-3">
 		<div class="flex flex-wrap gap-4 justify-center fill-cyan-500">
 			<div class="flex gap-1 items-center">
 				<div class="text-cyan-500 font-semibold">
@@ -95,14 +102,14 @@
 			</div>
 			<div class="flex items-center gap-1">
 				<div class="text-cyan-500 font-semibold">
-					{10}
+					{challengeInfo?.sunReward.amount}
 				</div>
 				<span><div class="w-3"><Sun /></div></span>
 				next reward
 			</div>
 			<div class="flex items-center gap-1">
 				<div class="text-cyan-500 font-semibold">
-					{0}
+					{numWakeups}
 				</div>
 				wakeups confirmed
 			</div>
@@ -127,5 +134,5 @@
 		>
 			Wakeup
 		</button>
-	{/if}
-</div>
+	</div>
+</ChallengeCard>
