@@ -29,6 +29,8 @@ export default mudConfig({
     SunsStaked: "uint32",
     EthStaked: "uint256",
 
+    TimezoneAttested: "bool",
+
     AlarmSchedule: {
       valueSchema: {
         alarmTime: "uint32",

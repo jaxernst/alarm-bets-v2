@@ -19,4 +19,5 @@ import { ChallengeStatus, ChallengeStatusTableId } from "./tables/ChallengeStatu
 import { ChallengeDays, ChallengeDaysTableId } from "./tables/ChallengeDays.sol";
 import { SunsStaked, SunsStakedTableId } from "./tables/SunsStaked.sol";
 import { EthStaked, EthStakedTableId } from "./tables/EthStaked.sol";
+import { TimezoneAttested, TimezoneAttestedTableId } from "./tables/TimezoneAttested.sol";
 import { AlarmSchedule, AlarmScheduleData, AlarmScheduleTableId } from "./tables/AlarmSchedule.sol";
