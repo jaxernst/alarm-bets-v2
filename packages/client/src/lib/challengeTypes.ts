@@ -18,15 +18,16 @@ export type ChallengeInfo = {
 	name: string
 	description: string
 	requiredLevel: number
-	sunEntryStake: Stake<'suns'>
+	sunEntryStake?: Stake<'suns'>
 	ethEntryStake?: Stake<'eth'>
 	sunReward: {
 		amount: number
 		currency: 'suns'
 	}
 
-	attestionRequired?: boolean
+	attestationRequired?: boolean
 	submissionWindowMin: number
+	numPlayers: number
 }
 
 export const challengeTypes: ChallengeInfo[] = [
@@ -36,16 +37,38 @@ export const challengeTypes: ChallengeInfo[] = [
 		sunReward: { amount: 11, currency: 'suns' },
 		sunEntryStake: { type: 'fixed', currency: 'suns', amount: 5 },
 		submissionWindowMin: 15,
+		numPlayers: 1,
 		description:
 			'Wakeup before your wakeup goal time and check in to earn suns. If you miss your wakeup on the days you select, no reward is given'
 	},
 	{
-		name: 'Wakeup Wordle',
-		attestionRequired: true,
+		name: "Stake It 'Til You Wake It",
+		requiredLevel: 1,
+		sunReward: { amount: 16, currency: 'suns' },
+		ethEntryStake: { type: 'variable', currency: 'eth', minAmount: 0.01 },
+		submissionWindowMin: 15,
+		numPlayers: 1,
+		description:
+			'Stake Eth, Wakeup before your wakeup goal time, and get back the Eth with a Sun bonus!'
+	},
+	{
+		name: 'Wakeup Wordle (Single Player)',
+		attestationRequired: true,
 		sunReward: { amount: 35, currency: 'suns' },
 		sunEntryStake: { type: 'fixed', currency: 'suns', amount: 18 },
 		requiredLevel: 5,
 		submissionWindowMin: 15,
+		numPlayers: 1,
+		description: 'Wakeup and solve a puzzle before your goal time to earn suns'
+	},
+	{
+		name: 'Wakeup Wordle (1v1)',
+		attestationRequired: true,
+		sunReward: { amount: 35, currency: 'suns' },
+		sunEntryStake: { type: 'fixed', currency: 'suns', amount: 18 },
+		requiredLevel: 5,
+		submissionWindowMin: 15,
+		numPlayers: 2,
 		description: 'Wakeup and solve a puzzle before your goal time to earn suns'
 	}
 ]

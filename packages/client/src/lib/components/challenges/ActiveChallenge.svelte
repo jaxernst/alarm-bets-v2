@@ -60,6 +60,7 @@
 		challengeSubmitLoading = true
 		try {
 			await $mud.systemCalls.recordEntry(challenge)
+
 			entrySubmitted = true
 		} catch (e) {
 			challengeSubmitError = 'Error recording entry. Were you too late?'
@@ -151,7 +152,7 @@
 			{:else if entrySubmitted}
 				Success!
 			{:else}
-				Wakeup
+				Wakeup in {timeToNextDeadline ? formatTime(timeToNextDeadline - submissionWindow) : ''}
 			{/if}
 		</button>
 	</div>

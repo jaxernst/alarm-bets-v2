@@ -7,6 +7,7 @@
 	import ActiveDaysInput from '../ActiveDaysInput.svelte'
 	import { timeString } from '$lib/util'
 	import { fade } from 'svelte/transition'
+	import EthSymbol from '$lib/icons/EthSymbol.svelte'
 
 	export let challenge: ChallengeInfo
 	export let wakeupGoal: Entity
@@ -20,7 +21,7 @@
 	let numWeeks = 0
 
 	$: sunEntryCost =
-		challenge.sunEntryStake.type === 'fixed'
+		challenge.sunEntryStake?.type === 'fixed'
 			? daysSelected.length * numWeeks * (challenge.sunEntryStake.amount ?? 0)
 			: 0
 
@@ -56,11 +57,23 @@
 				+{challenge.sunReward.amount}
 				<div class="w-3"><Sun /></div>
 			</div>
-			{#if challenge.sunEntryStake.type === 'fixed'}
+			{#if challenge.sunEntryStake?.type === 'fixed'}
 				<div class="flex gap-1 items-center text-red-500 font-semibold">
 					-{challenge.sunEntryStake.amount}
 					<div class="w-3"><Sun /></div>
 				</div>
+			{/if}
+			{#if challenge.ethEntryStake}
+				{#if challenge.ethEntryStake.type === 'variable'}
+					<div class="flex gap-1 items-center text-red-500 font-semibold">
+						<div class="w-4"><EthSymbol /></div>
+					</div>
+				{:else}
+					<div class="flex gap-1 items-center text-red-500 font-semibold">
+						-{challenge.ethEntryStake.amount}
+						<div class="w-4"><EthSymbol /></div>
+					</div>
+				{/if}
 			{/if}
 		</div>
 	</div>
@@ -69,24 +82,41 @@
 		{challenge.description}
 	</div>
 
-	<div slot="details" class="flex flex-col gap-1">
-		<div class="text-sm flex gap-2">
+	<div slot="details" class="flex flex-col gap-1 fill-cyan-500">
+		<div class="text-sm flex items-center gap-2">
 			<span class="font-semibold">Entry stake: </span>
-			{#if challenge.sunEntryStake.type === 'fixed'}
-				<div class="flex gap-1 items-center">
-					{challenge.sunEntryStake.amount}
-					<div class="w-3 fill-cyan-500"><Sun /></div>
-					{'/ day'}
-				</div>
-			{:else}
-				Variable
+			{#if challenge.sunEntryStake}
+				{#if challenge.sunEntryStake?.type === 'fixed'}
+					<div class="flex gap-1 items-center">
+						{challenge.sunEntryStake?.amount}
+						<div class="w-3 fill-cyan-500"><Sun /></div>
+						{'/ day'}
+					</div>
+				{:else}
+					Variable
+				{/if}
+			{/if}
+			{#if challenge.ethEntryStake}
+				{#if challenge.ethEntryStake.type === 'variable'}
+					<input
+						type="number"
+						value=".001"
+						step=".001"
+						min={challenge.ethEntryStake.minAmount}
+						class="w-[80px] text-center bg-zinc-200 rounded"
+					/>
+				{:else}
+					{challenge.ethEntryStake.amount}
+				{/if}
+				<div class="w-4"><EthSymbol /></div>
+				{'($5.24)'}
 			{/if}
 		</div>
 		<div class="text-sm flex gap-2">
 			<span class="font-semibold">Reward: </span>
 			<div class="flex gap-1 items-center">
 				{challenge.sunReward.amount}
-				<div class="w-3 fill-cyan-500"><Sun /></div>
+				<div class="w-3"><Sun /></div>
 				{'/ day'}
 			</div>
 		</div>
