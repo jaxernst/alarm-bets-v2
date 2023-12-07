@@ -1,8 +1,11 @@
 <script>
+	import { page } from '$app/stores'
 	import NavBar from '$lib/components/NavBar.svelte'
 	import Wallet from '$lib/icons/Wallet.svelte'
 	import { mud } from '$lib/mud/mudStore'
 	import '../app.css'
+
+	$: pageRoute = $page.route.id
 </script>
 
 <div class="flex justify-center">
@@ -21,7 +24,9 @@
 			<div class="flex-grow overflow-y-auto min-h-min">
 				<slot />
 			</div>
-			<NavBar />
+			{#if pageRoute !== '/welcome'}
+				<NavBar />
+			{/if}
 		</div>
 	{/if}
 </div>
