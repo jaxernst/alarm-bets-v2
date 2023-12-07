@@ -73,7 +73,7 @@
 <ChallengeCard>
 	<div slot="header" class="w-full flex justify-between items-center">
 		<div>
-			<div class="font-bold text-xl">
+			<div class="font-bold text-cyan-600 text-lg">
 				{challengeName}
 			</div>
 			{#if timeToNextDeadline}

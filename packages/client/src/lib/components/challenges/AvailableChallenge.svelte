@@ -43,14 +43,17 @@
 </script>
 
 <ChallengeCard>
-	<div slot="header" class={`flex justify-between gap-2 ${qualifies ? '' : 'opacity-60'}`}>
+	<div
+		slot="header"
+		class={`flex flex-wrap justify-between gap-2 ${qualifies ? '' : 'opacity-60'}`}
+	>
 		<div class="flex gap-2">
 			<div
 				class={`flex items-center px-2 bg-gradient-to-r from-cyan-400 to-cyan-500 text-cyan-50 font-bold rounded-full text-sm`}
 			>
 				{`Level ${challenge.requiredLevel}`}
 			</div>
-			<div class="text-lg font-bold">{challenge.name}</div>
+			<div class="text-lg text-cyan-600 font-bold">{challenge.name}</div>
 		</div>
 		<div class="flex gap-3 fill-cyan-500 text-base">
 			<div class="flex gap-1 items-center text-green-500 font-semibold">

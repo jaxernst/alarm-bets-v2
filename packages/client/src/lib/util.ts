@@ -139,3 +139,7 @@ export const parseTimeString = (timeString: string) => {
 	// Calculate total seconds
 	return hours * 3600 + minutes * 60 + seconds
 }
+
+export const shortenAddress = (address: string, chars = 4) => {
+	return `${address.substring(0, chars + 2)}...${address.substring(address.length - chars)}`
+}

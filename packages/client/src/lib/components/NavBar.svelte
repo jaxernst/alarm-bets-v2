@@ -1,7 +1,25 @@
-<ul
-	class="hidden flex w-full justify-evenly py-2 bg-cyan-500 text-white font-bold rounded-t-lg min-w-[400px]"
->
-	<li><a href="/">Dashboard</a></li>
-	<li><a href="/challenges">Challenges</a></li>
-	<li>Friends</li>
-</ul>
+<script>
+	import { page } from '$app/stores'
+
+	$: selected = $page.route
+	console.log(selected, $page)
+</script>
+
+<div class="flex justify-center p-4">
+	<ul class="flex bg-cyan-500 rounded-full text-cyan-50 font-semibold">
+		<li
+			class={`${
+				$page.route.id === '/' ? 'bg-cyan-400' : ''
+			} px-4 py-2 rounded-full transition-all duration-500`}
+		>
+			<a href="/">Dashboard</a>
+		</li>
+		<li
+			class={`${
+				$page.route.id === '/leaderboard' ? 'bg-cyan-400' : ''
+			} px-4 py-2 rounded-full transition-all duration-500`}
+		>
+			<a href="/leaderboard">Leaderboard</a>
+		</li>
+	</ul>
+</div>
