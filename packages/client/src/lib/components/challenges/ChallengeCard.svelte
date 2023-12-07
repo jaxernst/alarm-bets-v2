@@ -18,7 +18,7 @@
 	}
 </script>
 
-<div use:openOnChildClick class="p-3 flex flex-col text-lg bg-zinc-100 text-zinc-400 rounded-lg">
+<div use:openOnChildClick class="p-3 flex flex-col text-lg bg-zinc-100 text-zinc-500 rounded-lg">
 	<div class="cursor-pointer">
 		<slot name="header" />
 	</div>

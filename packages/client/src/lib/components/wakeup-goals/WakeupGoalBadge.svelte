@@ -28,15 +28,20 @@
 	}
 </script>
 
-<div class="flex flex-col p-3 rounded-xl">
-	<div class="flex justify-between items-end text-sm text-cyan-400">
-		<div
-			class="text-cyan-500 border border-cyan-500 rounded-full px-2 font-semibold flex items-center"
-		>
-			Level {goalLevel} goal
+<div class="flex flex-col">
+	<div class="px-2 flex justify-between text-cyan-400 fill-cyan-400 font-semibold">
+		<div class="flex items-center text-sm gap-2">
+			<div class="w-4">
+				<Sun />
+			</div>
+			{goalSuns}
 		</div>
-		<div class="">by jaxer.eth</div>
+		<div>
+			Level
+			{goalLevel}
+		</div>
 	</div>
+
 	<div
 		class="whitespace-nowrap font-digital text-cyan-500 from-cyan-50 to-cyan-200 text-7xl font-bold text-center pt-[.45rem]"
 		style="line-height:.8em"
@@ -44,23 +49,12 @@
 		{timeString(goalTime)}
 	</div>
 
-	<div class="flex items-center justify-between">
+	<div class="flex items-center justify-center">
 		<ActiveDays
-			textSizeClass={'text-xs font-semibold '}
+			textSizeClass={'font-semibold'}
 			activeDays={challengeDays}
 			activeDayClass={'text-green-400 font-bold'}
 			inactiveDayClass={'text-zinc-300'}
 		/>
-		<div class="flex items-center text-sm gap-2 text-cyan-400 fill-cyan-400">
-			<div class="w-4 ">
-				<Sun />
-			</div>
-			{goalSuns}
-		</div>
-	</div>
-	<div
-		class="my-1 self-start text-sm font-semibold px-2 rounded-full bg-gradient-to-r from-cyan-300 to-cyan-400 text-cyan-50"
-	>
-		Mint
 	</div>
 </div>
