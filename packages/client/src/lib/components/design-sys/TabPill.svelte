@@ -6,6 +6,7 @@
 	export let inactiveClass = ''
 	export let paddingClass = 'px-2 py-1'
 	export let roundedClass = 'rounded-full'
+	export let extraClass = ''
 </script>
 
 <button
@@ -13,7 +14,7 @@
 	on:click
 	class={`${roundedClass} text-sm whitespace-nowrap font-semibold transition-color duration-200 ${paddingClass} ${
 		active ? activeClass : inactiveClass
-	}`}
+	} ${extraClass}`}
 >
 	<slot />
 </button>

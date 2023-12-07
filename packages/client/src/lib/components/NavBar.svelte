@@ -6,7 +6,7 @@
 </script>
 
 <div class="flex justify-center p-4">
-	<ul class="flex bg-cyan-500 rounded-full text-cyan-50 font-semibold">
+	<ul class="flex bg-cyan-500 rounded-full text-cyan-50 font-semibold shadow-inner">
 		<li
 			class={`${
 				$page.route.id === '/' ? 'bg-cyan-400' : ''

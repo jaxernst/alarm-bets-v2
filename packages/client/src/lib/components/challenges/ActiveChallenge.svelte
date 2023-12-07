@@ -143,7 +143,7 @@
 		</div>
 
 		<button
-			class="py-1 px-2 self-center flex justify-center bg-gradient-to-r from-cyan-400 to-cyan-500 text-cyan-100 rounded font-semibold disabled:opacity-60"
+			class="py-1 px-2 self-center flex justify-center bg-gradient-to-r from-cyan-400 to-cyan-500 text-cyan-100 rounded-md font-semibold disabled:opacity-60"
 			disabled={(timeToNextDeadline ?? 0) > submissionWindow || entrySubmitted}
 			on:click={() => submitChallengeEntry()}
 		>

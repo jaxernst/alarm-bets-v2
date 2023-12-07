@@ -24,7 +24,7 @@
 	</div>
 </div>
 
-<div class="flex flex-shrink flex-col overflow-y-auto rounded-t-2xl px-3">
+<div class="flex flex-shrink flex-col overflow-y-auto rounded-t-2xl px-3 pt-5">
 	<div class="py-3 flex items-center gap-3 text-cyan-400">
 		<TabPill
 			on:click={() => (activeTab = 'Active Challenges')}
@@ -47,23 +47,16 @@
 		</TabPill>
 	</div>
 
-	<div class="border-[.5px] border-cyan-400 w-full" />
-
-	<div class="py-4 grid text-zinc-400 flex-grow overflow-auto h-max">
-		{#if activeTab === 'Available Challenges'}
-			<div
-				transition:fade
-				class="flex flex-col gap-2 overflow-y-auto row-start-1 col-start-1 whitespace-nowrap text-sm"
-			>
+	<div class=" grid text-zinc-400 flex-grow overflow-auto h-max overflow-y-auto">
+		<div
+			transition:fade
+			class="px-3 py-2 flex flex-col gap-2 row-start-1 col-start-1 whitespace-nowrap overflow-visible text-sm"
+		>
+			{#if activeTab === 'Available Challenges'}
 				{#each availableChallenge as challenge}
 					<AvailableChallenge {challenge} {wakeupGoal} />
 				{/each}
-			</div>
-		{:else if activeTab === 'Active Challenges'}
-			<div
-				transition:fade
-				class="h-full row-start-1 col-start-1 flex flex-col items-stretch overflow-hidden"
-			>
+			{:else if activeTab === 'Active Challenges'}
 				{#if !activeChallenges.length}
 					<div class="text-sm">No active challenges ...</div>
 				{:else}
@@ -73,7 +66,7 @@
 						{/each}
 					</div>
 				{/if}
-			</div>
-		{/if}
+			{/if}
+		</div>
 	</div>
 </div>

@@ -18,7 +18,13 @@
 	}
 </script>
 
-<div use:openOnChildClick class="p-3 flex flex-col text-lg bg-zinc-100 text-zinc-500 rounded-lg">
+<div
+	use:openOnChildClick
+	class={`p-3 flex flex-col text-lg bg-gradient-to-b from-zinc-50 to-zinc-100 text-zinc-500 rounded-lg 
+					hover:shadow-md hover:scale-[102%] transition-all duration-200
+	  			${open ? 'shadow-md scale-[102%]' : ''}
+		`}
+>
 	<div class="cursor-pointer">
 		<slot name="header" />
 	</div>
