@@ -2,11 +2,13 @@
 	import { writable } from 'svelte/store'
 	import Plus from './Plus.svelte'
 	import GradientCard from './design-sys/GradientCard.svelte'
+	import { promptConnectWallet } from '$lib/components/WalletConnector.svelte'
 	import { fade, scale, slide } from 'svelte/transition'
 	import { cubicInOut, cubicOut } from 'svelte/easing'
 	import { localTzOffsetHrs, parseTimeString, readableTimezone } from '$lib/util'
 	import { mud } from '$lib/mud/mudStore'
 	import Sun from '$lib/icons/Sun.svelte'
+	import { userWallet } from '$lib/connectWallet'
 
 	export let onGoalCreated = () => {}
 	export let onClose = () => {}
@@ -21,7 +23,7 @@
 	function interactionListener(node: HTMLElement) {
 		const handleMouseover = () => (hovered = true)
 		const handleMouseout = () => (hovered = false)
-		const handleClickOutside = (event) => {
+		const handleClickOutside = (event: any) => {
 			if (Date.now() - mountTime < deferClickOutsideDuration) {
 				return
 			}
@@ -66,17 +68,45 @@
 
 	let submitLoading = false
 	const submitGoal = async () => {
-		const alarmTime = parseTimeString($alarmTimeInput)
 		submitLoading = true
 		try {
+			if (!$userWallet) {
+				await promptConnectWallet()
+			}
+
+			if (!$userWallet) throw 'No Wallet'
+
+			if (!$mud.ready) {
+				console.log('calling setup')
+				await mud.setup($userWallet)
+			}
+
+			const alarmTime = parseTimeString($alarmTimeInput)
+
 			await new Promise((resolve) => setTimeout(resolve, 800))
 			await $mud.systemCalls.createWakeupObjective(alarmTime, playerTimezoneOffset)
+
 			onGoalCreated()
 		} catch (e) {
 			console.error(e)
 		} finally {
 			inputActive = false
 			submitLoading = false
+		}
+	}
+
+	let nonFocussedPlaceholder = 'At what time would you like to wake up?'
+	let placeholder = nonFocussedPlaceholder
+	function focussedPlaceholder(node: HTMLInputElement) {
+		const onFocusIn = () => (placeholder = "e.g. '7:30am'")
+		const onFocusOut = () => (placeholder = nonFocussedPlaceholder)
+		node.addEventListener('focusin', onFocusIn)
+		node.addEventListener('focusout', onFocusOut)
+		return {
+			destroy: () => {
+				node.removeEventListener('focusin', onFocusIn)
+				node.removeEventListener('focusout', onFocusOut)
+			}
 		}
 	}
 </script>
@@ -115,8 +145,9 @@
 							class="flex flex-col w-full row-start-1 col-start-1 gap-3 overflow-hidden items-center"
 						>
 							<input
+								use:focussedPlaceholder
 								type="text"
-								placeholder="At what time would you like to wake up?"
+								{placeholder}
 								class={`self-stretch flex-grow font-semibold text-center bg-transparent placeholder-cyan-200 outline-none`}
 								bind:value={$alarmTimeInput}
 							/>

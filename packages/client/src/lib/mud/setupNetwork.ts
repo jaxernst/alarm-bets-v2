@@ -11,7 +11,11 @@ import {
 	createWalletClient,
 	type Hex,
 	parseEther,
-	type ClientConfig
+	type ClientConfig,
+	type WalletClient,
+	type Transport,
+	type Account,
+	type Chain
 } from 'viem'
 import { createFaucetService } from '@latticexyz/services/faucet'
 import { encodeEntity, syncToRecs } from '@latticexyz/store-sync/recs'
@@ -19,12 +23,7 @@ import { encodeEntity, syncToRecs } from '@latticexyz/store-sync/recs'
 import { getNetworkConfig } from './getNetworkConfig'
 import { world } from './world'
 import IWorldAbi from 'contracts/out/IWorld.sol/IWorld.abi.json'
-import {
-	createBurnerAccount,
-	getContract,
-	transportObserver,
-	type ContractWrite
-} from '@latticexyz/common'
+import { getContract, transportObserver, type ContractWrite } from '@latticexyz/common'
 
 import { Subject, share } from 'rxjs'
 
@@ -39,31 +38,18 @@ import { Subject, share } from 'rxjs'
 import mudConfig from 'contracts/mud.config'
 
 export type SetupNetworkResult = Awaited<ReturnType<typeof setupNetwork>>
+export type Wallet = WalletClient<Transport, Chain, Account>
 
-export async function setupNetwork() {
-	const networkConfig = await getNetworkConfig()
+export const networkConfig = {
+	...getNetworkConfig(),
+	transport: transportObserver(fallback([webSocket(), http()])),
+	pollingInterval: 1000
+} as const satisfies ClientConfig
 
-	/*
-	 * Create a viem public (read only) client
-	 * (https://viem.sh/docs/clients/public.html)
-	 */
-	const clientOptions = {
-		chain: networkConfig.chain,
-		transport: transportObserver(fallback([webSocket(), http()])),
-		pollingInterval: 1000
-	} as const satisfies ClientConfig
+export async function setupNetwork(userWallet: Wallet) {
+	if (!userWallet.account.address) throw 'No wallet address'
 
-	const publicClient = createPublicClient(clientOptions)
-
-	/*
-	 * Create a temporary wallet and a viem client for it
-	 * (see https://viem.sh/docs/clients/wallet.html).
-	 */
-	const burnerAccount = createBurnerAccount(networkConfig.privateKey as Hex)
-	const burnerWalletClient = createWalletClient({
-		...clientOptions,
-		account: burnerAccount
-	})
+	const publicClient = createPublicClient(networkConfig)
 
 	/*
 	 * Create an observable for contract writes that we can
@@ -78,7 +64,7 @@ export async function setupNetwork() {
 		address: networkConfig.worldAddress as Hex,
 		abi: IWorldAbi,
 		publicClient,
-		walletClient: burnerWalletClient,
+		walletClient: userWallet,
 		onWrite: (write) => write$.next(write)
 	})
 
@@ -102,7 +88,7 @@ export async function setupNetwork() {
 	 * run out.
 	 */
 	if (networkConfig.faucetServiceUrl) {
-		const address = burnerAccount.address
+		const address = userWallet.account.address
 		console.info('[Dev Faucet]: Player address -> ', address)
 
 		const faucet = createFaucetService(networkConfig.faucetServiceUrl)
@@ -127,12 +113,8 @@ export async function setupNetwork() {
 	return {
 		world,
 		components,
-		playerEntity: encodeEntity(
-			{ address: 'address' },
-			{ address: burnerWalletClient.account.address }
-		),
+		playerEntity: encodeEntity({ address: 'address' }, { address: userWallet.account.address }),
 		publicClient,
-		walletClient: burnerWalletClient,
 		latestBlock$,
 		storedBlockLogs$,
 		waitForTransaction,

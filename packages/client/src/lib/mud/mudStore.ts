@@ -1,8 +1,18 @@
 import mudConfig from 'contracts/mud.config'
-import { type SetupResult, setup } from './setup'
-import { writable, derived } from 'svelte/store'
+import { writable, derived, get } from 'svelte/store'
 import { mount as mountDevTools } from '@latticexyz/dev-tools'
-import { type Component, runQuery, Has, HasValue, type Entity } from '@latticexyz/recs'
+import {
+	type Component,
+	runQuery,
+	Has,
+	HasValue,
+	type Entity,
+	getComponentValue,
+	getComponentEntities
+} from '@latticexyz/recs'
+import { setupNetwork, type SetupNetworkResult, type Wallet } from './setupNetwork'
+import { createSystemCalls } from './createSystemCalls'
+import { userWallet } from '$lib/connectWallet'
 
 enum Status {
 	Inactive,
@@ -11,34 +21,37 @@ enum Status {
 }
 
 export const mud = (() => {
-	const mud = writable<SetupResult>()
-	const components = writable<SetupResult['components']>()
+	const mud = writable<SetupNetworkResult>()
+	const systemCalls = derived(mud, ($mud) => {
+		return $mud && createSystemCalls($mud)
+	})
+
 	const stateSynced = writable(false)
 
-	setup().then((mudSetupResult) => {
-		mud.set(mudSetupResult)
-		components.set(mudSetupResult.components)
+	const setup = async (walletClient: Wallet) => {
+		const network = await setupNetwork(walletClient)
+		mud.set(network)
 
-		const { network } = mudSetupResult
-
-		Object.entries(mudSetupResult.components).forEach(([componentName, component]) => {
+		/**
+		 * Subscribe to component updates and propgate those changes to the mud store
+		 */
+		Object.entries(network.components).forEach(([componentName, component]) => {
 			return (component as Component).update$.subscribe((update) => {
 				console.log('Component update', componentName, update)
-				components.update((components) => ({
-					...components,
-					[componentName]: update.component as any
+				mud.update((mud) => ({
+					...mud,
+					components: {
+						...mud.components,
+						[componentName]: update.component as any
+					} as any
 				}))
 			})
 		})
 
-		mudSetupResult.components.SyncProgress.update$.subscribe((progress) => {
-			stateSynced.set(progress.value.every((v) => v?.step === 'live'))
-		})
-
 		mountDevTools({
 			config: mudConfig,
+			walletClient: walletClient,
 			publicClient: network.publicClient,
-			walletClient: network.walletClient,
 			latestBlock$: network.latestBlock$,
 			storedBlockLogs$: network.storedBlockLogs$,
 			worldAddress: network.worldContract.address,
@@ -46,37 +59,70 @@ export const mud = (() => {
 			write$: network.write$,
 			recsWorld: network.world
 		})
+
+		/**
+		 * Wait for state to be synced before resolving setup promise
+		 */
+		return await new Promise((resolve) => {
+			stateSynced.subscribe((synced) => {
+				if (synced) resolve(true)
+			})
+		})
+	}
+
+	/**
+	 * Subscribe to the SyncProgress component to identify when all state is synced
+	 */
+	mud.subscribe((_mud) => {
+		if (!_mud?.components?.SyncProgress) return
+		stateSynced.set(
+			getComponentValue(_mud.components.SyncProgress, '0x' as Entity)?.step === 'live'
+		)
 	})
 
-	return derived([mud, components, stateSynced], ([$mud, $components, $stateSynced]) => {
-		if (!$mud) return undefined as unknown as SetupResult & { stateSynced: boolean }
-		return {
-			...$mud,
-			stateSynced: $stateSynced,
-			components: $components
+	let setupLoading = false
+
+	return {
+		...derived([mud, systemCalls, stateSynced], ([$network, $systemCalls, $stateSynced]) => {
+			return {
+				network: $network,
+				components: $network?.components,
+				systemCalls: $systemCalls,
+				stateSynced: $stateSynced,
+				ready: $stateSynced && $network.components && $systemCalls && $network
+			}
+		}),
+		setup: async (wallet: Wallet) => {
+			if (setupLoading || get(stateSynced)) return
+			setupLoading = true
+			try {
+				await setup(wallet)
+			} finally {
+				setupLoading = false
+			}
 		}
-	})
+	}
 })()
 
-export const user = derived(mud, ($mud) => {
-	return $mud?.network.walletClient.account.address
+export const user = derived(userWallet, ($userWallet) => {
+	return $userWallet?.account.address
 })
 
-export const userWakeupGoals = derived(mud, ($mud) => {
-	const user = $mud?.network.walletClient.account.address
-	if (!$mud || !user) return []
+export const userWakeupGoals = derived([mud, user], ([$mud, $user]) => {
+	if (!$mud.ready) return []
 
 	const { WakeupObjective, Creator } = $mud.components
-	const entities = runQuery([Has(WakeupObjective), HasValue(Creator, { value: user })])
+	const entities = runQuery([Has(WakeupObjective), HasValue(Creator, { value: $user })])
 	return Array.from(entities)
 })
 
 // Function to get all active wakeup challenges for a given wakeup goal
 export const getActiveWakeupChallenges = derived(mud, ($mud) => {
 	return (forGoal: Entity) => {
-		if (!$mud) return []
+		if (!$mud.ready) return []
 
 		const { WakeupChallenge, ChallengeStatus, TargetWakeupObjective } = $mud.components
+
 		const entities = runQuery([
 			Has(WakeupChallenge),
 			HasValue(TargetWakeupObjective, { value: forGoal }),
