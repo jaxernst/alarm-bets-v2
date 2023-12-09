@@ -24,10 +24,7 @@
 	let nextLevelSunRequirement = 100
 </script>
 
-<div
-	transition:fade
-	class="flex items-center justify-evenly gap-4 rounded-xl bg-gradient-to-b from-zinc-50 to-zinc-100 shadow-md py-6"
->
+<div transition:fade class="flex items-center justify-evenly gap-4 py-6">
 	<WakeupGoalBadge wakeupGoal={goal} />
 	{#key goalSuns}
 		<CircularProgress progress={Number(goalSuns) / nextLevelSunRequirement}>
