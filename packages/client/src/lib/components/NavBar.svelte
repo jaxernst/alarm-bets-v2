@@ -9,7 +9,7 @@
 	<ul class="flex bg-cyan-500 rounded-full text-cyan-50 font-semibold shadow-inner">
 		<li
 			class={`${
-				$page.route.id === '/' ? 'bg-cyan-400' : ''
+				$page.route.id === '/dashboard' ? 'bg-cyan-400' : ''
 			} px-4 py-2 rounded-full transition-all duration-500`}
 		>
 			<a href="/dashboard">Dashboard</a>

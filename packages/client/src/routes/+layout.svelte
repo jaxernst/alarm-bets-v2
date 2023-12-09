@@ -17,7 +17,11 @@
 	<div class={`flex w-full flex-col text-zinc-700 min-h-screen max-w-[550px] overflow-auto`}>
 		{#if $userWallet}
 			<div class="p-3 pb-7 flex justify-between items-center">
-				<div class="text-xl font-bold text-cyan-500">Alarm Bets</div>
+				<div class="text-xl font-bold text-cyan-500">
+					{#if !($page.route.id === '/welcome')}
+						Alarm Bets
+					{/if}
+				</div>
 				<div
 					class="px-3 py-1 flex items-center gap-1 text-cyan-500 font-semibold text-sm border border-cyan-500 rounded-full"
 				>

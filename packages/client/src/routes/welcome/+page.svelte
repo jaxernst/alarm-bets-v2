@@ -23,11 +23,9 @@
 		<div>
 			<h1 class="text-cyan-600 text-6xl font-bold">Alarm Bets</h1>
 			<div class="text-cyan-500 font-semibold flex flex-wrap gap-2 text-sm py-5">
-				<p class="shadow border border-cyan-500 rounded-lg px-2 py-1">Set goals</p>
-				<p class="shadow border border-cyan-500 rounded-lg px-2 py-1">
-					Complete morning challenges
-				</p>
-				<p class="shadow border border-cyan-500 rounded-lg px-2 py-1">Wake up earlier</p>
+				<p class="border border-cyan-500 rounded-lg px-2 py-1">Set goals</p>
+				<p class="border border-cyan-500 rounded-lg px-2 py-1">Complete morning challenges</p>
+				<p class="border border-cyan-500 rounded-lg px-2 py-1">Wake up earlier</p>
 			</div>
 		</div>
 		<div class="flex flex-col items-center gap-3">

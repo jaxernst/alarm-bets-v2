@@ -50,7 +50,7 @@
 	<div class=" grid text-zinc-400 flex-grow overflow-auto h-max overflow-y-auto">
 		<div
 			transition:fade
-			class="px-3 py-2 flex flex-col gap-2 row-start-1 col-start-1 whitespace-nowrap overflow-visible text-sm"
+			class="px-1 sm:px-2 py-2 flex flex-col gap-2 row-start-1 col-start-1 whitespace-nowrap overflow-visible text-sm"
 		>
 			{#if activeTab === 'Available Challenges'}
 				{#each availableChallenge as challenge}

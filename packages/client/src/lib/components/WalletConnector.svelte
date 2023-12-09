@@ -43,6 +43,7 @@
 					Welcome {shortenAddress($userWallet?.account.address ?? '')}
 				</p>
 			{:else}
+				<div class="font-semibold text-lg text-zinc-400">Sign in or sign up for Alarm Bets</div>
 				<button
 					on:click={connectWallet}
 					class="bg-cyan-400 rounded-full px-2 py-1 text-white font-bold"
