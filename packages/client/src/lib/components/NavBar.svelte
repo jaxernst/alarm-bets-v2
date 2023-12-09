@@ -12,7 +12,7 @@
 				$page.route.id === '/' ? 'bg-cyan-400' : ''
 			} px-4 py-2 rounded-full transition-all duration-500`}
 		>
-			<a href="/">Dashboard</a>
+			<a href="/dashboard">Dashboard</a>
 		</li>
 		<li
 			class={`${
