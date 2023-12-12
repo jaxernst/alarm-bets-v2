@@ -13,7 +13,7 @@
 
 <WalletConnector />
 
-<div class="flex justify-center">
+<div class="relative flex justify-center">
 	<div class={`flex w-full flex-col text-zinc-400 min-h-screen max-w-[550px] overflow-auto`}>
 		{#if $userWallet}
 			<div class="p-3 pb-3 flex justify-between items-center">
@@ -32,11 +32,13 @@
 				</div>
 			</div>
 		{/if}
-		<div class="flex-grow overflow-y-auto min-h-min">
+		<div class="flex-grow min-h-min">
 			<slot />
 		</div>
 		{#if pageRoute !== '/welcome'}
-			<NavBar />
+			<div class="fixed flex bottom-0 justify-center w-full max-w-[550px]">
+				<NavBar />
+			</div>
 		{/if}
 	</div>
 </div>
