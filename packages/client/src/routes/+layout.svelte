@@ -14,12 +14,12 @@
 <WalletConnector />
 
 <div class="flex justify-center">
-	<div class={`flex w-full flex-col text-zinc-700 min-h-screen max-w-[550px] overflow-auto`}>
+	<div class={`flex w-full flex-col text-zinc-400 min-h-screen max-w-[550px] overflow-auto`}>
 		{#if $userWallet}
 			<div class="p-3 pb-7 flex justify-between items-center">
 				<div class="text-xl font-bold text-cyan-500">
-					{#if !($page.route.id === '/welcome')}
-						Alarm Bets
+					{#if $page.route.id === '/dashboard'}
+						Alarm Dashboard
 					{/if}
 				</div>
 				<div
