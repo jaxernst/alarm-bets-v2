@@ -22,7 +22,21 @@
 </script>
 
 <div class="h-full flex flex-col gap-1">
-	<div class="w-full px-2">
+	{#if showGoalCreator}
+		<div transition:slide class="px-4">
+			<GoalCreator
+				firstGoal={$userWakeupGoals.length === 0}
+				onGoalCreated={() => {
+					showGoalCreator = false
+				}}
+				onClose={() => {
+					showGoalCreator = false
+				}}
+			/>
+		</div>
+	{/if}
+
+	<div class="w-full px-2 pt-4">
 		<div class="text-sm text-cyan-500 flex justify-between">
 			<div class="w-full flex gap-1">
 				<div class="px-2 flex gap-2">
@@ -48,20 +62,6 @@
 			</div>
 		</div>
 	</div>
-
-	{#if showGoalCreator}
-		<div transition:slide class="px-4 pt-2">
-			<GoalCreator
-				firstGoal={$userWakeupGoals.length === 0}
-				onGoalCreated={() => {
-					showGoalCreator = false
-				}}
-				onClose={() => {
-					showGoalCreator = false
-				}}
-			/>
-		</div>
-	{/if}
 
 	{#if $userWakeupGoals[iActiveGoal]}
 		<div class="flex-grow">

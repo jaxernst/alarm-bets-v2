@@ -115,7 +115,7 @@
 <button class="w-full" on:click={() => (inputActive = true)} use:interactionListener>
 	<GradientCard
 		gradientDirection="bg-gradient-to-b"
-		klass={` p-3 px-4 flex justify-between items-center transition-all duration-300 ease-in-out ${
+		klass={`p-3 px-4 flex justify-between items-center transition-all duration-300 ease-in-out ${
 			hovered || inputActive ? 'shadow-lg fill-cyan-50 text-cyan-50' : ''
 		}`}
 	>
