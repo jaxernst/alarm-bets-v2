@@ -36,7 +36,7 @@
 {#if $showModal}
 	<div class="absolute h-screen w-screen flex justify-center items-center bg-black bg-opacity-20">
 		<div
-			class="min-w-[200px] min-h-[200px] bg-zinc-50 flex flex-col gap-2 justify-evenly items-center rounded-lg p-6"
+			class="z-10 min-w-[200px] min-h-[200px] bg-zinc-50 flex flex-col gap-2 justify-evenly items-center rounded-lg p-6"
 		>
 			{#if $userWallet}
 				<p transition:fade class={`text-cyan-500 font-semibold`}>
