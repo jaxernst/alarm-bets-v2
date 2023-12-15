@@ -6,20 +6,21 @@ import { SystemSwitch } from "@latticexyz/world-modules/src/utils/SystemSwitch.s
 import { System } from "@latticexyz/world/src/System.sol";
 import { Status } from "../codegen/common.sol";
 import { AlarmScheduleSystem } from "./AlarmScheduleSystem.sol";
-import { WakeupObjective, Creator, Timezone, AlarmTime, Suns, ChallengeStatus, WakeupChallenge, ChallengeName, ExpirationTime, TargetWakeupObjective, ChallengeDays, SunsStaked } from "../codegen/index.sol";
+import { WakeupObjective, Creator, Timezone, AlarmTime, Suns, ChallengeStatus, WakeupChallengeType, ExpirationTime, TargetWakeupObjective, ChallengeDays, SunsStaked } from "../codegen/index.sol";
 import { IWorld } from "../codegen/world/IWorld.sol";
 
-contract DailyCheckInSystem is System {
-  string public constant CHALLENGE_NAME = "Daily Check In";
+contract SunStakedCheckInSystem is System {
+  uint32 public constant CHALLENGE_ID = 2;
   uint32 public constant SUBMISSION_WINDOW = 15 minutes;
   uint32 public constant SUN_REWARD_PER_DAY = 11;
   uint32 public constant SUN_COST_PER_DAY = 5;
 
-  function DailyCheckIn_enter(
-    bytes32 wakeupObjective,
-    uint32 numWeeks,
-    uint8[] memory challengeDays
-  ) public returns (bytes32) {
+  modifier onlyChallengeEntity(bytes32 challengeEntity) {
+    require(WakeupChallengeType.get(challengeEntity) == CHALLENGE_ID, "Not a wakeup challenge");
+    _;
+  }
+
+  function enter(bytes32 wakeupObjective, uint32 numWeeks, uint8[] memory challengeDays) public returns (bytes32) {
     int8 timezoneHrs = Timezone.get(wakeupObjective);
     uint32 alarmTime = AlarmTime.get(wakeupObjective);
     address creator = Creator.get(wakeupObjective);
@@ -33,33 +34,32 @@ contract DailyCheckInSystem is System {
     _debitEntity(wakeupObjective, costSuns);
 
     // Create challenge entity
-    bytes32 challengeId = getUniqueEntity();
-    ChallengeName.set(challengeId, CHALLENGE_NAME);
-    TargetWakeupObjective.set(challengeId, wakeupObjective);
-    WakeupChallenge.set(challengeId, true);
-    Creator.set(challengeId, creator);
-    ChallengeStatus.set(challengeId, Status.Active);
-    ChallengeDays.set(challengeId, challengeDays);
-    SunsStaked.set(challengeId, costSuns);
+    bytes32 challengeEntity = getUniqueEntity();
+    WakeupChallengeType.set(challengeEntity, CHALLENGE_ID);
+    TargetWakeupObjective.set(challengeEntity, wakeupObjective);
+    Creator.set(challengeEntity, creator);
+    ChallengeStatus.set(challengeEntity, Status.Active);
+    ChallengeDays.set(challengeEntity, challengeDays);
+    SunsStaked.set(challengeEntity, costSuns);
 
     uint expiration = block.timestamp + challengeDays.length * numWeeks * 1 days;
-    ExpirationTime.set(challengeId, expiration);
+    ExpirationTime.set(challengeEntity, expiration);
 
-    _startAlarmSchedule(challengeId, alarmTime, timezoneHrs, uint32(expiration), challengeDays);
+    _startAlarmSchedule(challengeEntity, alarmTime, timezoneHrs, uint32(expiration), challengeDays);
 
-    return challengeId;
+    return challengeEntity;
   }
 
-  function DailyCheckIn_confirmWakeup(bytes32 challengeId) public {
-    address challengeCreator = Creator.get(challengeId);
-    uint expiration = ExpirationTime.get(challengeId);
+  function confirmWakeup(bytes32 entity) public onlyChallengeEntity(entity) {
+    address challengeCreator = Creator.get(entity);
+    uint expiration = ExpirationTime.get(entity);
 
     require(challengeCreator == _msgSender(), "Only creator can confirm wakeup");
     require(expiration > block.timestamp, "Challenge expired");
 
-    SystemSwitch.call(abi.encodeCall(IWorld(_world()).recordEntry, (challengeId)));
+    SystemSwitch.call(abi.encodeCall(IWorld(_world()).recordEntry, (entity)));
 
-    _creditEntity(TargetWakeupObjective.get(challengeId), SUN_REWARD_PER_DAY);
+    _creditEntity(TargetWakeupObjective.get(entity), SUN_REWARD_PER_DAY);
   }
 
   function _creditEntity(bytes32 entity, uint32 amount) private {
@@ -73,7 +73,7 @@ contract DailyCheckInSystem is System {
   }
 
   function _startAlarmSchedule(
-    bytes32 challengeId,
+    bytes32 challengeEntity,
     uint32 alarmTime,
     int8 timezoneHrs,
     uint32 expiration,
@@ -82,7 +82,7 @@ contract DailyCheckInSystem is System {
     SystemSwitch.call(
       abi.encodeCall(
         IWorld(_world()).newAlarmSchedule,
-        (challengeId, alarmTime, SUBMISSION_WINDOW, timezoneHrs, uint32(expiration), challengeDays)
+        (challengeEntity, alarmTime, SUBMISSION_WINDOW, timezoneHrs, uint32(expiration), challengeDays)
       )
     );
   }

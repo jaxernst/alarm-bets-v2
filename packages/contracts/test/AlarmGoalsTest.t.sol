@@ -17,7 +17,7 @@ contract AlarmChallengeTest is MudTest {
     challengeDays[1] = 5;
     challengeDays[2] = 6;
 
-    bytes32 challengeId = IWorld(worldAddress).DailyCheckIn_enter(entity, 1, challengeDays);
+    bytes32 challengeId = IWorld(worldAddress).enter(entity, 1, challengeDays);
 
     // Check that entering the challenge creates a schedule
     assertTrue(AlarmSchedule.getActivationTimestamp(challengeId) > 0);
@@ -29,7 +29,7 @@ contract AlarmChallengeTest is MudTest {
     uint8[] memory challengeDays = new uint8[](1);
     challengeDays[0] = 1;
 
-    bytes32 challengeId = IWorld(worldAddress).DailyCheckIn_enter(entity, 1, challengeDays);
-    IWorld(worldAddress).DailyCheckIn_confirmWakeup(challengeId);
+    bytes32 challengeId = IWorld(worldAddress).enter(entity, 1, challengeDays);
+    IWorld(worldAddress).confirmWakeup(challengeId);
   }
 }

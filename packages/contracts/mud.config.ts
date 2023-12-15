@@ -20,8 +20,7 @@ export default mudConfig({
     Level: "uint32",
 
     // Wakeup challenge components
-    WakeupChallenge: "bool",
-    ChallengeName: "string",
+    WakeupChallengeType: "uint32",
     TargetWakeupObjective: "bytes32",
     ExpirationTime: "uint256",
     ChallengeStatus: "Status",

@@ -21,15 +21,15 @@ import { ResourceId } from "@latticexyz/store/src/ResourceId.sol";
 import { RESOURCE_TABLE, RESOURCE_OFFCHAIN_TABLE } from "@latticexyz/store/src/storeResourceTypes.sol";
 
 ResourceId constant _tableId = ResourceId.wrap(
-  bytes32(abi.encodePacked(RESOURCE_TABLE, bytes14(""), bytes16("WakeupChallenge")))
+  bytes32(abi.encodePacked(RESOURCE_TABLE, bytes14(""), bytes16("WakeupChallengeT")))
 );
-ResourceId constant WakeupChallengeTableId = _tableId;
+ResourceId constant WakeupChallengeTypeTableId = _tableId;
 
 FieldLayout constant _fieldLayout = FieldLayout.wrap(
-  0x0001010001000000000000000000000000000000000000000000000000000000
+  0x0004010004000000000000000000000000000000000000000000000000000000
 );
 
-library WakeupChallenge {
+library WakeupChallengeType {
   /**
    * @notice Get the table values' field layout.
    * @return _fieldLayout The field layout for the table.
@@ -55,7 +55,7 @@ library WakeupChallenge {
    */
   function getValueSchema() internal pure returns (Schema) {
     SchemaType[] memory _valueSchema = new SchemaType[](1);
-    _valueSchema[0] = SchemaType.BOOL;
+    _valueSchema[0] = SchemaType.UINT32;
 
     return SchemaLib.encode(_valueSchema);
   }
@@ -95,51 +95,51 @@ library WakeupChallenge {
   /**
    * @notice Get value.
    */
-  function getValue(bytes32 key) internal view returns (bool value) {
+  function getValue(bytes32 key) internal view returns (uint32 value) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (_toBool(uint8(bytes1(_blob))));
+    return (uint32(bytes4(_blob)));
   }
 
   /**
    * @notice Get value.
    */
-  function _getValue(bytes32 key) internal view returns (bool value) {
+  function _getValue(bytes32 key) internal view returns (uint32 value) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (_toBool(uint8(bytes1(_blob))));
+    return (uint32(bytes4(_blob)));
   }
 
   /**
    * @notice Get value.
    */
-  function get(bytes32 key) internal view returns (bool value) {
+  function get(bytes32 key) internal view returns (uint32 value) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (_toBool(uint8(bytes1(_blob))));
+    return (uint32(bytes4(_blob)));
   }
 
   /**
    * @notice Get value.
    */
-  function _get(bytes32 key) internal view returns (bool value) {
+  function _get(bytes32 key) internal view returns (uint32 value) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (_toBool(uint8(bytes1(_blob))));
+    return (uint32(bytes4(_blob)));
   }
 
   /**
    * @notice Set value.
    */
-  function setValue(bytes32 key, bool value) internal {
+  function setValue(bytes32 key, uint32 value) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
@@ -149,7 +149,7 @@ library WakeupChallenge {
   /**
    * @notice Set value.
    */
-  function _setValue(bytes32 key, bool value) internal {
+  function _setValue(bytes32 key, uint32 value) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
@@ -159,7 +159,7 @@ library WakeupChallenge {
   /**
    * @notice Set value.
    */
-  function set(bytes32 key, bool value) internal {
+  function set(bytes32 key, uint32 value) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
@@ -169,7 +169,7 @@ library WakeupChallenge {
   /**
    * @notice Set value.
    */
-  function _set(bytes32 key, bool value) internal {
+  function _set(bytes32 key, uint32 value) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
@@ -200,7 +200,7 @@ library WakeupChallenge {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(bool value) internal pure returns (bytes memory) {
+  function encodeStatic(uint32 value) internal pure returns (bytes memory) {
     return abi.encodePacked(value);
   }
 
@@ -210,7 +210,7 @@ library WakeupChallenge {
    * @return The lengths of the dynamic fields (packed into a single bytes32 value).
    * @return The dyanmic (variable length) data, encoded into a sequence of bytes.
    */
-  function encode(bool value) internal pure returns (bytes memory, PackedCounter, bytes memory) {
+  function encode(uint32 value) internal pure returns (bytes memory, PackedCounter, bytes memory) {
     bytes memory _staticData = encodeStatic(value);
 
     PackedCounter _encodedLengths;
@@ -227,17 +227,5 @@ library WakeupChallenge {
     _keyTuple[0] = key;
 
     return _keyTuple;
-  }
-}
-
-/**
- * @notice Cast a value to a bool.
- * @dev Boolean values are encoded as uint8 (1 = true, 0 = false), but Solidity doesn't allow casting between uint8 and bool.
- * @param value The uint8 value to convert.
- * @return result The boolean value.
- */
-function _toBool(uint8 value) pure returns (bool result) {
-  assembly {
-    result := value
   }
 }
