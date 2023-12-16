@@ -20,7 +20,7 @@
 
 <div
 	use:openOnChildClick
-	class={`px-2 sm:p-3 py-3 flex flex-col text-lg bg-gradient-to-b from-zinc-50 to-zinc-100 text-zinc-400 rounded-lg 
+	class={`px-2 sm:p-3 py-3 flex flex-col text-lg bg-gradient-to-b from-zinc-50 to-zinc-50 text-zinc-400 rounded-lg 
 					hover:shadow-md sm:hover:scale-[102%] transition-all duration-200
 	  			${open ? 'shadow-md sm:scale-[102%]' : ''}
 		`}
