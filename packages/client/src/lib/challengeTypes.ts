@@ -16,6 +16,7 @@ type Stake<T extends Currency> = FixedStake<T> | VariablStake<T>
 
 export type ChallengeInfo = {
 	name: string
+	id: number
 	description: string
 	requiredLevel: number
 	sunEntryStake?: Stake<'suns'>
@@ -32,7 +33,8 @@ export type ChallengeInfo = {
 
 export const challengeTypes: ChallengeInfo[] = [
 	{
-		name: 'Daily Check In',
+		id: 2,
+		name: 'Sun Staked Check In',
 		requiredLevel: 1,
 		sunReward: { amount: 11, currency: 'suns' },
 		sunEntryStake: { type: 'fixed', currency: 'suns', amount: 5 },
@@ -42,6 +44,7 @@ export const challengeTypes: ChallengeInfo[] = [
 			'Wakeup before your wakeup goal time and check in to earn suns. If you miss your wakeup on the days you select, no reward is given'
 	},
 	{
+		id: 99,
 		name: "Stake It 'Til You Wake It",
 		requiredLevel: 1,
 		sunReward: { amount: 16, currency: 'suns' },
@@ -52,6 +55,7 @@ export const challengeTypes: ChallengeInfo[] = [
 			'Stake Eth, Wakeup before your wakeup goal time, and get back the Eth with a Sun bonus!'
 	},
 	{
+		id: 99,
 		name: 'Wakeup Wordle (Single Player)',
 		attestationRequired: true,
 		sunReward: { amount: 35, currency: 'suns' },
@@ -62,6 +66,7 @@ export const challengeTypes: ChallengeInfo[] = [
 		description: 'Wakeup and solve a puzzle before your goal time to earn suns'
 	},
 	{
+		id: 99,
 		name: 'Wakeup Wordle (1v1)',
 		attestationRequired: true,
 		sunReward: { amount: 35, currency: 'suns' },

@@ -10,17 +10,21 @@ import { WakeupObjective, Creator, Timezone, AlarmTime, Suns, ChallengeStatus, W
 import { IWorld } from "../codegen/world/IWorld.sol";
 
 contract SunStakedCheckInSystem is System {
-  uint32 public constant CHALLENGE_ID = 2;
-  uint32 public constant SUBMISSION_WINDOW = 15 minutes;
-  uint32 public constant SUN_REWARD_PER_DAY = 11;
-  uint32 public constant SUN_COST_PER_DAY = 5;
+  uint32 constant CHALLENGE_ID = 2;
+  uint32 constant SUBMISSION_WINDOW = 15 minutes;
+  uint32 constant SUN_REWARD_PER_DAY = 11;
+  uint32 constant SUN_COST_PER_DAY = 5;
 
   modifier onlyChallengeEntity(bytes32 challengeEntity) {
     require(WakeupChallengeType.get(challengeEntity) == CHALLENGE_ID, "Not a wakeup challenge");
     _;
   }
 
-  function enter(bytes32 wakeupObjective, uint32 numWeeks, uint8[] memory challengeDays) public returns (bytes32) {
+  function SunStakedCheckIn_enter(
+    bytes32 wakeupObjective,
+    uint32 numWeeks,
+    uint8[] memory challengeDays
+  ) public returns (bytes32) {
     int8 timezoneHrs = Timezone.get(wakeupObjective);
     uint32 alarmTime = AlarmTime.get(wakeupObjective);
     address creator = Creator.get(wakeupObjective);
@@ -50,7 +54,7 @@ contract SunStakedCheckInSystem is System {
     return challengeEntity;
   }
 
-  function confirmWakeup(bytes32 entity) public onlyChallengeEntity(entity) {
+  function SunStakedCheckIn_confirmWakeup(bytes32 entity) public onlyChallengeEntity(entity) {
     address challengeCreator = Creator.get(entity);
     uint expiration = ExpirationTime.get(entity);
 

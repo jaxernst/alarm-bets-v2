@@ -19,7 +19,7 @@ export function createSystemCalls({ worldContract, waitForTransaction }: SetupNe
 		challengeDays: number[],
 		numWeeks: number
 	) => {
-		const tx = await worldContract.write.DailyCheckIn_enter([
+		const tx = await worldContract.write.SunStakedCheckIn_enter([
 			wakeupObjective as `0x${string}`,
 			numWeeks,
 			challengeDays
@@ -29,7 +29,7 @@ export function createSystemCalls({ worldContract, waitForTransaction }: SetupNe
 	}
 
 	const recordEntry = async (challengeId: Entity) => {
-		const tx = await worldContract.write.DailyCheckIn_confirmWakeup([challengeId])
+		const tx = await worldContract.write.SunStakedCheckIn_confirmWakeup([challengeId])
 		await waitForTransaction(tx)
 	}
 

@@ -23,16 +23,18 @@
 		7: 'S'
 	}
 
-	$: [challengeName, expiration, days, sunsStaked, alarmSchedule] = [
-		getComponentValueStrict($mud.components.ChallengeName, challenge).value,
+	$: [challengeType, expiration, days, sunsStaked, alarmSchedule] = [
+		getComponentValueStrict($mud.components.WakeupChallengeType, challenge).value,
 		Number(getComponentValueStrict($mud.components.ExpirationTime, challenge).value),
 		getComponentValueStrict($mud.components.ChallengeDays, challenge).value,
 		getComponentValueStrict($mud.components.SunsStaked, challenge).value,
 		getComponentValueStrict($mud.components.AlarmSchedule, challenge)
 	]
 
+	$: console.log('Typee', challengeType)
+
 	$: challengeInfo = challengeTypes.find((type) => {
-		return type.name === challengeName
+		return type.id === challengeType
 	})
 
 	$: submissionWindow = alarmSchedule.submissionWindow
@@ -54,7 +56,7 @@
 	let challengeSubmitError = ''
 	let entrySubmitted = false
 	const submitChallengeEntry = async () => {
-		if (challengeName !== 'Daily Check In') throw 'Not implemented'
+		if (challengeInfo?.name !== 'Daily Check In') throw 'Not implemented'
 
 		challengeSubmitError = ''
 		challengeSubmitLoading = true
@@ -74,7 +76,7 @@
 	<div slot="header" class="w-full flex justify-between items-center">
 		<div>
 			<div class="font-bold text-cyan-600 text-lg">
-				{challengeName}
+				{challengeInfo?.name}
 			</div>
 			{#if timeToNextDeadline}
 				<div class="text-xs px-2 text-zinc-400">Due in {formatTime(timeToNextDeadline)}...</div>

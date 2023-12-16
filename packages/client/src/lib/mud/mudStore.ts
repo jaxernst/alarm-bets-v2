@@ -121,10 +121,10 @@ export const getActiveWakeupChallenges = derived(mud, ($mud) => {
 	return (forGoal: Entity) => {
 		if (!$mud.ready) return []
 
-		const { WakeupChallenge, ChallengeStatus, TargetWakeupObjective } = $mud.components
-
+		const { WakeupChallengeType, ChallengeStatus, TargetWakeupObjective } = $mud.components
+		console.log($mud.components)
 		const entities = runQuery([
-			Has(WakeupChallenge),
+			Has(WakeupChallengeType),
 			HasValue(TargetWakeupObjective, { value: forGoal }),
 			HasValue(ChallengeStatus, { value: Status.Active as any })
 		])

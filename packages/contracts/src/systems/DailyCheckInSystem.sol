@@ -13,18 +13,17 @@ import { IWorld } from "../codegen/world/IWorld.sol";
  * DailyCheckIn challenge: Earn suns for checking in on any day of the week within
  * the subission window
  */
-contract SunStakedCheckInSystem is System {
-  string public constant CHALLENGE_NAME = "Daily Check In";
-  uint32 public constant CHALLENGE_ID = 2;
-  uint32 public constant SUBMISSION_WINDOW = 15 minutes;
-  uint32 public constant SUN_REWARD_PER_DAY = 11;
+contract DailyCheckInSystem is System {
+  uint32 constant CHALLENGE_ID = 2;
+  uint32 constant SUBMISSION_WINDOW = 15 minutes;
+  uint32 constant SUN_REWARD_PER_DAY = 11;
 
   modifier onlyChallengeEntity(bytes32 challengeEntity) {
     require(WakeupChallengeType.get(challengeEntity) == CHALLENGE_ID, "Not a wakeup challenge");
     _;
   }
 
-  function enter(bytes32 wakeupObjective) public returns (bytes32) {
+  function DailyCheckIn_enter(bytes32 wakeupObjective) public returns (bytes32) {
     address creator = Creator.get(wakeupObjective);
 
     require(WakeupObjective.get(wakeupObjective), "Not a wakeup objective");
@@ -40,7 +39,7 @@ contract SunStakedCheckInSystem is System {
     return challengeEntity;
   }
 
-  function confirmWakeup(bytes32 challengeEntity) public onlyChallengeEntity(challengeEntity) {
+  function DailyCheck_confirmWakeup(bytes32 challengeEntity) public onlyChallengeEntity(challengeEntity) {
     address challengeCreator = Creator.get(challengeEntity);
     bytes32 wakeupObjective = TargetWakeupObjective.get(challengeEntity);
     int8 timezoneHrs = Timezone.get(wakeupObjective);
