@@ -38,9 +38,9 @@
 
 	<div class="w-full px-2 pt-4">
 		<div class="text-sm text-cyan-500 flex justify-between">
-			<div class="w-full flex gap-1">
-				<div class="px-2 flex gap-2">
-					{#each goalTimes as time, i}
+			<div class="flex gap-2 flex-wrap">
+				{#each goalTimes as time, i}
+					<div class="h-8 flex">
 						<TabPill
 							active={iActiveGoal === i}
 							on:click={() => (iActiveGoal = i)}
@@ -51,14 +51,14 @@
 						>
 							{time}
 						</TabPill>
-					{/each}
-					<button
-						on:click={() => (showGoalCreator = true)}
-						class="rounded-full aspect-square h-full bg-zinc-200 hover:bg-zinc-300 transition-all hover:shadow-md px-2 flex justify-center items-center text-lg text-white font-bold pb-[.2em]"
-					>
-						+
-					</button>
-				</div>
+					</div>
+				{/each}
+				<button
+					on:click={() => (showGoalCreator = true)}
+					class="rounded-full aspect-square h-8 bg-zinc-200 hover:bg-zinc-300 transition-all hover:shadow-md px-2 flex justify-center items-center text-lg text-white font-bold pb-[.2em]"
+				>
+					+
+				</button>
 			</div>
 		</div>
 	</div>
