@@ -6,7 +6,7 @@ import { SystemSwitch } from "@latticexyz/world-modules/src/utils/SystemSwitch.s
 import { System } from "@latticexyz/world/src/System.sol";
 import { Status } from "../codegen/common.sol";
 import { AlarmScheduleSystem } from "./AlarmScheduleSystem.sol";
-import { WakeupObjective, Creator, Timezone, AlarmTime, Suns, ChallengeStatus, WakeupChallengeType, ExpirationTime, TargetWakeupObjective, ChallengeDays, SunsStaked } from "../codegen/index.sol";
+import { WakeupObjective, Creator, Timezone, AlarmTime, Suns, ChallengeStatus, WakeupChallengeType, ExpirationTime, TargetWakeupObjective, ChallengeDays, SunsStaked, WakeupConfirmations, BaseReward } from "../codegen/index.sol";
 import { IWorld } from "../codegen/world/IWorld.sol";
 
 /**
@@ -16,7 +16,6 @@ import { IWorld } from "../codegen/world/IWorld.sol";
 contract DailyCheckInSystem is System {
   uint32 constant CHALLENGE_ID = 2;
   uint32 constant SUBMISSION_WINDOW = 15 minutes;
-  uint32 constant SUN_REWARD_PER_DAY = 11;
 
   modifier onlyChallengeEntity(bytes32 challengeEntity) {
     require(WakeupChallengeType.get(challengeEntity) == CHALLENGE_ID, "Not a wakeup challenge");
@@ -35,6 +34,7 @@ contract DailyCheckInSystem is System {
     TargetWakeupObjective.set(challengeEntity, wakeupObjective);
     Creator.set(challengeEntity, creator);
     ChallengeStatus.set(challengeEntity, Status.Active);
+    WakeupConfirmations.set(challengeEntity, 0);
 
     return challengeEntity;
   }
@@ -44,11 +44,13 @@ contract DailyCheckInSystem is System {
     bytes32 wakeupObjective = TargetWakeupObjective.get(challengeEntity);
     int8 timezoneHrs = Timezone.get(wakeupObjective);
     uint32 alarmTime = AlarmTime.get(wakeupObjective);
+    uint32 checkInReward = BaseReward.get(wakeupObjective);
 
     require(challengeCreator == _msgSender(), "Only creator can confirm wakeup");
     require(_inSubmissionWindow(alarmTime, timezoneHrs), "Not in submission window");
 
-    _creditEntity(TargetWakeupObjective.get(challengeEntity), SUN_REWARD_PER_DAY);
+    WakeupConfirmations.set(challengeEntity, WakeupConfirmations.get(challengeEntity) + 1);
+    _creditEntity(TargetWakeupObjective.get(challengeEntity), checkInReward);
   }
 
   function _creditEntity(bytes32 entity, uint32 amount) private {

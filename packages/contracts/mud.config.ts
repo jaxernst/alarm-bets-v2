@@ -10,25 +10,30 @@ export default mudConfig({
       valueSchema: "uint32",
     },
 
-    // Wakeup goal components
-    WakeupObjective: "bool",
+    // Generic components
     Creator: "address",
-    AlarmTime: "uint32",
     Timezone: "int8",
-    WakeupConfirmations: "uint32",
+    ExpirationTime: "uint256",
+    StartTime: "uint256",
+
+    // Wakeup goal specific components
+    WakeupObjective: "bool",
+    BaseReward: "uint32",
+    AlarmTime: "uint32",
     Suns: "uint32",
     Level: "uint32",
 
     // Wakeup challenge components
     WakeupChallengeType: "uint32",
     TargetWakeupObjective: "bytes32",
-    ExpirationTime: "uint256",
     ChallengeStatus: "Status",
     ChallengeDays: "uint8[]",
     SunsStaked: "uint32",
     EthStaked: "uint256",
 
-    TimezoneAttested: "bool",
+    // Wakeup challenge schedule components
+    // TODO: Break apart 'AlarmSchedule' into individual components
+    WakeupConfirmations: "uint32",
 
     AlarmSchedule: {
       valueSchema: {
@@ -42,6 +47,10 @@ export default mudConfig({
         alarmDays: "uint8[]",
       },
     },
+
+    // Unused
+    TimezoneAttested: "bool",
+    SubmissionWindow: "uint32",
   },
 
   systems: {

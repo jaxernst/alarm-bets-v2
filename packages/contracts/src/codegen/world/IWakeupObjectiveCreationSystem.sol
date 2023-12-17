@@ -9,4 +9,6 @@ pragma solidity >=0.8.21;
  */
 interface IWakeupObjectiveCreationSystem {
   function newObjective(uint32 wakeupTime, int8 playerTimezoneHrs) external returns (bytes32);
+
+  function getBaseReward(uint32 alarmTime) external pure returns (uint32);
 }

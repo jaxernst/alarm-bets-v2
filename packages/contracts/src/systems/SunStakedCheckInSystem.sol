@@ -6,7 +6,7 @@ import { SystemSwitch } from "@latticexyz/world-modules/src/utils/SystemSwitch.s
 import { System } from "@latticexyz/world/src/System.sol";
 import { Status } from "../codegen/common.sol";
 import { AlarmScheduleSystem } from "./AlarmScheduleSystem.sol";
-import { WakeupObjective, Creator, Timezone, AlarmTime, Suns, ChallengeStatus, WakeupChallengeType, ExpirationTime, TargetWakeupObjective, ChallengeDays, SunsStaked } from "../codegen/index.sol";
+import { WakeupObjective, Creator, Timezone, AlarmTime, Suns, ChallengeStatus, WakeupChallengeType, ExpirationTime, TargetWakeupObjective, ChallengeDays, SunsStaked, WakeupConfirmations } from "../codegen/index.sol";
 import { IWorld } from "../codegen/world/IWorld.sol";
 
 contract SunStakedCheckInSystem is System {
@@ -45,6 +45,7 @@ contract SunStakedCheckInSystem is System {
     ChallengeStatus.set(challengeEntity, Status.Active);
     ChallengeDays.set(challengeEntity, challengeDays);
     SunsStaked.set(challengeEntity, costSuns);
+    WakeupConfirmations.set(challengeEntity, 0);
 
     uint expiration = block.timestamp + challengeDays.length * numWeeks * 1 days;
     ExpirationTime.set(challengeEntity, expiration);
@@ -61,6 +62,7 @@ contract SunStakedCheckInSystem is System {
     require(challengeCreator == _msgSender(), "Only creator can confirm wakeup");
     require(expiration > block.timestamp, "Challenge expired");
 
+    WakeupConfirmations.set(entity, WakeupConfirmations.get(entity) + 1);
     SystemSwitch.call(abi.encodeCall(IWorld(_world()).recordEntry, (entity)));
 
     _creditEntity(TargetWakeupObjective.get(entity), SUN_REWARD_PER_DAY);
