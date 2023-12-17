@@ -31,8 +31,6 @@
 		getComponentValueStrict($mud.components.AlarmSchedule, challenge)
 	]
 
-	$: console.log('Typee', challengeType)
-
 	$: challengeInfo = challengeTypes.find((type) => {
 		return type.id === challengeType
 	})
@@ -56,7 +54,7 @@
 	let challengeSubmitError = ''
 	let entrySubmitted = false
 	const submitChallengeEntry = async () => {
-		if (challengeInfo?.name !== 'Daily Check In') throw 'Not implemented'
+		if (challengeInfo?.name !== 'Sun Staked Check In') throw 'Not implemented'
 
 		challengeSubmitError = ''
 		challengeSubmitLoading = true
@@ -153,8 +151,12 @@
 				<div in:fade class="w-4 fill-cyan-50 py-1 animate-spin"><Sun /></div>
 			{:else if entrySubmitted}
 				Success!
-			{:else}
-				Wakeup in {timeToNextDeadline ? formatTime(timeToNextDeadline - submissionWindow) : ''}
+			{:else if timeToNextDeadline}
+				{#if timeToNextDeadline > submissionWindow}
+					Wakeup in {formatTime(timeToNextDeadline - submissionWindow)}
+				{:else}
+					Submit Wakeup
+				{/if}
 			{/if}
 		</button>
 	</div>
