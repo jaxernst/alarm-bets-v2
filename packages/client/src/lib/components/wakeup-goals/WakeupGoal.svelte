@@ -24,26 +24,26 @@
 	let nextLevelSunRequirement = 100
 </script>
 
-<div class="border-l-2 border-zinc-400 pl-2 pb-4">
-	<div transition:fade class="flex items-center justify-evenly gap-4 py-6">
-		<WakeupGoalBadge wakeupGoal={goal} />
-		{#key goalSuns}
-			<CircularProgress progress={Number(goalSuns) / nextLevelSunRequirement}>
-				<div class="flex flex-col w-[70px] font-semibold text-center fill-cyan-500 text-cyan-500">
-					<div class="flex justify-center items-center gap-1">
-						100
-						<div class="w-4">
-							<Sun />
-						</div>
+<div transition:fade class="flex items-center justify-between gap-4 py-6 px-6">
+	<WakeupGoalBadge wakeupGoal={goal} />
+	{#key goalSuns}
+		<CircularProgress progress={Number(goalSuns) / nextLevelSunRequirement}>
+			<div class="flex flex-col w-[70px] font-semibold text-center fill-cyan-500 text-cyan-500">
+				<div class="flex justify-center items-center gap-1">
+					100
+					<div class="w-4">
+						<Sun />
 					</div>
-					<div class="text-zinc-300 text-xs">To level up</div>
 				</div>
-			</CircularProgress>
-		{/key}
-	</div>
+				<div class="text-zinc-300 text-xs">To level up</div>
+			</div>
+		</CircularProgress>
+	{/key}
+</div>
 
+<div class="px-6">
 	<div
-		class="relative text-cyan-500 w-full flex flex-wrap items-center gap-2 text-xs border-l-2 pl-2 border-zinc-400"
+		class="w-auto relative text-cyan-500 flex flex-wrap items-center gap-2 text-xs border-l border-zinc-400 px-2"
 	>
 		<div class="whitespace-nowrap px-1">
 			<span class="text-zinc-400">Started</span>
