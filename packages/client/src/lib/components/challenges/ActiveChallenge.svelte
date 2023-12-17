@@ -23,12 +23,13 @@
 		7: 'S'
 	}
 
-	$: [challengeType, expiration, days, sunsStaked, alarmSchedule] = [
+	$: [challengeType, expiration, days, sunsStaked, alarmSchedule, targetWakeupGoal] = [
 		getComponentValueStrict($mud.components.WakeupChallengeType, challenge).value,
 		Number(getComponentValueStrict($mud.components.ExpirationTime, challenge).value),
 		getComponentValueStrict($mud.components.ChallengeDays, challenge).value,
 		getComponentValueStrict($mud.components.SunsStaked, challenge).value,
-		getComponentValueStrict($mud.components.AlarmSchedule, challenge)
+		getComponentValueStrict($mud.components.AlarmSchedule, challenge),
+		getComponentValueStrict($mud.components.TargetWakeupObjective, challenge).value as Entity
 	]
 
 	$: challengeInfo = challengeTypes.find((type) => {
@@ -37,7 +38,7 @@
 
 	$: submissionWindow = alarmSchedule.submissionWindow
 	$: numWakeups = alarmSchedule.alarmEntries
-
+	$: baseReward = getComponentValueStrict($mud.components.BaseReward, targetWakeupGoal).value
 	$: sunBalance = (challengeInfo?.sunReward.amount ?? 0) * numWakeups - sunsStaked
 
 	let timeToNextDeadline: null | number = null
@@ -117,7 +118,7 @@
 			</div>
 			<div class="flex items-center gap-1">
 				<div class="text-cyan-500 font-semibold">
-					{challengeInfo?.sunReward.amount}
+					{challengeInfo?.sunReward.amount + baseReward}
 				</div>
 				<span><div class="w-3"><Sun /></div></span>
 				next reward
