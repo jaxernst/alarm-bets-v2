@@ -10,9 +10,7 @@ export default {
 				'transparent-grey': 'rgba(47, 47, 50, 0.29)', // Customize the alpha value to set the transparency level you desire
 				'highlight-transparent-grey': 'rgba(60, 61, 61, 0.4)' // Customize the alpha value to set the transparency level you desire
 			},
-			colors: {
-				green: 'hsl(115, 73%, 58%)'
-			}
+			colors: {}
 		}
 	},
 	plugins: []
