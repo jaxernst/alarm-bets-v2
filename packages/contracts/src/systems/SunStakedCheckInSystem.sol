@@ -6,7 +6,7 @@ import { SystemSwitch } from "@latticexyz/world-modules/src/utils/SystemSwitch.s
 import { System } from "@latticexyz/world/src/System.sol";
 import { Status } from "../codegen/common.sol";
 import { AlarmScheduleSystem } from "./AlarmScheduleSystem.sol";
-import { WakeupObjective, Creator, Timezone, AlarmTime, Suns, ChallengeStatus, WakeupChallengeType, ExpirationTime, TargetWakeupObjective, ChallengeDays, SunsStaked, WakeupConfirmations } from "../codegen/index.sol";
+import { WakeupObjective, Creator, Timezone, AlarmTime, Suns, ChallengeStatus, WakeupChallengeType, ExpirationTime, TargetWakeupObjective, ChallengeDays, SunsStaked, WakeupConfirmations, BaseReward } from "../codegen/index.sol";
 import { IWorld } from "../codegen/world/IWorld.sol";
 
 contract SunStakedCheckInSystem is System {
@@ -65,7 +65,9 @@ contract SunStakedCheckInSystem is System {
     WakeupConfirmations.set(entity, WakeupConfirmations.get(entity) + 1);
     SystemSwitch.call(abi.encodeCall(IWorld(_world()).recordEntry, (entity)));
 
-    _creditEntity(TargetWakeupObjective.get(entity), SUN_REWARD_PER_DAY);
+    uint32 baseWakeupReward = BaseReward.get(TargetWakeupObjective.get(entity));
+
+    _creditEntity(TargetWakeupObjective.get(entity), SUN_REWARD_PER_DAY + baseWakeupReward);
   }
 
   function _creditEntity(bytes32 entity, uint32 amount) private {
