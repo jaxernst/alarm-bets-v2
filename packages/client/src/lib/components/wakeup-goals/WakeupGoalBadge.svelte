@@ -29,7 +29,7 @@
 </script>
 
 <div class="flex flex-col">
-	<div class="px-2 flex justify-between text-cyan-400 fill-cyan-400 font-semibold">
+	<div class=" flex justify-between text-cyan-400 fill-cyan-400 font-semibold">
 		<div class="flex items-center text-sm gap-2">
 			<div class="w-4">
 				<Sun />
