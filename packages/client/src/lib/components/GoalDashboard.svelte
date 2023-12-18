@@ -10,7 +10,7 @@
 
 	export let wakeupGoal: Entity
 
-	const availableChallenge = challengeTypes
+	const availableChallenge = challengeTypes.filter((c) => c.id !== 1)
 
 	$: activeChallenges = $getActiveWakeupChallenges(wakeupGoal)
 
