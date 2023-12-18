@@ -14,7 +14,7 @@ import { IWorld } from "../codegen/world/IWorld.sol";
  * the subission window
  */
 contract DailyCheckInSystem is System {
-  uint32 constant CHALLENGE_ID = 2;
+  uint32 constant CHALLENGE_ID = 1;
   uint32 constant SUBMISSION_WINDOW = 15 minutes;
 
   modifier onlyChallengeEntity(bytes32 challengeEntity) {
@@ -23,11 +23,9 @@ contract DailyCheckInSystem is System {
   }
 
   function DailyCheckIn_enter(bytes32 wakeupObjective) public returns (bytes32) {
-    address creator = Creator.get(wakeupObjective);
-
     require(WakeupObjective.get(wakeupObjective), "Not a wakeup objective");
-    require(creator == _msgSender(), "creator only");
 
+    address creator = Creator.get(wakeupObjective);
     bytes32 challengeEntity = getUniqueEntity();
 
     WakeupChallengeType.set(challengeEntity, CHALLENGE_ID);

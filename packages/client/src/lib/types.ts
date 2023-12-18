@@ -1,9 +1,5 @@
-export type Challenge = {
-	id: number
-	days: number[]
-	time: number
-	title: string
-	sunReward: number
-	sunPenalty: number
-	ethPenalty: number
+export enum Challenge {
+	_,
+	DailyCheckIn,
+	SunStakedCheckIn
 }

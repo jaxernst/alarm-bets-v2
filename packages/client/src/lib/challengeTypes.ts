@@ -33,6 +33,15 @@ export type ChallengeInfo = {
 
 export const challengeTypes: ChallengeInfo[] = [
 	{
+		id: 1,
+		name: 'Daily Check In',
+		requiredLevel: 1,
+		sunReward: { amount: 0, currency: 'suns' },
+		submissionWindowMin: 15,
+		numPlayers: 1,
+		description: 'Check in any day before your alarm time to earn your base reward'
+	},
+	{
 		id: 2,
 		name: 'Sun Staked Check In',
 		requiredLevel: 1,

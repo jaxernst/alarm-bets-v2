@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { mud } from '$lib/mud/mudStore'
-	import { getComponentValueStrict, type Entity } from '@latticexyz/recs'
+	import { getComponentValueStrict, type Entity, getComponentValue } from '@latticexyz/recs'
 	import CircularProgress from '../CircularProgress.svelte'
 	import { onMount } from 'svelte'
 	import { formatTime, systemTimestamp, timeString, timeString24Hour } from '$lib/util'
@@ -23,21 +23,23 @@
 		7: 'S'
 	}
 
-	$: [challengeType, expiration, days, sunsStaked, alarmSchedule, targetWakeupGoal] = [
-		getComponentValueStrict($mud.components.WakeupChallengeType, challenge).value,
-		Number(getComponentValueStrict($mud.components.ExpirationTime, challenge).value),
-		getComponentValueStrict($mud.components.ChallengeDays, challenge).value,
-		getComponentValueStrict($mud.components.SunsStaked, challenge).value,
-		getComponentValueStrict($mud.components.AlarmSchedule, challenge),
-		getComponentValueStrict($mud.components.TargetWakeupObjective, challenge).value as Entity
-	]
+	$: [challengeType, expiration, days, sunsStaked, submissionWindow, numWakeups, targetWakeupGoal] =
+		[
+			getComponentValueStrict($mud.components.WakeupChallengeType, challenge).value,
+			getComponentValue($mud.components.ExpirationTime, challenge)?.value,
+			getComponentValue($mud.components.ChallengeDays, challenge)?.value,
+			getComponentValue($mud.components.SunsStaked, challenge)?.value ?? 0,
+			0,
+			0,
+			getComponentValueStrict($mud.components.TargetWakeupObjective, challenge).value as Entity
+		]
 
 	$: challengeInfo = challengeTypes.find((type) => {
 		return type.id === challengeType
 	})
 
-	$: submissionWindow = alarmSchedule.submissionWindow
-	$: numWakeups = alarmSchedule.alarmEntries
+	$: console.log(challengeInfo)
+
 	$: baseReward = getComponentValueStrict($mud.components.BaseReward, targetWakeupGoal).value
 	$: sunBalance = (challengeInfo?.sunReward.amount ?? 0) * numWakeups - sunsStaked
 
@@ -82,13 +84,21 @@
 			{/if}
 		</div>
 		<div class="flex justify-center items-center font-semibold text-cyan-50 gap-2">
-			{#each days as day}
+			{#if days}
+				{#each days as day}
+					<div
+						class="w-6 h-6 flex items-center text-sm justify-center bg-gradient-to-r from-cyan-400 to-cyan-500 font-semibold rounded-full"
+					>
+						{dayMap[day]}
+					</div>
+				{/each}
+			{:else}
 				<div
-					class="w-6 h-6 flex items-center text-sm justify-center bg-gradient-to-r from-cyan-400 to-cyan-500 font-semibold rounded-full"
+					class="px-2 h-6 flex items-center text-sm justify-center bg-gradient-to-r from-cyan-400 to-cyan-500 font-semibold rounded-full"
 				>
-					{dayMap[day]}
+					Any Day
 				</div>
-			{/each}
+			{/if}
 			<div
 				class={`flex gap-1 p-2 items-center text-base ${
 					sunBalance > 0 ? 'text-green-500' : 'text-red-500'
@@ -103,8 +113,7 @@
 	</div>
 
 	<div slot="description">
-		Wakeup before your goal time and check in to earn suns on the days you selected. Missing a
-		deadline results in lost Suns!
+		{challengeInfo?.description}
 	</div>
 
 	<div slot="details" class="flex flex-col gap-3">
@@ -118,7 +127,7 @@
 			</div>
 			<div class="flex items-center gap-1">
 				<div class="text-cyan-500 font-semibold">
-					{challengeInfo?.sunReward.amount + baseReward}
+					{(challengeInfo?.sunReward.amount ?? 0) + baseReward}
 				</div>
 				<span><div class="w-3"><Sun /></div></span>
 				next reward
@@ -136,11 +145,13 @@
 					submissionWindow / 60
 				)} minutes before deadline
 			</div>
-			<div>
-				<span class="font-semibold">Expiration:</span>{' '}{formatTime(
-					expiration - systemTimestamp()
-				)}
-			</div>
+			{#if expiration}
+				<div>
+					<span class="font-semibold">Expiration:</span>{' '}{formatTime(
+						Number(expiration) - systemTimestamp()
+					)}
+				</div>
+			{/if}
 		</div>
 
 		<button

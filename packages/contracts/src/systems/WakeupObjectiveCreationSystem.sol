@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.21;
 
+import { IWorld } from "../codegen/world/IWorld.sol";
+import { SystemSwitch } from "@latticexyz/world-modules/src/utils/SystemSwitch.sol";
 import { getUniqueEntity } from "@latticexyz/world-modules/src/modules/uniqueentity/getUniqueEntity.sol";
 import { System } from "@latticexyz/world/src/System.sol";
 import { WakeupObjective, Creator, AlarmTime, Timezone, Suns, Level, WakeupConfirmations, BaseReward, StartTime } from "../codegen/index.sol";
@@ -20,6 +22,8 @@ contract WakeupObjectiveCreationSystem is System {
     Suns.set(entity, baseReward);
     BaseReward.set(entity, baseReward);
     Level.set(entity, 1);
+
+    _enterDailyCheckInChallenge(entity);
 
     return entity;
   }
@@ -45,5 +49,9 @@ contract WakeupObjectiveCreationSystem is System {
 
     // Correct the scaling by dividing by 1000
     return uint32(reward / 1000);
+  }
+
+  function _enterDailyCheckInChallenge(bytes32 entity) private {
+    SystemSwitch.call(abi.encodeCall(IWorld(_world()).DailyCheckIn_enter, entity));
   }
 }

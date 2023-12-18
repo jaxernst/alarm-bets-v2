@@ -4,6 +4,7 @@
 	import { getActiveWakeupChallenges, mud } from '$lib/mud/mudStore'
 	import ActiveDays from '../ActiveDays.svelte'
 	import Sun from '$lib/icons/Sun.svelte'
+	import { Challenge } from '$lib/types'
 
 	export let wakeupGoal: Entity
 
@@ -17,6 +18,14 @@
 	$: {
 		const activeChallengeDays = new Set<number>()
 		activeChallenges.forEach((challenge) => {
+			const challengeType = getComponentValueStrict(
+				$mud.components.WakeupChallengeType,
+				challenge
+			).value
+
+			console.log(challengeType, Challenge.DailyCheckIn)
+			if (challengeType === Challenge.DailyCheckIn) return
+
 			const days = getComponentValueStrict($mud.components.ChallengeDays, challenge).value
 			days.forEach((day) => {
 				if (!activeChallengeDays.has(day)) {
