@@ -26,8 +26,8 @@
 	$: [challengeType, expiration, days, sunsStaked, submissionWindow, numWakeups, targetWakeupGoal] =
 		[
 			getComponentValueStrict($mud.components.WakeupChallengeType, challenge).value,
-			getComponentValue($mud.components.ExpirationTime, challenge)?.value,
-			getComponentValue($mud.components.ChallengeDays, challenge)?.value,
+			getComponentValue($mud.components.Expiration, challenge)?.value,
+			getComponentValue($mud.components.DaysOfWeek, challenge)?.value,
 			getComponentValue($mud.components.SunsStaked, challenge)?.value ?? 0,
 			0,
 			0,

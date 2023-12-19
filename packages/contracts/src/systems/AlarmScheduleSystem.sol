@@ -27,7 +27,6 @@ contract AlarmScheduleSystem is System {
     require(_validateDaysArr(alarmDays), "INVALID_DAYS");
     require(alarmTime < 1 days, "INVALID_ALARM_TIME");
     require(-12 < timezoneOffsetHrs && timezoneOffsetHrs < 12, "INVALID_TIMEZONE_OFFSET");
-
     // The 'activation' occurs at the next alarm deadline interval. This interval occurs at next timestamp
     // which the alarmTime (in local timezone) will occur
     uint32 activationTimestamp = _nextDeadlineInterval(uint32(block.timestamp), alarmTime, timezoneOffsetHrs);

@@ -5,7 +5,7 @@ import { getUniqueEntity } from "@latticexyz/world-modules/src/modules/uniqueent
 import { SystemSwitch } from "@latticexyz/world-modules/src/utils/SystemSwitch.sol";
 import { System } from "@latticexyz/world/src/System.sol";
 import { Status } from "../codegen/common.sol";
-import { WakeupObjective, Creator, Timezone, AlarmTime, Suns, ChallengeStatus, WakeupChallengeType, ExpirationTime, TargetWakeupObjective, ChallengeDays, SunsStaked, WakeupConfirmations, BaseReward } from "../codegen/index.sol";
+import { WakeupObjective, Creator, Timezone, AlarmTime, Suns, ChallengeStatus, WakeupChallengeType, Expiration, TargetWakeupObjective, SunsStaked, WakeupConfirmations, BaseReward } from "../codegen/index.sol";
 import { IWorld } from "../codegen/world/IWorld.sol";
 
 import { _inSubmissionWindow } from "../library/ScheduleUtils.sol";

@@ -26,7 +26,7 @@
 			console.log(challengeType, Challenge.DailyCheckIn)
 			if (challengeType === Challenge.DailyCheckIn) return
 
-			const days = getComponentValueStrict($mud.components.ChallengeDays, challenge).value
+			const days = getComponentValueStrict($mud.components.DaysOfWeek, challenge).value
 			days.forEach((day) => {
 				if (!activeChallengeDays.has(day)) {
 					activeChallengeDays.add(day)

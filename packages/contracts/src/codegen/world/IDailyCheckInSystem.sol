@@ -10,5 +10,5 @@ pragma solidity >=0.8.21;
 interface IDailyCheckInSystem {
   function DailyCheckIn_enter(bytes32 wakeupObjective) external returns (bytes32);
 
-  function DailyCheck_confirmWakeup(bytes32 challengeEntity) external;
+  function DailyCheckIn_confirmWakeup(bytes32 challengeEntity) external;
 }

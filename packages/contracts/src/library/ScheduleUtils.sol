@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
+function _alarmScheduleParamsValid(
+  uint8[] calldata alarmDays,
+  uint32 alarmTime,
+  int8 timezoneOffsetHrs
+) pure returns (bool) {
+  return _validateDaysArr(alarmDays) && alarmTime < 1 days && -12 < timezoneOffsetHrs && timezoneOffsetHrs < 12;
+}
+
 function _inSubmissionWindow(uint32 submissionWindow, uint32 alarmTime, int8 timezoneOffset) view returns (bool) {
   if (_deadlinePassedToday(uint32(block.timestamp), alarmTime, timezoneOffset)) {
     return false;
@@ -67,7 +75,7 @@ function _offsetTimestamp(uint32 timestamp, int8 offset) pure returns (uint32) {
   return uint32(int32(timestamp) + offset * int32(3600));
 }
 
-function _validateDaysArr(uint8[] memory daysActive) pure returns (bool) {
+function _validateDaysArr(uint8[] calldata daysActive) pure returns (bool) {
   if (daysActive.length > 7 || daysActive.length == 0) {
     return false;
   }

@@ -11,7 +11,7 @@ interface ISunStakedCheckInSystem {
   function SunStakedCheckIn_enter(
     bytes32 wakeupObjective,
     uint32 numWeeks,
-    uint8[] memory challengeDays
+    uint8[] calldata challengeDays
   ) external returns (bytes32);
 
   function SunStakedCheckIn_confirmWakeup(bytes32 entity) external;
