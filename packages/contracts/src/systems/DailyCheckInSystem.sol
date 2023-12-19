@@ -5,9 +5,10 @@ import { getUniqueEntity } from "@latticexyz/world-modules/src/modules/uniqueent
 import { SystemSwitch } from "@latticexyz/world-modules/src/utils/SystemSwitch.sol";
 import { System } from "@latticexyz/world/src/System.sol";
 import { Status } from "../codegen/common.sol";
-import { AlarmScheduleSystem } from "./AlarmScheduleSystem.sol";
 import { WakeupObjective, Creator, Timezone, AlarmTime, Suns, ChallengeStatus, WakeupChallengeType, ExpirationTime, TargetWakeupObjective, ChallengeDays, SunsStaked, WakeupConfirmations, BaseReward } from "../codegen/index.sol";
 import { IWorld } from "../codegen/world/IWorld.sol";
+
+import { _inSubmissionWindow } from "../library/ScheduleUtils.sol";
 
 /**
  * DailyCheckIn challenge: Earn suns for checking in on any day of the week within
@@ -37,7 +38,7 @@ contract DailyCheckInSystem is System {
     return challengeEntity;
   }
 
-  function DailyCheck_confirmWakeup(bytes32 challengeEntity) public onlyChallengeEntity(challengeEntity) {
+  function DailyCheckIn_confirmWakeup(bytes32 challengeEntity) public onlyChallengeEntity(challengeEntity) {
     address challengeCreator = Creator.get(challengeEntity);
     bytes32 wakeupObjective = TargetWakeupObjective.get(challengeEntity);
     int8 timezoneHrs = Timezone.get(wakeupObjective);
@@ -45,7 +46,7 @@ contract DailyCheckInSystem is System {
     uint32 checkInReward = BaseReward.get(wakeupObjective);
 
     require(challengeCreator == _msgSender(), "Only creator can confirm wakeup");
-    require(_inSubmissionWindow(alarmTime, timezoneHrs), "Not in submission window");
+    require(_inSubmissionWindow(SUBMISSION_WINDOW, alarmTime, timezoneHrs), "Not in submission window");
 
     WakeupConfirmations.set(challengeEntity, WakeupConfirmations.get(challengeEntity) + 1);
     _creditEntity(TargetWakeupObjective.get(challengeEntity), checkInReward);
@@ -53,9 +54,5 @@ contract DailyCheckInSystem is System {
 
   function _creditEntity(bytes32 entity, uint32 amount) private {
     Suns.set(entity, Suns.get(entity) + amount);
-  }
-
-  function _inSubmissionWindow(uint32 alarmTime, int8 timezoneHrs) private pure returns (bool) {
-    return true;
   }
 }
