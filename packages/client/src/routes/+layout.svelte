@@ -35,6 +35,7 @@
 		<div class="flex-grow min-h-min">
 			<slot />
 		</div>
+		<div class="h-[65px]" />
 		{#if pageRoute !== '/welcome'}
 			<div class="fixed flex bottom-0 justify-center w-full max-w-[550px]">
 				<NavBar />

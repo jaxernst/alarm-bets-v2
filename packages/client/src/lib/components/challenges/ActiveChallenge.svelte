@@ -29,8 +29,8 @@
 			getComponentValue($mud.components.Expiration, challenge)?.value,
 			getComponentValue($mud.components.DaysOfWeek, challenge)?.value,
 			getComponentValue($mud.components.SunsStaked, challenge)?.value ?? 0,
-			0,
-			0,
+			getComponentValueStrict($mud.components.SubmissionWindow, challenge)?.value,
+			getComponentValueStrict($mud.components.WakeupConfirmations, challenge).value,
 			getComponentValueStrict($mud.components.TargetWakeupObjective, challenge).value as Entity
 		]
 

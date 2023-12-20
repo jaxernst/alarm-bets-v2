@@ -6,7 +6,7 @@ import { SystemSwitch } from "@latticexyz/world-modules/src/utils/SystemSwitch.s
 import { System } from "@latticexyz/world/src/System.sol";
 import { Status } from "../codegen/common.sol";
 import { AlarmScheduleSystem } from "./AlarmScheduleSystem.sol";
-import { WakeupObjective, Creator, Timezone, AlarmTime, Suns, ChallengeStatus, WakeupChallengeType, Expiration, TargetWakeupObjective, DaysOfWeek, SunsStaked, WakeupConfirmations, BaseReward, LastEntryTime, StartTime } from "../codegen/index.sol";
+import { WakeupObjective, Creator, Timezone, AlarmTime, Suns, ChallengeStatus, WakeupChallengeType, Expiration, TargetWakeupObjective, DaysOfWeek, SunsStaked, WakeupConfirmations, BaseReward, LastEntryTime, StartTime, SubmissionWindow } from "../codegen/index.sol";
 import { IWorld } from "../codegen/world/IWorld.sol";
 
 import { _alarmScheduleParamsValid, _inSubmissionWindow } from "../library/ScheduleUtils.sol";
@@ -53,6 +53,7 @@ contract SunStakedCheckInSystem is System {
     Expiration.set(challengeEntity, expiration);
     StartTime.set(challengeEntity, block.timestamp);
     DaysOfWeek.set(challengeEntity, challengeDays);
+    SubmissionWindow.set(challengeEntity, SUBMISSION_WINDOW);
     WakeupConfirmations.set(challengeEntity, 0);
 
     return challengeEntity;

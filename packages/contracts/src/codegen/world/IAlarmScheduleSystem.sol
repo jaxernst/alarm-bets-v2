@@ -8,22 +8,5 @@ pragma solidity >=0.8.21;
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface IAlarmScheduleSystem {
-  function newAlarmSchedule(
-    bytes32 entity,
-    uint32 alarmTime,
-    uint32 submissionWindow,
-    int8 timezoneOffsetHrs,
-    uint32 expiration,
-    uint8[] memory alarmDays
-  ) external;
-
-  function recordEntry(bytes32 entity) external;
-
-  function inSubmissionWindow(bytes32 entity) external view returns (bool);
-
-  function expired(bytes32 entity) external view returns (bool);
-
-  function timeToNextDeadline(bytes32 entity) external view returns (uint);
-
-  function nextDeadlineTimestamp(bytes32 entity) external view returns (uint);
+  function nextDeadlineTimestamp(bytes32 challengeEntity) external view returns (uint);
 }

@@ -68,6 +68,25 @@ function _missedAlarms(
   return totalExpectedEntries - numAlarmConfirmations;
 }
 
+function _timeToNextDeadline(uint32 alarmTime, uint8[] memory alarmDays, int8 timezoneOffset) view returns (uint) {
+  return _nextDeadlineTimestamp(alarmTime, alarmDays, timezoneOffset) - block.timestamp;
+}
+
+function _nextDeadlineTimestamp(uint32 alarmTime, uint8[] memory alarmDays, int8 timezoneOffset) view returns (uint) {
+  uint referenceTimestamp = _lastAlarmTimeInterval(block.timestamp, alarmTime, timezoneOffset);
+  uint8 curDay = _dayOfWeek(_offsetTimestamp(referenceTimestamp, timezoneOffset));
+  uint8 nextDay = _nextAlarmDay(alarmDays, curDay);
+
+  uint8 daysAway;
+  if (nextDay > curDay) {
+    daysAway = nextDay - curDay;
+  } else {
+    daysAway = 7 - curDay + _nextAlarmDay(alarmDays, 0);
+  }
+
+  return referenceTimestamp + uint(daysAway) * 1 days;
+}
+
 function _nextAlarmDay(uint8[] memory alarmDays, uint8 currentDay) pure returns (uint8) {
   /**
    * Iterate over the alarmDays and take the first day that that's greater than today

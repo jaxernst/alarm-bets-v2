@@ -5,7 +5,7 @@ import { getUniqueEntity } from "@latticexyz/world-modules/src/modules/uniqueent
 import { SystemSwitch } from "@latticexyz/world-modules/src/utils/SystemSwitch.sol";
 import { System } from "@latticexyz/world/src/System.sol";
 import { Status } from "../codegen/common.sol";
-import { WakeupObjective, Creator, Timezone, AlarmTime, Suns, ChallengeStatus, WakeupChallengeType, Expiration, TargetWakeupObjective, SunsStaked, WakeupConfirmations, BaseReward } from "../codegen/index.sol";
+import { WakeupObjective, Creator, Timezone, AlarmTime, Suns, ChallengeStatus, WakeupChallengeType, Expiration, TargetWakeupObjective, SunsStaked, WakeupConfirmations, BaseReward, SubmissionWindow, DaysOfWeek } from "../codegen/index.sol";
 import { IWorld } from "../codegen/world/IWorld.sol";
 
 import { _inSubmissionWindow } from "../library/ScheduleUtils.sol";
@@ -33,7 +33,15 @@ contract DailyCheckInSystem is System {
     TargetWakeupObjective.set(challengeEntity, wakeupObjective);
     Creator.set(challengeEntity, creator);
     ChallengeStatus.set(challengeEntity, Status.Active);
+    SubmissionWindow.set(challengeEntity, SUBMISSION_WINDOW);
     WakeupConfirmations.set(challengeEntity, 0);
+
+    uint8[] memory daysOfWeek = new uint8[](7);
+    for (uint8 i = 0; i < 7; i++) {
+      daysOfWeek[i] = i + 1;
+    }
+
+    DaysOfWeek.set(challengeEntity, daysOfWeek);
 
     return challengeEntity;
   }
