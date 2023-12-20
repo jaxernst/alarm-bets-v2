@@ -15,7 +15,57 @@ function _inSubmissionWindow(uint32 submissionWindow, uint32 alarmTime, int8 tim
   }
 
   return
-    (_nextDeadlineInterval(uint32(block.timestamp), alarmTime, timezoneOffset) - block.timestamp) < submissionWindow;
+    (_nextAlarmTimeInterval(uint32(block.timestamp), alarmTime, timezoneOffset) - block.timestamp) < submissionWindow;
+}
+
+/**
+ * Determine how many total alarm deadlines have been missed for this schedule.
+ * This is done by calculating the number of whole weeks that have passed since
+ * activation, then calculating how many additional (remainder) alarms days to add,
+ * and comparing that with the total entry count.
+ *
+ * @notice missedDeadlines can still be called after expiration, but will stop counting after the expiration timestamp
+ */
+function _missedAlarms(
+  uint32 alarmTime,
+  uint8[] memory alarmDays,
+  int8 timezoneOffset,
+  uint32 numAlarmConfirmations,
+  uint fromTimestamp,
+  uint toTimestamp
+) pure returns (uint) {
+  if (fromTimestamp < toTimestamp) return 0;
+
+  uint latestTimestamp = toTimestamp;
+  uint lastDeadlineInterval = _lastAlarmTimeInterval(latestTimestamp, alarmTime, timezoneOffset);
+  uint firstDeadlineInterval = _nextAlarmTimeInterval(fromTimestamp, alarmTime, timezoneOffset);
+
+  uint daysPassed = (lastDeadlineInterval - firstDeadlineInterval) / 1 days;
+  uint weeksPassed = daysPassed / 7;
+  uint remainderDays = daysPassed % 7;
+
+  // Get expected entries for full weeks passed
+  uint expectedEntriesForFullWeeks = weeksPassed * alarmDays.length;
+
+  // Figure out additional expected entries for remainder days based on which
+  // of those remainder days are alarm days
+  uint8 alarmsInRemainderDays = 0;
+  uint8 remainderStartDay = _dayOfWeek(
+    _offsetTimestamp(lastDeadlineInterval - (remainderDays * 1 days), timezoneOffset)
+  );
+  uint8 remainderEndDay = _dayOfWeek(_offsetTimestamp(lastDeadlineInterval, timezoneOffset));
+  for (uint j = 0; j < alarmDays.length; j++) {
+    uint8 checkDay = alarmDays[j];
+    if (
+      (checkDay >= remainderStartDay && checkDay <= remainderEndDay) ||
+      (remainderStartDay > remainderEndDay && (checkDay >= remainderStartDay || checkDay <= remainderEndDay))
+    ) {
+      alarmsInRemainderDays++;
+    }
+  }
+
+  uint totalExpectedEntries = expectedEntriesForFullWeeks + alarmsInRemainderDays;
+  return totalExpectedEntries - numAlarmConfirmations;
 }
 
 function _nextAlarmDay(uint8[] memory alarmDays, uint8 currentDay) pure returns (uint8) {
@@ -32,8 +82,8 @@ function _nextAlarmDay(uint8[] memory alarmDays, uint8 currentDay) pure returns 
   return alarmDays[0];
 }
 
-function _nextDeadlineInterval(uint32 timestamp, uint32 alarmTime, int8 timezoneOffset) pure returns (uint32) {
-  uint32 lastMidnight = _lastMidnightTimestamp(timestamp, timezoneOffset);
+function _nextAlarmTimeInterval(uint timestamp, uint32 alarmTime, int8 timezoneOffset) pure returns (uint) {
+  uint lastMidnight = _lastMidnightTimestamp(timestamp, timezoneOffset);
   if (_deadlinePassedToday(timestamp, alarmTime, timezoneOffset)) {
     return lastMidnight + 1 days + alarmTime;
   } else {
@@ -41,8 +91,8 @@ function _nextDeadlineInterval(uint32 timestamp, uint32 alarmTime, int8 timezone
   }
 }
 
-function _lastDeadlineInterval(uint32 timestamp, uint32 alarmTime, int8 timezoneOffset) pure returns (uint32) {
-  uint32 lastMidnight = _lastMidnightTimestamp(timestamp, timezoneOffset);
+function _lastAlarmTimeInterval(uint timestamp, uint32 alarmTime, int8 timezoneOffset) pure returns (uint) {
+  uint lastMidnight = _lastMidnightTimestamp(timestamp, timezoneOffset);
   if (_deadlinePassedToday(timestamp, alarmTime, timezoneOffset)) {
     return lastMidnight + alarmTime;
   } else {
@@ -50,14 +100,14 @@ function _lastDeadlineInterval(uint32 timestamp, uint32 alarmTime, int8 timezone
   }
 }
 
-function _deadlinePassedToday(uint32 timestamp, uint32 alarmTime, int8 timezoneOffset) pure returns (bool) {
+function _deadlinePassedToday(uint timestamp, uint32 alarmTime, int8 timezoneOffset) pure returns (bool) {
   uint _now = _offsetTimestamp(timestamp, timezoneOffset);
   return (_now % 1 days) > alarmTime;
 }
 
 // 1 = Sunday, 7 = Saturday
-function _dayOfWeek(uint32 timestamp) pure returns (uint8 dayOfWeek) {
-  uint32 _days = timestamp / 1 days;
+function _dayOfWeek(uint timestamp) pure returns (uint8 dayOfWeek) {
+  uint _days = timestamp / 1 days;
   dayOfWeek = uint8(((_days + 4) % 7) + 1);
 }
 
@@ -65,14 +115,14 @@ function _dayOfWeek(uint32 timestamp) pure returns (uint8 dayOfWeek) {
  * @notice 'midnight' is timezone specific so we must offset the timestamp before taking the modulus.
  * this is like pretending UTC started in the user's timezone instead of GMT.
  */
-function _lastMidnightTimestamp(uint32 timestamp, int8 timezoneOffset) pure returns (uint32) {
-  uint32 localTimestamp = _offsetTimestamp(timestamp, timezoneOffset);
-  uint32 lastMidnightLocal = localTimestamp - (localTimestamp % 1 days);
+function _lastMidnightTimestamp(uint timestamp, int8 timezoneOffset) pure returns (uint) {
+  uint localTimestamp = _offsetTimestamp(timestamp, timezoneOffset);
+  uint lastMidnightLocal = localTimestamp - (localTimestamp % 1 days);
   return _offsetTimestamp(lastMidnightLocal, -timezoneOffset);
 }
 
-function _offsetTimestamp(uint32 timestamp, int8 offset) pure returns (uint32) {
-  return uint32(int32(timestamp) + offset * int32(3600));
+function _offsetTimestamp(uint timestamp, int8 offset) pure returns (uint) {
+  return uint(int(timestamp) + offset * int(3600));
 }
 
 function _validateDaysArr(uint8[] calldata daysActive) pure returns (bool) {

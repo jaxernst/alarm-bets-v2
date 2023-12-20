@@ -34,6 +34,7 @@ export default mudConfig({
     // Alarm schedule components
     WakeupConfirmations: "uint32",
     SubmissionWindow: "uint32",
+    LastEntryTime: "uint256",
 
     AlarmSchedule: {
       valueSchema: {
@@ -50,7 +51,6 @@ export default mudConfig({
 
     // Unused
     TimezoneAttested: "bool",
-    SubmissionWindow: "uint32",
   },
 
   systems: {

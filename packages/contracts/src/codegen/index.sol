@@ -21,5 +21,6 @@ import { SunsStaked, SunsStakedTableId } from "./tables/SunsStaked.sol";
 import { EthStaked, EthStakedTableId } from "./tables/EthStaked.sol";
 import { WakeupConfirmations, WakeupConfirmationsTableId } from "./tables/WakeupConfirmations.sol";
 import { SubmissionWindow, SubmissionWindowTableId } from "./tables/SubmissionWindow.sol";
+import { LastEntryTime, LastEntryTimeTableId } from "./tables/LastEntryTime.sol";
 import { AlarmSchedule, AlarmScheduleData, AlarmScheduleTableId } from "./tables/AlarmSchedule.sol";
 import { TimezoneAttested, TimezoneAttestedTableId } from "./tables/TimezoneAttested.sol";

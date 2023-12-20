@@ -15,4 +15,6 @@ interface ISunStakedCheckInSystem {
   ) external returns (bytes32);
 
   function SunStakedCheckIn_confirmWakeup(bytes32 entity) external;
+
+  function SunStakedCheckIn_complete(bytes32 entity) external;
 }
