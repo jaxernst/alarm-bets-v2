@@ -1,12 +1,9 @@
 <script lang="ts">
 	import { mud } from '$lib/mud/mudStore'
 	import { getComponentValueStrict, type Entity, getComponentValue } from '@latticexyz/recs'
-	import CircularProgress from '../CircularProgress.svelte'
 	import { onMount } from 'svelte'
 	import { formatTime, systemTimestamp, timeString, timeString24Hour } from '$lib/util'
-	import ActiveDays from '../ActiveDays.svelte'
 	import Sun from '$lib/icons/Sun.svelte'
-	import WakeupGoal from '../wakeup-goals/WakeupGoal.svelte'
 	import ChallengeCard from './ChallengeCard.svelte'
 	import { challengeTypes } from '$lib/challengeTypes'
 	import { fade } from 'svelte/transition'
